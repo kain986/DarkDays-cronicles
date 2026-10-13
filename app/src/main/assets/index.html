@@ -447,6 +447,20 @@ svg.ic{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;str
 .cell.ally::before{--c:#1f7a34}
 .covh{color:#e8d8a8}
 .covh svg{width:12px;height:12px;vertical-align:-2px}
+/* fixed-height combat chrome so the board never overflows */
+.info{height:58px;min-height:0;overflow:hidden;padding:5px 16px 3px}
+.info p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info p:not(.hint){font-size:12px}
+.cbp{height:64px;min-height:0;overflow:hidden}
+.tags{max-height:18px;overflow:hidden}
+.board-wrap{overflow:visible;padding-top:24px}
+@media (max-height:700px){
+  .init{padding:5px 16px 4px}.ini{width:26px;height:26px;padding:5px}.init .rd b{font-size:18px}
+  .info{height:46px}.info p:not(.hint){display:none}
+  .cbp{height:54px;padding:5px 16px}.por{width:38px;height:38px;padding:8px}.acb{width:34px;height:40px}.acb b{font-size:16px}
+  .hotrow{padding:5px 16px 4px}.slot{height:60px;width:56px;padding-top:5px}.endbtn{width:58px}
+  .cblog{min-height:30px}
+}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 
@@ -727,7 +741,7 @@ const SHOPS = {
 
 /* =================== FOES =================== */
 const FOES = {
-  famished:{n:["Morto affamato","Famished dead","Muerto hambriento"], hp:11, ac:11, spd:5, ic:"skull", xp:50, sv:0, undead:1, atk:[{n:["Artigli","Claws","Garras"], b:3, d:"1d6+1", r:1, t:"slash"}]},
+  famished:{n:["Morto affamato","Famished dead","Muerto hambriento"], hp:10, ac:10, spd:4, ic:"skull", xp:75, sv:0, undead:1, atk:[{n:["Artigli","Claws","Garras"], b:2, d:"1d6", r:1, t:"slash"}]},
   wolf:{n:["Lupo d'ombra","Shadow wolf","Lobo de sombra"], hp:11, ac:13, spd:8, ic:"fang", xp:50, sv:1, atk:[{n:["Morso","Bite","Mordisco"], b:4, d:"2d4+2", r:1, t:"pierce"}]},
   goblin:{n:["Goblin","Goblin","Goblin"], hp:7, ac:15, spd:6, ic:"dagger", xp:50, sv:1, atk:[{n:["Scimitarra","Scimitar","Cimitarra"], b:4, d:"1d6+2", r:1, t:"slash"}]},
   gobarcher:{n:["Goblin arciere","Goblin archer","Goblin arquero"], hp:7, ac:13, spd:6, ic:"bow", xp:50, sv:1, atk:[{n:["Arco corto","Shortbow","Arco corto"], b:4, d:"1d6+2", r:8, t:"pierce", ranged:1}]},
@@ -2159,6 +2173,9 @@ const ABIL = {
 function startCombat(key, win, surprise) {
   CBSNAP = JSON.stringify(S);
   const enc = ENC[key], mp = MAPS[enc.map];
+  // scale to party size: a duo faces one fewer non-boss foe
+  const fl = enc.foes.slice();
+  if (S.party.length <= 2 && fl.length >= 3) { let wi = -1; fl.forEach((k, i) => { if (!FOES[k].boss && (wi < 0 || FOES[k].xp <= FOES[fl[wi]].xp)) wi = i; }); if (wi >= 0) fl.splice(wi, 1); }
   CB = {key, win, surprise, map: mp, units: [], order: [], ti: -1, round: 1, log: [], busy: false, sel: null, pend: null, xp: 0, gold: enc.gold || 0, ended: false, inspect: null};
   // obstacles, keeping the board connected
   for (let t = 0; t < 30; t++) {
@@ -2169,9 +2186,9 @@ function startCombat(key, win, surprise) {
   const ps = [[3,8],[2,8],[4,8],[3,7],[1,8],[5,8]];
   S.party.forEach((c, i) => { if (c.hp <= 0) c.hp = 1; CB.units.push({uid: "p_" + c.id, side: "p", ref: c, name: c.name.split(" ")[0], hp: c.hp, maxhp: c.maxhp, ac: acOf(c), spd: speedOf(c), icon: CL(c).icon, x: ps[i][0], y: ps[i][1], cond: {}, down: false}); });
   const hpMul = [.75, 1, 1.3][S.diff ?? 1], cnt = {};
-  enc.foes.forEach(k => cnt[k] = (cnt[k] || 0) + 1);
+  fl.forEach(k => cnt[k] = (cnt[k] || 0) + 1);
   const seen = {};
-  enc.foes.forEach((k, i) => {
+  fl.forEach((k, i) => {
     const d = FOES[k]; seen[k] = (seen[k] || 0) + 1;
     let x, y, g = 0;
     if (d.boss) { x = 3; y = 0; while (unitAtRaw(x, y) && g++ < 20) x = (x + 1) % COLS; }
@@ -2540,11 +2557,15 @@ function buildCombat() {
   $("#aEnd").onclick = () => { if (CB && !CB.busy && cur() && cur().side === "p") endTurn(); };
   $("#cblog").onclick = openLog;
   sizeBoard(); renderCombat();
+  if (typeof ResizeObserver !== "undefined") { if (CB.ro) CB.ro.disconnect(); CB.ro = new ResizeObserver(() => { if (CB && $("#bw")) sizeBoard(); }); CB.ro.observe($("#bw")); }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (CB) sizeBoard(); });
 }
 function sizeBoard() {
   const bw = $("#bw"); if (!bw || !CB) return;
-  const W = Math.min(bw.clientWidth, 560) - 32, H = bw.clientHeight - 12;
-  CB.cell = Math.max(30, Math.floor(Math.min(W / COLS, H / ROWS)));
+  const W = Math.min(bw.clientWidth, 560) - 32, H = bw.clientHeight - 36;
+  const cell = Math.max(24, Math.floor(Math.min(W / COLS, H / ROWS)));
+  if (cell === CB.cell && $("#terrain").width) return;
+  CB.cell = cell;
   const b = $("#board"); b.style.setProperty("--cell", CB.cell + "px");
   paintTerrain(); fxInit(); placeTokens();
 }
@@ -3635,7 +3656,7 @@ renderCombat = function () {
   _renderCombat0(); if (!CB) return; const u = cur(); const mine = u && u.side === "p" && !CB.busy && !CB.ended;
   CB.units.forEach(o => { const tk = $("#t_" + o.uid); if (!tk) return; const ch = tk.querySelector(".chance"); if (!tk.classList.contains("tg") || !mine) return;
     const cov = coverOf(u, o); if (cov) { ch.innerHTML = `${ch.textContent}<i class="cv">${icon("shield")}+${cov}</i>`; tk.classList.add("cov"); } else tk.classList.remove("cov"); });
-  const info = $("#info p.hint"); if (mine && info && CB.sel) { const sp = selSpec(u); if (sp.tgt === "enemy" && sp.r > 1 && foes().some(f => coverOf(u, f))) info.insertAdjacentHTML("beforeend", ` · <span class="covh">${icon("shield")} ${tr(["Ostacoli e creature tra te e il bersaglio danno copertura: +2 o +5 alla CA.","Obstacles and creatures between you and the target grant cover: +2 or +5 AC.","Obstáculos y criaturas entre tú y el objetivo dan cobertura: +2 o +5 a la CA."])}</span>`); }
+  const info = $("#info p.hint"); if (mine && info && CB.sel) { const sp = selSpec(u); if (sp.tgt === "enemy" && sp.r > 1 && foes().some(f => coverOf(u, f))) info.insertAdjacentHTML("beforeend", ` · <span class="covh">${icon("shield")} ${tr(["copertura +2/+5 CA","cover +2/+5 AC","cobertura +2/+5 CA"])}</span>`); }
 };
 /* =================== BOOT =================== */
 let resizeT = null;
