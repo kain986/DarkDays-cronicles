@@ -461,6 +461,30 @@ svg.ic{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;str
   .hotrow{padding:5px 16px 4px}.slot{height:60px;width:56px;padding-top:5px}.endbtn{width:58px}
   .cblog{min-height:30px}
 }
+/* ---------- tactics ---------- */
+.cell.reach.risk::after{background:#d9622b;opacity:.95;width:16%;height:16%;box-shadow:0 0 0 1.5px rgba(255,220,180,.6)}
+.cell.dep{background:rgba(202,166,80,.22);box-shadow:inset 0 0 0 1.5px rgba(140,100,30,.75)}
+.tok.depsel .in::before{content:"";position:absolute;left:-4%;right:-4%;bottom:-6%;height:50%;border-radius:50%;border:2.5px solid #f0d48a;box-shadow:0 0 10px rgba(240,200,120,.8)}
+.tok .st .c-o{color:#9fd0ff;box-shadow:0 0 0 1px rgba(159,208,255,.6)}
+.tok .chance .adv{font-style:normal;color:#9be0a6;margin-right:2px}
+.tok .chance .dis{font-style:normal;color:#ff9aa9;margin-right:2px}
+.info .rk{color:#e8925a}
+.info .vu{color:#9be0a6}.info .re{color:#ff9aa9}
+.startb{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;height:64px;border-radius:10px;font-family:var(--f-display);font-size:20px;color:#1b140a;background:linear-gradient(#ecc977,#a9832f);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 0 0 1px #6d5524,0 0 18px rgba(240,200,120,.35)}
+.startb svg{width:26px;height:26px}
+.helpb{width:30px;height:30px;padding:5px;flex:none;margin-right:2px;border-radius:50%;color:var(--brass)}
+.tips{display:grid;gap:10px}
+.tip{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start}
+.tip b{font-family:var(--f-display);font-weight:400;font-size:17px;color:#f3e2b4}
+.tip p{margin:2px 0 0!important;font-size:14px;color:var(--muted);line-height:1.35}
+.chal{display:grid;gap:4px;margin:4px 0 10px;font-family:var(--f-ui);font-size:13px;color:var(--muted)}
+.chal span.ok{color:#9be0a6}
+.chal small{color:var(--brass);margin-left:4px}
+.loot{display:grid;gap:6px;margin:-6px 0 14px;text-align:left}
+.loot .li{display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:8px;background:#1a141f;box-shadow:inset 0 0 0 1px #3a3044;font-size:15px}
+.loot .li.rare{box-shadow:inset 0 0 0 1px #caa650,0 0 14px rgba(240,200,120,.25);color:#f3e2b4}
+.taglist .ft{box-shadow:inset 0 0 0 1px #caa650;color:#f3e2b4}
+.taglist .tk{box-shadow:inset 0 0 0 1px #8fb0f0;color:#cfe0ff}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 
@@ -734,15 +758,42 @@ const ITEMS = {
   key:{n:["Chiave dell'Alba","Key of Dawn","Llave del Alba"], d:["Una chiave d'oro a forma di raggio di sole. È calda.","A golden key shaped like a sunbeam. It is warm.","Una llave de oro con forma de rayo de sol. Está caliente."], quest:1},
   coin:{n:["Moneta della Corona Cava","Hollow Crown coin","Moneda de la Corona Hueca"], d:["Argento annerito, inciso con una corona vuota.","Blackened silver stamped with an empty crown.","Plata ennegrecida con una corona vacía grabada."], quest:1},
 };
+Object.assign(ITEMS, {
+  scroll_fire:{n:["Pergamena: Palla di fuoco","Scroll: Fireball","Pergamino: Bola de fuego"], d:["Chiunque può leggerla in combattimento: area 5×5, TS DES CD 15, 8d6 fuoco.","Anyone can read it in combat: 5×5 area, DEX save DC 15, 8d6 fire.","Cualquiera puede leerlo en combate: área 5×5, salvación DES CD 15, 8d6 fuego."], price:150, use:"scroll", spell:"fireball", tgt:"area", r:12, rad:2},
+  scroll_heal:{n:["Pergamena: Cura di gruppo","Scroll: Mass Cure","Pergamino: Curación en grupo"], d:["In combattimento: tutto il gruppo recupera 2d8+2 PF e si rialza.","In combat: the whole party regains 2d8+2 HP and stands up.","En combate: todo el grupo recupera 2d8+2 PG y se levanta."], price:110, use:"scroll", spell:"massheal", tgt:"none"},
+  ring_prot:{n:["Anello di protezione","Ring of Protection","Anillo de protección"], d:["Accessorio: +1 alla CA e a tutti i tiri salvezza.","Trinket: +1 to AC and all saving throws.","Accesorio: +1 a la CA y a todas las salvaciones."], price:450, use:"equip", slot:"t"},
+  amulet_health:{n:["Amuleto della salute","Amulet of Health","Amuleto de salud"], d:["Accessorio: la tua Costituzione diventa 19.","Trinket: your Constitution becomes 19.","Accesorio: tu Constitución pasa a ser 19."], price:600, use:"equip", slot:"t", setAb:["con", 19]},
+  gauntlets_ogre:{n:["Guanti della forza dell'orco","Gauntlets of Ogre Power","Guanteletes de fuerza de ogro"], d:["Accessorio: la tua Forza diventa 19.","Trinket: your Strength becomes 19.","Accesorio: tu Fuerza pasa a ser 19."], price:600, use:"equip", slot:"t", setAb:["str", 19]},
+  headband_int:{n:["Fascia dell'intelletto","Headband of Intellect","Diadema del intelecto"], d:["Accessorio: la tua Intelligenza diventa 19.","Trinket: your Intelligence becomes 19.","Accesorio: tu Inteligencia pasa a ser 19."], price:600, use:"equip", slot:"t", setAb:["int", 19]},
+  boots_wind:{n:["Stivali del vento","Boots of the Wind","Botas del viento"], d:["Accessorio: +2 alla velocità.","Trinket: +2 speed.","Accesorio: +2 a la velocidad."], price:380, use:"equip", slot:"t"},
+  cloak_displ:{n:["Mantello di dislocazione","Cloak of Displacement","Capa de desplazamiento"], d:["Accessorio: il primo attacco contro di te in ogni round ha svantaggio.","Trinket: the first attack against you each round has disadvantage.","Accesorio: el primer ataque contra ti cada ronda tiene desventaja."], price:520, use:"equip", slot:"t"},
+  periapt:{n:["Periapto della chiusura delle ferite","Periapt of Wound Closure","Periapto de cierre de heridas"], d:["Accessorio: se sei sotto metà PF, all'inizio del tuo turno recuperi 2 PF.","Trinket: below half HP, you regain 2 HP at the start of your turn.","Accesorio: por debajo de la mitad de PG, recuperas 2 PG al inicio de tu turno."], price:400, use:"equip", slot:"t"},
+  sun_talisman:{n:["Talismano del sole","Sun Talisman","Talismán del sol"], d:["Accessorio: i colpi con l'arma infliggono +1d4 danni ai non morti.","Trinket: weapon hits deal +1d4 damage to undead.","Accesorio: los golpes con arma infligen +1d4 de daño a muertos vivientes."], price:300, use:"equip", slot:"t"},
+  pearl_power:{n:["Perla del potere","Pearl of Power","Perla de poder"], d:["Accessorio per incantatori: +1 slot incantesimo (di 2° livello dal 3° livello).","Caster trinket: +1 spell slot (2nd level from character level 3).","Accesorio de lanzador: +1 espacio de conjuro (de 2º nivel desde nivel 3)."], price:500, use:"equip", slot:"t"},
+  eye_hawk:{n:["Lente del falco","Hawk's Lens","Lente del halcón"], d:["Accessorio: +2 ai tiri per colpire a distanza con le armi.","Trinket: +2 to hit with ranged weapon attacks.","Accesorio: +2 al ataque a distancia con armas."], price:350, use:"equip", slot:"t"},
+});
+const FEATLIST = {
+  sharpshooter:{n:["Tiratore scelto","Sharpshooter","Tirador experto"], d:["I tuoi attacchi a distanza con l'arma ignorano la copertura. Sblocca «Colpo potente» a distanza: −5 a colpire, +10 danni.","Your ranged weapon attacks ignore cover. Unlocks ranged “Power attack”: −5 to hit, +10 damage.","Tus ataques a distancia con arma ignoran la cobertura. Desbloquea «Golpe poderoso» a distancia: −5 al ataque, +10 de daño."], ic:"bow"},
+  gwm:{n:["Maestro d'armi","Weapon Master","Maestro de armas"], d:["Sblocca «Colpo potente» in mischia: −5 a colpire, +10 danni. Quando abbatti un nemico in mischia ottieni un attacco extra come azione bonus.","Unlocks melee “Power attack”: −5 to hit, +10 damage. When you drop an enemy in melee you get an extra attack as a bonus action.","Desbloquea «Golpe poderoso» cuerpo a cuerpo: −5 al ataque, +10 de daño. Al abatir a un enemigo cuerpo a cuerpo obtienes un ataque extra como acción adicional."], ic:"sword"},
+  tough:{n:["Robusto","Tough","Duro"], d:["+2 punti ferita per livello.","+2 hit points per level.","+2 puntos de golpe por nivel."], ic:"heart"},
+  alert:{n:["Allerta","Alert","Alerta"], d:["+5 all'iniziativa: agisci quasi sempre per primo.","+5 to initiative: you almost always act first.","+5 a la iniciativa: casi siempre actúas primero."], ic:"eye"},
+  mobile:{n:["Mobile","Mobile","Móvil"], d:["+2 alla velocità e non provochi mai attacchi d'opportunità.","+2 speed and you never provoke opportunity attacks.","+2 a la velocidad y nunca provocas ataques de oportunidad."], ic:"wind"},
+  sentinel:{n:["Sentinella","Sentinel","Centinela"], d:["I tuoi attacchi d'opportunità funzionano anche contro chi si disimpegna, e se colpisci il nemico si ferma sul posto.","Your opportunity attacks work even against creatures that disengage, and a hit stops the enemy in its tracks.","Tus ataques de oportunidad funcionan incluso contra quien se retira, y si aciertas el enemigo se detiene."], ic:"shield"},
+};
+const COMP_FEAT = {brenna: "tough", kael: "mobile", ilyra: "alert"};
+const LOOT = {
+  mill:["eye_hawk"], cem:["sun_talisman"], varga:["periapt"], varga_small:["periapt"], bandits:["cloak_displ"], tower:["pearl_power"], doran:["boots_wind"],
+  duke:["ring_prot"], vault_boss:["w2","scroll_fire"], vault_boss_hard:["w2","scroll_fire"], vault_guard:["greater"], keeper:["amulet_health"], ser_guards:["headband_int"], pass:["gauntlets_ogre"], jailers:["scroll_fire","scroll_heal"],
+};
 const SHOPS = {
-  ashford:{n:["Bottega di Mara la Vecchia","Old Mara's shop","Tienda de la vieja Mara"], items:["potion","flask","a1"]},
-  vesperia:{n:["Mercato delle Candele","Candle Market","Mercado de las Velas"], items:["potion","greater","flask","w1","a1","w2"]},
+  ashford:{n:["Bottega di Mara la Vecchia","Old Mara's shop","Tienda de la vieja Mara"], items:["potion","flask","scroll_heal","a1"]},
+  vesperia:{n:["Mercato delle Candele","Candle Market","Mercado de las Velas"], items:["potion","greater","flask","scroll_heal","scroll_fire","w1","a1","w2","boots_wind","ring_prot"]},
 };
 
 /* =================== FOES =================== */
 const FOES = {
   famished:{n:["Morto affamato","Famished dead","Muerto hambriento"], hp:10, ac:10, spd:4, ic:"skull", xp:75, sv:0, undead:1, atk:[{n:["Artigli","Claws","Garras"], b:2, d:"1d6", r:1, t:"slash"}]},
-  wolf:{n:["Lupo d'ombra","Shadow wolf","Lobo de sombra"], hp:11, ac:13, spd:8, ic:"fang", xp:50, sv:1, atk:[{n:["Morso","Bite","Mordisco"], b:4, d:"2d4+2", r:1, t:"pierce"}]},
+  wolf:{n:["Lupo d'ombra","Shadow wolf","Lobo de sombra"], hp:11, ac:13, spd:8, ic:"fang", xp:50, sv:1, pack:1, atk:[{n:["Morso","Bite","Mordisco"], b:4, d:"2d4+2", r:1, t:"pierce"}]},
   goblin:{n:["Goblin","Goblin","Goblin"], hp:7, ac:15, spd:6, ic:"dagger", xp:50, sv:1, atk:[{n:["Scimitarra","Scimitar","Cimitarra"], b:4, d:"1d6+2", r:1, t:"slash"}]},
   gobarcher:{n:["Goblin arciere","Goblin archer","Goblin arquero"], hp:7, ac:13, spd:6, ic:"bow", xp:50, sv:1, atk:[{n:["Arco corto","Shortbow","Arco corto"], b:4, d:"1d6+2", r:8, t:"pierce", ranged:1}]},
   snik:{n:["Snik, capo goblin","Snik the goblin boss","Snik, jefe goblin"], hp:24, ac:17, spd:6, ic:"crown", xp:200, sv:2, atk:[{n:["Scimitarra","Scimitar","Cimitarra"], b:4, d:"1d6+2", r:1, t:"slash", k:2}]},
@@ -768,6 +819,7 @@ const FOES = {
   hknight:{n:["Cavaliere Cavo","Hollow Knight","Caballero Hueco"], hp:65, ac:17, spd:6, ic:"helm", xp:700, sv:3, construct:1, atk:[{n:["Spadone","Greatsword","Mandoble"], b:6, d:"1d10+4", r:1, t:"slash", k:2}]},
   shade:{n:["Riflesso d'ombra","Mirror shade","Reflejo de sombra"], hp:36, ac:13, spd:7, ic:"eye", xp:200, sv:2, vuln:"radiant", atk:[{n:["Lama riflessa","Mirrored blade","Hoja reflejada"], b:5, d:"2d6+3", r:1, t:"necrotic"}]},
   jailer:{n:["Carceriere","Jailer","Carcelero"], hp:45, ac:15, spd:6, ic:"helm", xp:300, sv:2, atk:[{n:["Mazza chiodata","Morningstar","Lucero del alba"], b:5, d:"1d10+3", r:1, t:"blunt", k:2}]},
+  obsidian:{n:["Custode d'Ossidiana","Obsidian Warden","Guardián de Obsidiana"], hp:115, ac:17, spd:5, ic:"helm", boss:1, xp:700, sv:3, construct:1, vuln:"blunt", res:"fire", atk:[{n:["Pugni di vetro nero","Black glass fists","Puños de vidrio negro"], b:6, d:"2d8+3", r:1, t:"blunt", k:2}], spells:[{n:["Pioggia di schegge","Shard burst","Lluvia de esquirlas"], save:"dex", dc:14, d:"3d6", rad:1, r:6, t:"slash", p:.35}]},
   seraphine:{n:["Seraphine, Madre della Notte","Seraphine, Mother of Night","Seraphine, Madre de la Noche"], hp:175, ac:16, spd:6, ic:"crown", boss:1, xp:1800, sv:4,
     atk:[{n:["Bastone del lutto","Staff of mourning","Báculo del luto"], b:7, d:"2d6+4", r:1, t:"blunt", k:2}],
     spells:[{n:["Lancia della notte","Night lance","Lanza de la noche"], b:7, d:"4d8", r:8, t:"necrotic", p:.4},{n:["Velo della notte","Veil of night","Velo de la noche"], save:"dex", dc:15, d:"3d8", rad:1, r:8, t:"necrotic", p:.35}]},
@@ -827,6 +879,10 @@ const ENC = {
   jailers:{map:"dungeon", foes:["jailer","jailer","jailer","fanatic"], gold:40},
   seraphine:{map:"throne", foes:["seraphine","shade","shade","fanatic"]},
   avatar:{map:"throne", foes:["avatar","shade","shade"]},
+  vault1:{map:"dungeon", foes:["skeleton","skeleton","skeleton","skelarcher","skelarcher","armor"], gold:25},
+  vault_guard:{map:"dungeon", foes:["armor","armor","armor"]},
+  vault_boss:{map:"mirror", foes:["obsidian","shade","shade"], gold:80},
+  vault_boss_hard:{map:"mirror", foes:["obsidian","shade","shade","shadow","shadow"], gold:80},
   avatar_weak:{map:"throne", foes:["avatarw"]},
 };
 /* =================== STORY =================== */
@@ -1340,6 +1396,7 @@ SC.vesperia = {bg:"city", loc:LOC.vesperia, hub:1,
     {t:["La Torre Campanaria, al nono rintocco","The Bell Tower, at the ninth bell","El Campanario, a la novena campanada"], req:()=>has("q_doran") && !has("doran_done") && inP("kael"), go:"a2_bell"},
     {t:["Il ballo in maschera del Duca","The Duke's masquerade","El baile de máscaras del Duque"], req:()=>has("invite") && !has("masq_done"), go:"a2_masq"},
     {t:["Le fogne della Città Bassa","The Lower City sewers","Las cloacas de la Ciudad Baja"], req:()=>has("q_key") && !has("has_key"), go:"a2_sewers"},
+    {t:["Le Volte di Aurel, sotto la cappella dell'Archivio","The Vaults of Aurel, beneath the Archive chapel","Las Bóvedas de Aurel, bajo la capilla del Archivo"], req:()=>has("vault_known") && !has("vault_done"), go:"v_enter"},
     {t:["Riposare alla locanda","Rest at the inn","Descansar en la posada"], cost:10, rest:1},
     {t:["Partire per la Corona di Cenere","Set out for the Crown of Ash","Partir hacia la Corona de Ceniza"], req:()=>has("act2_done"), go:"a3_title"}]};
 
@@ -1352,6 +1409,7 @@ SC.a2_archive = {bg:"archive", loc:LOC.archive,
     {t:["«Cerchiamo la Chiave dell'Alba.»","“We're looking for the Key of Dawn.”","«Buscamos la Llave del Alba.»"], req:()=>!has("q_key"), go:"a2_pellin_key"},
     {t:["«Parlaci dei Custodi del Sole.»","“Tell us about the Sunwardens.”","«Háblanos de los Custodios del Sol.»"], req:()=>!has("pl_lore"), go:"a2_pellin_lore"},
     {t:["«Conosci un certo Mortimer?»","“Do you know a certain Mortimer?”","«¿Conoces a un tal Mortimer?»"], req:()=>!has("pl_mort"), go:"a2_pellin_mort"},
+    {t:["«Che cosa c'è sotto la cappella dell'Archivio?»","“What lies beneath the Archive chapel?”","«¿Qué hay bajo la capilla del Archivo?»"], req:()=>!has("vault_known") && !has("act2_done"), go:"v_pellin"},
     {t:["Tornare in città","Return to the city","Volver a la ciudad"], go:"vesperia"}]};
 
 SC.a2_pellin_key = {bg:"archive", loc:LOC.archive, once(){ set("q_key"); toastQ(["Nuova missione: La Chiave dell'Alba","New quest: The Key of Dawn","Nueva misión: La Llave del Alba"]); },
@@ -1545,6 +1603,80 @@ SC.a2_after = {bg:"archive", loc:LOC.archive, once(){ set("act2_done"); xp(300);
   ch:[
     {t:["«Andiamo alla Corona di Cenere.»","“To the Crown of Ash.”","«A la Corona de Ceniza.»"], go:"a3_title"},
     {t:["Prima voglio prepararmi in città","First I want to prepare in the city","Antes quiero prepararme en la ciudad"], go:"vesperia"}]};
+
+/* -------------------- OPTIONAL DUNGEON: THE VAULTS OF AUREL -------------------- */
+const LOC_V = ["Le Volte di Aurel","The Vaults of Aurel","Las Bóvedas de Aurel"];
+SC.v_pellin = {bg:"archive", loc:LOC.archive, once(){ set("vault_known"); toastQ(["Nuova missione: Le Volte di Aurel","New quest: The Vaults of Aurel","Nueva misión: Las Bóvedas de Aurel"]); },
+  t:["Pellin abbassa la voce. «Le Volte di Aurel. I Custodi del Sole vi deponevano le armi dei loro morti, insieme a ciò che non volevano finisse nelle mani sbagliate. Sono sigillate da trecento anni.»\n\nSi gratta la barba, a disagio. «Da quando il sole si è spento, il sigillo si è incrinato. Di notte si sentono passi, là sotto. Passi pesanti, metallici. Se cercate armi degne di affrontare il buio, sono lì. Ma i Custodi non lasciavano le loro cose incustodite.»",
+     "Pellin lowers his voice. “The Vaults of Aurel. The Sunwardens laid their dead's weapons there, along with things they did not want falling into the wrong hands. They've been sealed for three hundred years.”\n\nHe scratches his beard, uneasy. “Since the sun went out, the seal has cracked. At night you can hear footsteps down there. Heavy, metallic footsteps. If you seek weapons fit to face the dark, they're there. But the Sunwardens never left their things unguarded.”",
+     "Pellin baja la voz. «Las Bóvedas de Aurel. Los Custodios del Sol depositaban allí las armas de sus muertos, junto con lo que no querían que cayera en malas manos. Llevan trescientos años selladas.»\n\nSe rasca la barba, incómodo. «Desde que se apagó el sol, el sello se ha agrietado. De noche se oyen pasos ahí abajo. Pasos pesados, metálicos. Si buscáis armas dignas de enfrentar la oscuridad, están allí. Pero los Custodios nunca dejaban sus cosas sin vigilancia.»"],
+  ch:[{t:["Continuare","Go on","Continuar"], go:"a2_archive"}]};
+SC.v_enter = {bg:"crypt", loc:LOC_V,
+  t:["Una scala a chiocciola scende nel buio sotto la cappella. L'aria sa di polvere e ferro. In fondo, un lungo corridoio lastricato: alcune lastre sono più lucide delle altre, come se qualcuno le avesse calpestate di recente. O come se fossero fatte per essere calpestate.",
+     "A spiral stair descends into the dark beneath the chapel. The air smells of dust and iron. At the bottom, a long flagstone corridor: some flags are shinier than the rest, as if someone had walked on them recently. Or as if they were made to be walked on.",
+     "Una escalera de caracol desciende a la oscuridad bajo la capilla. El aire huele a polvo y hierro. Al fondo, un largo pasillo enlosado: algunas losas brillan más que las otras, como si alguien las hubiera pisado hace poco. O como si estuvieran hechas para pisarlas."],
+  ch:[
+    {t:["Studiare il pavimento prima di avanzare","Study the floor before advancing","Estudiar el suelo antes de avanzar"], check:{sk:"per", dc:13, ok:"v_trap_ok", ko:"v_trap_ko"}},
+    {t:["Avanzare in fretta","Hurry on","Avanzar deprisa"], go:"v_trap_ko"},
+    {t:["Tornare in città","Return to the city","Volver a la ciudad"], go:"vesperia"}]};
+SC.v_trap_ok = {bg:"crypt", loc:LOC_V, once(){ xp(75); },
+  t:["Le lastre lucide sono piastre a pressione. Le scavalcate una per una, mentre nelle pareti, a un palmo dalle vostre facce, brillano le punte di cento dardi in attesa.","The shiny flags are pressure plates. You step over them one by one, while in the walls, a hand's breadth from your faces, the tips of a hundred waiting darts glint.","Las losas brillantes son placas de presión. Las pasáis una a una, mientras en las paredes, a un palmo de vuestras caras, brillan las puntas de cien dardos esperando."],
+  ch:[{t:["Proseguire","Press on","Seguir"], go:"v_hall"}]};
+SC.v_trap_ko = {bg:"crypt", loc:LOC_V, once(){ dmgParty(5); },
+  t:["Un clic sotto lo stivale. Dalle pareti esplode una pioggia di dardi. Vi gettate a terra, ma non abbastanza in fretta: tutti siete feriti, anche se di striscio.","A click under a boot. A hail of darts bursts from the walls. You throw yourselves down, but not fast enough: you're all grazed.","Un clic bajo la bota. De las paredes estalla una lluvia de dardos. Os tiráis al suelo, pero no lo bastante rápido: todos acabáis heridos, aunque de refilón."],
+  ch:[{t:["Proseguire","Press on","Seguir"], go:"v_hall"}]};
+SC.v_hall = {bg:"crypt", loc:LOC_V,
+  t:["La Sala dei Caduti. File di nicchie scavate nella roccia, ognuna con uno scheletro in armatura e una lama posata sul petto. Quando entrate, centinaia di orbite vuote si accendono di una luce fredda. Alcuni scheletri si alzano. In fondo alla sala, un'armatura vuota afferra la sua spada.",
+     "The Hall of the Fallen. Rows of niches cut into the rock, each holding an armoured skeleton with a blade laid on its chest. As you enter, hundreds of empty sockets kindle with a cold light. Some skeletons rise. At the end of the hall, an empty suit of armour grips its sword.",
+     "La Sala de los Caídos. Hileras de nichos excavados en la roca, cada uno con un esqueleto acorazado y una hoja sobre el pecho. Al entrar, cientos de cuencas vacías se encienden con una luz fría. Algunos esqueletos se alzan. Al fondo de la sala, una armadura vacía empuña su espada."],
+  ch:[{t:["Combattere","Fight","Luchar"], fight:"vault1", win:"v_altar"}]};
+SC.v_altar = {bg:"shrine", loc:LOC_V,
+  t:["Oltre la sala, una cappella intatta. Sull'altare arde ancora, debolissima, una fiamma dorata: forse l'ultima fiamma del sole rimasta in tutta Vesperia. Ai piedi dell'altare, una cassetta di offerte piena di monete antiche.",
+     "Beyond the hall, an intact chapel. On the altar a golden flame still burns, very faintly: perhaps the last flame of the sun left in all Vesperia. At the foot of the altar, an offering box full of ancient coins.",
+     "Más allá de la sala, una capilla intacta. Sobre el altar aún arde, muy débil, una llama dorada: quizá la última llama del sol que queda en toda Vesperia. Al pie del altar, una caja de ofrendas llena de monedas antiguas."],
+  ch:[
+    {t:["Pregare davanti alla fiamma","Pray before the flame","Rezar ante la llama"], req:()=>!has("v_prayed") && !has("v_taken"), check:{sk:"rel", dc:12, ok:"v_altar_ok", ko:"v_altar_ko"}},
+    {t:["Prendere le monete","Take the coins","Coger las monedas"], req:()=>!has("v_taken") && !has("v_prayed"), go:"v_taken"},
+    {t:["Proseguire","Press on","Seguir"], go:"v_puzzle"}]};
+SC.v_altar_ok = {bg:"shrine", loc:LOC_V, once(){ set("v_prayed"); longRest(); xp(100); },
+  t:["Vi inginocchiate. La fiamma si alza, calda come un mattino d'estate, e per un momento sentite la stanchezza scivolare via. Ferite chiuse, incantesimi rinnovati. Il marchio sulla tua mano smette di pulsare, come placato.","You kneel. The flame rises, warm as a summer morning, and for a moment you feel the weariness slip away. Wounds closed, spells renewed. The mark on your hand stops throbbing, as if soothed.","Os arrodilláis. La llama se alza, cálida como una mañana de verano, y por un momento sentís que el cansancio se desvanece. Heridas cerradas, conjuros renovados. La marca de tu mano deja de latir, como apaciguada."],
+  ch:[{t:["Proseguire","Press on","Seguir"], go:"v_puzzle"}]};
+SC.v_altar_ko = {bg:"shrine", loc:LOC_V, once(){ set("v_prayed"); S.party.forEach(c => c.hp = Math.min(c.maxhp, c.hp + Math.ceil(c.maxhp / 4))); },
+  t:["Le parole della preghiera vi tornano confuse. La fiamma tremola ma non si alza. Vi scalda appena le mani: qualche ferita si chiude, non di più.","The words of the prayer come back jumbled. The flame flickers but does not rise. It barely warms your hands: a few wounds close, no more.","Las palabras de la oración os vuelven confusas. La llama tiembla pero no se alza. Apenas os calienta las manos: algunas heridas se cierran, nada más."],
+  ch:[{t:["Proseguire","Press on","Seguir"], go:"v_puzzle"}]};
+SC.v_taken = {bg:"shrine", loc:LOC_V, once(){ set("v_taken"); gold(90); },
+  t:()=>cat(["Le monete sono pesanti, d'oro vecchio, coniate con un sole a sette raggi. Mentre le raccogliete, la fiamma sull'altare si spegne con un sospiro.\n\nDa qualche parte, più in basso, qualcosa si sveglia.","The coins are heavy, old gold, stamped with a seven-rayed sun. As you gather them, the flame on the altar goes out with a sigh.\n\nSomewhere further down, something wakes.","Las monedas pesan, oro viejo, acuñadas con un sol de siete rayos. Mientras las recogéis, la llama del altar se apaga con un suspiro.\n\nEn algún lugar, más abajo, algo despierta."],
+    inP("ilyra") && ["Ilyra ti guarda. «Ottimo. Davvero ottimo.»","Ilyra looks at you. “Excellent. Truly excellent.”","Ilyra te mira. «Excelente. De verdad excelente.»"]),
+  ch:[{t:["Proseguire","Press on","Seguir"], go:"v_puzzle"}]};
+SC.v_puzzle = {bg:"crypt", loc:LOC_V,
+  t:["Una porta rotonda di bronzo chiude il passaggio. Al centro, un disco solare che si può ruotare. Intorno, tre statue: una donna che si stiracchia (l'Alba), un uomo che alza la spada al cielo (il Mezzogiorno), un vecchio che si appoggia al bastone (il Tramonto). Sotto ciascuna, un incavo per il disco.\n\nSull'architrave è inciso: «Come il giorno, così il cammino.»",
+     "A round bronze door blocks the passage. At its centre, a sun disc that can be turned. Around it, three statues: a woman stretching (Dawn), a man raising his sword to the sky (Noon), an old man leaning on his staff (Dusk). Beneath each, a socket for the disc.\n\nOn the lintel is carved: “As the day, so the path.”",
+     "Una puerta redonda de bronce cierra el paso. En el centro, un disco solar que se puede girar. Alrededor, tres estatuas: una mujer que se despereza (el Alba), un hombre que alza la espada al cielo (el Mediodía), un anciano apoyado en su bastón (el Ocaso). Bajo cada una, un hueco para el disco.\n\nEn el dintel está grabado: «Como el día, así el camino.»"],
+  ch:[
+    {t:["Esaminare le statue","Examine the statues","Examinar las estatuas"], req:()=>!has("v_hint"), check:{sk:"his", dc:12, ok:"v_hint", ko:"v_hint_ko"}},
+    {t:["Ruotare il disco: Tramonto, Alba, Mezzogiorno","Turn the disc: Dusk, Dawn, Noon","Girar el disco: Ocaso, Alba, Mediodía"], go:"v_puzzle_ko"},
+    {t:["Ruotare il disco: Alba, Mezzogiorno, Tramonto","Turn the disc: Dawn, Noon, Dusk","Girar el disco: Alba, Mediodía, Ocaso"], go:"v_puzzle_ok"},
+    {t:["Ruotare il disco: Mezzogiorno, Tramonto, Alba","Turn the disc: Noon, Dusk, Dawn","Girar el disco: Mediodía, Ocaso, Alba"], go:"v_puzzle_ko"}]};
+SC.v_hint = {bg:"crypt", loc:LOC_V, once(){ set("v_hint"); xp(50); },
+  t:["Sui piedistalli, sotto la polvere, ci sono dei numeri incisi in aurelico antico: uno sotto l'Alba, due sotto il Mezzogiorno, tre sotto il Tramonto. Il giorno, e il cammino, cominciano dall'alba.","On the pedestals, beneath the dust, numbers are carved in old Aurelian: one under Dawn, two under Noon, three under Dusk. The day, and the path, begin at dawn.","En los pedestales, bajo el polvo, hay números grabados en aureliano antiguo: uno bajo el Alba, dos bajo el Mediodía, tres bajo el Ocaso. El día, y el camino, empiezan al alba."],
+  ch:[{t:["Continuare","Go on","Continuar"], go:"v_puzzle"}]};
+SC.v_hint_ko = {bg:"crypt", loc:LOC_V, once(){ set("v_hint"); },
+  t:["Le statue sono belle e antiche, ma non vi dicono niente di più di quello che già vedete.","The statues are beautiful and ancient, but they tell you nothing more than what you already see.","Las estatuas son bellas y antiguas, pero no os dicen nada más de lo que ya veis."],
+  ch:[{t:["Continuare","Go on","Continuar"], go:"v_puzzle"}]};
+SC.v_puzzle_ok = {bg:"crypt", loc:LOC_V, once(){ xp(150); gold(120); item("greater", 2); },
+  t:["Il disco scatta tre volte e la porta rotola di lato senza un rumore. Dietro c'è una piccola camera sigillata: le offerte dei Custodi ai loro morti. Monete d'oro e due fiale di vetro soffiato, il cui liquido rosso brilla ancora.","The disc clicks three times and the door rolls aside without a sound. Behind it is a small sealed chamber: the Sunwardens' offerings to their dead. Gold coins and two vials of blown glass whose red liquid still glows.","El disco chasquea tres veces y la puerta rueda a un lado sin un ruido. Detrás hay una pequeña cámara sellada: las ofrendas de los Custodios a sus muertos. Monedas de oro y dos frascos de vidrio soplado cuyo líquido rojo aún brilla."],
+  ch:[{t:["Scendere più in basso","Descend further","Bajar más"], go:"v_door"}]};
+SC.v_puzzle_ko = {bg:"crypt", loc:LOC_V,
+  t:["Il disco scatta, poi si blocca con uno stridio. Dalle nicchie ai lati della porta escono tre armature vuote, con le visiere accese di luce bianca. «Ladri di tombe» rimbomba una voce. «Il giorno non perdona chi ne sbaglia il corso.»","The disc clicks, then jams with a screech. From the niches beside the door step three empty suits of armour, visors lit with white light. “Grave robbers,” a voice booms. “The day does not forgive those who mistake its course.”","El disco chasquea y luego se atasca con un chirrido. De los nichos junto a la puerta salen tres armaduras vacías, con las viseras encendidas de luz blanca. «Ladrones de tumbas» retumba una voz. «El día no perdona a quien equivoca su curso.»"],
+  ch:[{t:["Combattere","Fight","Luchar"], fight:"vault_guard", win:"v_door"}]};
+SC.v_door = {bg:"mirror", loc:LOC_V,
+  t:()=>cat(["L'ultima sala è un pozzo di ossidiana nera. Le pareti riflettono le vostre figure, deformate. Al centro, su un trono di vetro, siede un gigante d'ossidiana con una rastrelliera di lame dorate alle spalle: le Armi dei Custodi.\n\nIl gigante si alza. Il pavimento trema.","The last hall is a pit of black obsidian. The walls reflect your figures, distorted. At its centre, on a throne of glass, sits an obsidian giant with a rack of golden blades behind it: the Sunwardens' Weapons.\n\nThe giant rises. The floor shakes.","La última sala es un pozo de obsidiana negra. Las paredes reflejan vuestras figuras, deformadas. En el centro, en un trono de vidrio, se sienta un gigante de obsidiana con un armero de hojas doradas a su espalda: las Armas de los Custodios.\n\nEl gigante se alza. El suelo tiembla."],
+    has("v_taken") && ["Dalle pareti escono anche ombre, attratte dall'oro che portate addosso.","Shadows seep out of the walls as well, drawn by the gold you carry.","De las paredes salen también sombras, atraídas por el oro que lleváis encima."],
+    ["Il Custode d'Ossidiana è fatto di vetro: il fuoco gli fa poco, ma un buon colpo contundente potrebbe incrinarlo.","The Obsidian Warden is made of glass: fire barely harms it, but a good blunt blow might crack it.","El Guardián de Obsidiana es de vidrio: el fuego apenas le hace daño, pero un buen golpe contundente podría agrietarlo."]),
+  ch:[{t:["Combattere","Fight","Luchar"], fight:()=>has("v_taken") ? "vault_boss_hard" : "vault_boss", win:"v_end"}, {t:["Ritirarsi e tornare più tardi","Withdraw and come back later","Retirarse y volver más tarde"], go:"vesperia"}]};
+SC.v_end = {bg:"mirror", loc:LOC_V, once(){ set("vault_done"); xp(250); },
+  t:["Il gigante si frantuma in mille schegge nere che tintinnano sul pavimento come pioggia. Sulla rastrelliera, le Armi dei Custodi brillano di una luce che non vedevate da quaranta giorni: la luce del sole.\n\nNe prendete una, la più bella. Le altre restano dove sono, per chi verrà dopo di voi.","The giant shatters into a thousand black shards that tinkle on the floor like rain. On the rack, the Sunwardens' Weapons shine with a light you haven't seen in forty days: sunlight.\n\nYou take one, the finest. The others stay where they are, for whoever comes after you.","El gigante se hace añicos en mil esquirlas negras que tintinean en el suelo como lluvia. En el armero, las Armas de los Custodios brillan con una luz que no veíais desde hacía cuarenta días: la luz del sol.\n\nTomáis una, la más bella. Las demás se quedan donde están, para quien venga después."],
+  ch:[{t:["Tornare a Vesperia","Return to Vesperia","Volver a Vesperia"], go:"vesperia"}]};
 /* -------------------- ACT III -------------------- */
 const beacons = () => has("children_saved") && has("oil_done");
 SC.a3_title = {bg:"mountain", loc:LOC.pass,
@@ -1694,7 +1826,7 @@ const $ = (s, r = document) => r.querySelector(s);
 const rnd = n => 1 + Math.floor(Math.random() * n);
 const mod = s => Math.floor((s - 10) / 2);
 const sgn = n => (n >= 0 ? "+" : "") + n;
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+const sleep = ms => new Promise(r => setTimeout(r, ms * (typeof PREF !== "undefined" && PREF.fast ? .5 : 1)));
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function roll(expr) {
   if (typeof expr === "number") return {total: expr};
@@ -1720,11 +1852,13 @@ function saveGame(silent) { if (!S) return; const ok = store(SAVE_KEY, S); if (!
 /* =================== CHARACTER RULES =================== */
 const CL = c => CLASSES[c.cls];
 const prof = c => c.lvl >= 5 ? 3 : 2;
-const abm = (c, k) => mod(c.ab[k]);
-function maxHP(c) { const h = CL(c).hd, con = abm(c, "con"); let hp = h + con + (c.lvl - 1) * (h / 2 + 1 + con); if (c.race === "dwarf") hp += c.lvl; return Math.max(1, hp); }
-function acOf(c) { const dex = abm(c, "dex"); const a = CL(c).armor; let ac = a === "heavy" ? 16 : a === "medium" ? 14 + Math.min(dex, 2) : a === "light" ? 11 + dex : 13 + dex; if (CL(c).shield) ac += 2; return ac + (c.aplus || 0); }
-const speedOf = c => RACES[c.race].spd;
-function slotsMax(c) { const t = CL(c).caster; const tab = t === "full" ? FULL : t === "half" ? HALF : null; return tab ? tab[c.lvl].slice() : [0,0,0,0]; }
+const abEff = (c, k) => { const v = c.ab[k], t = c.trinket && ITEMS[c.trinket]; return t && t.setAb && t.setAb[0] === k ? Math.max(v, t.setAb[1]) : v; };
+const abm = (c, k) => mod(abEff(c, k));
+const hasFeat = (c, f) => !!(c && c.feats && c.feats.includes(f));
+function maxHP(c) { const h = CL(c).hd, con = abm(c, "con"); let hp = h + con + (c.lvl - 1) * (h / 2 + 1 + con); if (c.race === "dwarf") hp += c.lvl; if (hasFeat(c, "tough")) hp += 2 * c.lvl; return Math.max(1, hp); }
+function acOf(c) { const dex = abm(c, "dex"); const a = CL(c).armor; let ac = a === "heavy" ? 16 : a === "medium" ? 14 + Math.min(dex, 2) : a === "light" ? 11 + dex : 13 + dex; if (CL(c).shield) ac += 2; return ac + (c.aplus || 0) + (c.trinket === "ring_prot" ? 1 : 0); }
+const speedOf = c => RACES[c.race].spd + (c.trinket === "boots_wind" ? 2 : 0) + (hasFeat(c, "mobile") ? 2 : 0);
+function slotsMax(c) { const t = CL(c).caster; const tab = t === "full" ? FULL : t === "half" ? HALF : null; const s = tab ? tab[c.lvl].slice() : [0,0,0,0]; if (tab && c.trinket === "pearl_power") s[c.lvl >= 3 ? 1 : 0]++; return s; }
 const castMod = c => CL(c).cast ? abm(c, CL(c).cast) : 0;
 const spellDC = c => 8 + prof(c) + castMod(c);
 const spellAtk = c => prof(c) + castMod(c);
@@ -1734,8 +1868,8 @@ function spellsOf(c) { const t = CL(c).spells || {}, out = []; Object.keys(t).fo
 const weaponsOf = c => c.weapons || CL(c).weapons;
 const skillBonus = (c, sk) => abm(c, SKILLS[sk][1]) + (c.skills.includes(sk) ? prof(c) : 0);
 function auraBonus() { if (!S) return 0; const p = S.party.find(c => c.cls === "paladin" && c.lvl >= 6 && c.hp > 0); return p ? Math.max(1, abm(p, "cha")) : 0; }
-const saveBonus = (c, ab) => abm(c, ab) + (CL(c).saves.includes(ab) ? prof(c) : 0) + auraBonus();
-function resetRes(c) { c.res = {sw: 1, as: 1, lay: 5 * c.lvl, ch: 1}; }
+const saveBonus = (c, ab) => abm(c, ab) + (CL(c).saves.includes(ab) ? prof(c) : 0) + auraBonus() + (c.trinket === "ring_prot" ? 1 : 0);
+function resetRes(c) { c.res = {sw: 1, as: 1, lay: 5 * c.lvl, ch: 1, arc: 1}; c.hdLeft = c.lvl; }
 function recalc(c, full) {
   const m = maxHP(c);
   if (full || c.maxhp == null) c.hp = m; else c.hp = Math.min(m, c.hp + Math.max(0, m - c.maxhp));
@@ -1745,17 +1879,18 @@ function recalc(c, full) {
 function asiLevels(c) { const t = CLASS_FEATS[c.cls] || {}; return Object.keys(t).filter(l => t[l].includes("asi")).map(Number); }
 function autoASI(c) {
   c.asiDone = c.asiDone || [];
-  asiLevels(c).forEach(l => { if (c.lvl >= l && !c.asiDone.includes(l)) { const k = c.ab[CL(c).prim] >= 19 ? "con" : CL(c).prim; c.ab[k] = Math.min(20, c.ab[k] + 2); c.asiDone.push(l); } });
+  asiLevels(c).forEach(l => { if (c.lvl >= l && !c.asiDone.includes(l)) { c.feats = c.feats || []; if (l === 4 && COMP_FEAT[c.id] && !c.feats.includes(COMP_FEAT[c.id])) { c.feats.push(COMP_FEAT[c.id]); c.asiDone.push(l); recalc(c); return; } const k = c.ab[CL(c).prim] >= 19 ? "con" : CL(c).prim; c.ab[k] = Math.min(20, c.ab[k] + 2); c.asiDone.push(l); } });
 }
 function weapProfile(c, wk) {
   const w = WEAP[wk]; const stat = w.st === "fin" ? (abm(c, "str") > abm(c, "dex") ? "str" : "dex") : w.st; const m = abm(c, stat);
   let hit = m + prof(c) + (c.wplus || 0), flat = m + (c.wplus || 0);
   if (w.ranged && hasF(c, "archery")) hit += 2;
+  if (w.ranged && c.trinket === "eye_hawk") hit += 2;
   if (!w.ranged && hasF(c, "dueling")) flat += 2;
   return {key: wk, name: tr(w.n), dice: w.d, hit, flat, r: w.r, ranged: !!w.ranged, t: w.t, finesse: w.st === "fin"};
 }
 function newChar(o) {
-  const c = {id: o.id, name: o.name, race: o.race, cls: o.cls, bg: o.bg || null, ab: {...o.ab}, lvl: o.lvl || 1, wplus: 0, aplus: 0, skills: [...new Set(o.skills)], weapons: o.weapons || null, asiDone: []};
+  const c = {id: o.id, name: o.name, race: o.race, cls: o.cls, bg: o.bg || null, ab: {...o.ab}, lvl: o.lvl || 1, wplus: 0, aplus: 0, skills: [...new Set(o.skills)], weapons: o.weapons || null, asiDone: [], feats: [], trinket: null};
   if (o.id !== "pc") autoASI(c);
   recalc(c, true); return c;
 }
@@ -1772,7 +1907,15 @@ function take(k) { if (S.inv[k]) { S.inv[k]--; if (!S.inv[k]) delete S.inv[k]; }
 function xp(n) { S.xp += n; toastQ(`+${n} ${T_("xp")}`); checkLevel(); }
 function join(id) { if (inP(id)) return; const c = makeComp(id); S.party.push(c); toastQ(`${c.name} ${T_("joined")}`); }
 function dmgParty(n) { S.party.forEach(c => c.hp = Math.max(1, c.hp - n)); }
-function longRest() { S.party.forEach(c => { c.hp = c.maxhp; c.slots = slotsMax(c); resetRes(c); }); }
+function longRest() { S.party.forEach(c => { c.hp = c.maxhp; c.slots = slotsMax(c); resetRes(c); }); S.shortRests = 0; }
+function shortRest() {
+  if ((S.shortRests || 0) >= 2) return false; S.shortRests = (S.shortRests || 0) + 1;
+  S.party.forEach(c => { if (c.hdLeft == null) c.hdLeft = c.lvl; const hd = CL(c).hd;
+    while (c.hdLeft > 0 && c.hp < c.maxhp * .85) { c.hdLeft--; c.hp = Math.min(c.maxhp, c.hp + Math.max(1, rnd(hd) + abm(c, "con"))); }
+    c.res.sw = 1; c.res.as = 1; c.res.ch = 1;
+    if (c.cls === "wizard" && c.res.arc) { c.res.arc = 0; let b = Math.ceil(c.lvl / 2); const mx = slotsMax(c); for (let i = 2; i >= 0; i--) while (b >= i + 1 && c.slots[i] < mx[i]) { c.slots[i]++; b -= i + 1; } } });
+  return true;
+}
 function checkLevel() {
   while (S.level < MAXLV && S.xp >= XPT[S.level + 1]) {
     S.level++; (S.pendingLv = S.pendingLv || []).push(S.level);
@@ -2006,13 +2149,14 @@ function sheetHTML(c, creation) {
   const sk = Object.keys(SKILLS).filter(k => c.skills.includes(k));
   return `<div class="hero">${medHTML(CL(c).icon, "big on")}<div><b>${esc(c.name)}</b><span>${tr(RACES[c.race].n)} · ${tr(CL(c).n)} · ${T_("lvl")} ${c.lvl}${c.bg ? " · " + tr(BGS[c.bg].n) : ""}</span></div></div>
   <div class="sumgrid"><div class="stat"><b>${creation ? c.maxhp : c.hp + "/" + c.maxhp}</b><span>${T_("hp")}</span></div><div class="stat"><b>${acOf(c)}</b><span>${T_("ac")}</span></div><div class="stat"><b>${speedOf(c)}</b><span>${T_("spd")}</span></div></div>
-  <div class="abgrid">${AB.map(k => `<div><span>${abS(k)}</span><b>${c.ab[k]}</b><small>${sgn(mod(c.ab[k]))}</small></div>`).join("")}</div>
+  <div class="abgrid">${AB.map(k => `<div><span>${abS(k)}</span><b${abEff(c, k) !== c.ab[k] ? ' style="color:var(--frost)"' : ""}>${abEff(c, k)}</b><small>${sgn(abm(c, k))}</small></div>`).join("")}</div>
   <h3>${T_("weapons")}</h3><div class="taglist">${weaponsOf(c).map(w => { const p = weapProfile(c, w); return `<span>${p.name} ${sgn(p.hit)} · ${p.dice}${sgn(p.flat)}</span>`; }).join("")}</div>
   <h3>${T_("saves")}</h3><div class="taglist">${AB.map(k => `<span>${abS(k)} ${sgn(saveBonus(c, k))}</span>`).join("")}</div>
   <h3>${T_("skills")} · ${T_("prof")} +${prof(c)}</h3><div class="taglist">${sk.map(k => `<span>${tr(SKILLS[k][0])} ${sgn(skillBonus(c, k))}</span>`).join("")}</div>
-  ${feats.length ? `<h3>${T_("feats")}</h3><div class="taglist">${feats.map(f => `<span>${tr(FEATS[f])}</span>`).join("")}</div>` : ""}
+  ${feats.length || (c.feats || []).length ? `<h3>${T_("feats")}</h3><div class="taglist">${feats.map(f => `<span>${tr(FEATS[f])}</span>`).join("")}${(c.feats || []).map(f => `<span class="ft">${tr(FEATLIST[f].n)}</span>`).join("")}</div>` : ""}
   ${sp.length ? `<h3>${T_("spells")}${sm.some(Boolean) ? ` · ${T_("slotsL")} ${sm.map((n, i) => n ? `${i + 1}°: ${creation ? n : c.slots[i]}/${n}` : "").filter(Boolean).join(" · ")}` : ""}</h3><div class="taglist">${sp.map(k => `<span>${tr(SPELLS[k].n)}</span>`).join("")}</div>` : ""}
-  ${!creation && (c.wplus || c.aplus) ? `<h3>${T_("inv")}</h3><div class="taglist">${c.wplus ? `<span>${T_("bonusW")} +${c.wplus}</span>` : ""}${c.aplus ? `<span>${T_("bonusA")} +${c.aplus}</span>` : ""}</div>` : ""}`;
+  ${!creation && (c.wplus || c.aplus || c.trinket) ? `<h3>${tr(["Equipaggiamento","Equipment","Equipo"])}</h3><div class="taglist">${c.wplus ? `<span>${T_("bonusW")} +${c.wplus}</span>` : ""}${c.aplus ? `<span>${T_("bonusA")} +${c.aplus}</span>` : ""}${c.trinket ? `<span class="tk">${tr(ITEMS[c.trinket].n)}</span>` : ""}</div>` : ""}
+  ${!creation ? `<h3>${tr(["Dadi vita","Hit dice","Dados de golpe"])}</h3><p style="font-size:14px;color:var(--muted);margin:0">${c.hdLeft ?? c.lvl}/${c.lvl} d${CL(c).hd}</p>` : ""}`;
 }
 
 /* =================== STORY RUNNER =================== */
@@ -2084,10 +2228,11 @@ function openMenu(tab) {
   const tabs = [["party", T_("party")], ["inv", T_("inv")], ["journal", T_("journal")], ["opts", T_("settings")]];
   let body = "";
   if (tab === "party") { const c = S.party[Math.min(menuMember, S.party.length - 1)]; body = `<div class="who" style="margin:0 0 10px">${S.party.map((p, i) => `<button data-mm="${i}" aria-pressed="${p === c}" style="${p === c ? "border-color:var(--brass);color:var(--brass)" : ""}">${esc(p.name.split(" ")[0])}</button>`).join("")}</div>${sheetHTML(c)}
-    <h3>${T_("xp")}</h3><p style="font-variant-numeric:tabular-nums">${S.xp} ${S.level < MAXLV ? `/ ${XPT[S.level + 1]} · ${T_("nextLv")}` : ""}</p>`; }
+    <h3>${T_("xp")}</h3><p style="font-variant-numeric:tabular-nums">${S.xp} ${S.level < MAXLV ? `/ ${XPT[S.level + 1]} · ${T_("nextLv")}` : ""}</p>
+    ${SCREEN === "story" ? `<h3>${tr(["Riposo breve","Short rest","Descanso corto"])} · ${2 - (S.shortRests || 0)}/2</h3><p style="font-size:14px;color:var(--muted);margin:0 0 8px">${tr(["Un'ora di sosta: ogni personaggio spende dadi vita per curarsi e recupera Recupero, Impeto d'azione e Incanalare divinità. Il mago recupera alcuni slot. Si ricarica con il riposo lungo.","An hour's rest: each character spends hit dice to heal and regains Second Wind, Action Surge and Channel Divinity. The wizard recovers some slots. Recharges on a long rest.","Una hora de descanso: cada personaje gasta dados de golpe para curarse y recupera Nuevas energías, Oleada de acción y Canalizar divinidad. El mago recupera algunos espacios. Se recarga con un descanso largo."])}</p><button class="btn small" id="shortR" ${(S.shortRests || 0) >= 2 ? "disabled" : ""}>${tr(["Riposa un'ora","Rest for an hour","Descansar una hora"])}</button>` : ""}`; }
   if (tab === "inv") body = invHTML();
   if (tab === "journal") body = journalHTML();
-  if (tab === "opts") body = `<h3>${T_("lang")}</h3>${langSeg()}<h3>${T_("diff")}</h3>${diffSeg(S.diff)}${audioOptsHTML()}<h3>&nbsp;</h3><div style="display:grid;gap:8px"><button class="btn small" id="oSave">${T_("save")}</button><button class="btn small" id="oTitle">${T_("toTitle")}</button></div><p style="font-size:14px;color:var(--muted);margin-top:14px">${T_("install")}</p>`;
+  if (tab === "opts") body = `<h3>${T_("lang")}</h3>${langSeg()}<h3>${T_("diff")}</h3>${diffSeg(S.diff)}<h3>${tr(["Velocità combattimento","Combat speed","Velocidad de combate"])}</h3><div class="seg"><button data-fast="0" aria-pressed="${!PREF.fast}">${tr(["Normale","Normal","Normal"])}</button><button data-fast="1" aria-pressed="${!!PREF.fast}">${tr(["Veloce","Fast","Rápida"])}</button></div>${audioOptsHTML()}<h3>&nbsp;</h3><div style="display:grid;gap:8px"><button class="btn small" id="oSave">${T_("save")}</button><button class="btn small" id="oTitle">${T_("toTitle")}</button></div><p style="font-size:14px;color:var(--muted);margin-top:14px">${T_("install")}</p>`;
   const m = modal(`<div class="tabs">${tabs.map(([k, n]) => `<button data-tab="${k}" aria-pressed="${k === tab}">${n}</button>`).join("")}</div>${body}<button class="btn small" id="mClose" style="margin-top:14px">${T_("close")}</button>`);
   m.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => openMenu(b.dataset.tab));
   m.querySelectorAll("[data-mm]").forEach(b => b.onclick = () => { menuMember = +b.dataset.mm; openMenu("party"); });
@@ -2097,19 +2242,22 @@ function openMenu(tab) {
   const os = m.querySelector("#oSave"); if (os) os.onclick = () => saveGame(false);
   const ot = m.querySelector("#oTitle"); if (ot) ot.onclick = () => { saveGame(true); renderTitle(); };
   bindInv(m); bindAudioOpts(m);
+  m.querySelectorAll("[data-fast]").forEach(b => b.onclick = () => { PREF.fast = b.dataset.fast === "1"; store(PREF_KEY, PREF); openMenu("opts"); });
+  const sr = m.querySelector("#shortR"); if (sr) sr.onclick = () => { if (shortRest()) { toastQ(tr(["Il gruppo riposa un'ora.","The party rests for an hour.","El grupo descansa una hora."])); saveGame(true); } openMenu("party"); };
 }
 function invHTML() {
   const keys = Object.keys(S.inv).filter(k => S.inv[k] > 0);
   if (!keys.length) return `<p style="color:var(--muted)">${T_("empty")}</p>`;
   return keys.map(k => { const it = ITEMS[k]; const act = it.use === "heal" ? T_("use") : it.use === "equip" ? T_("equip") : "";
-    return `<div class="row"><div class="t"><b>${tr(it.n)}</b>${S.inv[k] > 1 ? ` ×${S.inv[k]}` : ""}<small>${tr(it.d)}</small><div class="who" data-whofor="${k}" hidden>${S.party.map((c, i) => `<button data-use="${k}" data-on="${i}">${esc(c.name.split(" ")[0])}${it.use === "heal" ? ` ${c.hp}/${c.maxhp}` : it.slot === "w" ? ` +${c.wplus}` : ` +${c.aplus}`}</button>`).join("")}</div></div>${act ? `<button class="btn small" data-pick="${k}">${act}</button>` : ""}</div>`; }).join("");
+    const cur = c => it.use === "heal" ? ` ${c.hp}/${c.maxhp}` : it.slot === "w" ? ` +${c.wplus}` : it.slot === "t" ? (c.trinket ? " ⇄" : "") : ` +${c.aplus}`;
+    return `<div class="row"><div class="t"><b>${tr(it.n)}</b>${S.inv[k] > 1 ? ` ×${S.inv[k]}` : ""}<small>${tr(it.d)}</small><div class="who" data-whofor="${k}" hidden>${S.party.map((c, i) => `<button data-use="${k}" data-on="${i}">${esc(c.name.split(" ")[0])}${cur(c)}</button>`).join("")}</div></div>${act ? `<button class="btn small" data-pick="${k}">${act}</button>` : ""}</div>`; }).join("");
 }
 function bindInv(m) {
   m.querySelectorAll("[data-pick]").forEach(b => b.onclick = () => { const w = m.querySelector(`[data-whofor="${b.dataset.pick}"]`); w.hidden = !w.hidden; });
   m.querySelectorAll("[data-use]").forEach(b => b.onclick = () => {
     const k = b.dataset.use, c = S.party[+b.dataset.on], it = ITEMS[k];
     if (it.use === "heal") { if (c.hp >= c.maxhp) return; c.hp = Math.min(c.maxhp, c.hp + roll(it.dice).total); take(k); }
-    else if (it.use === "equip") { if (it.slot === "w") { if (c.wplus >= it.v) return; c.wplus = it.v; } else { if (c.aplus >= 2) return; c.aplus += it.v; } take(k); }
+    else if (it.use === "equip") { if (it.slot === "w") { if (c.wplus >= it.v) return; c.wplus = it.v; take(k); } else if (it.slot === "t") { take(k); if (c.trinket) S.inv[c.trinket] = (S.inv[c.trinket] || 0) + 1; c.trinket = k; const hp0 = c.hp; recalc(c); c.slots = c.slots.map((v, i) => Math.min(v + (slotsMax(c)[i] > v ? 0 : 0), slotsMax(c)[i])); c.hp = Math.min(c.maxhp, Math.max(hp0, c.hp)); } else { if (c.aplus >= 2) return; c.aplus += it.v; take(k); } }
     saveGame(true); openMenu("inv");
   });
 }
@@ -2121,6 +2269,7 @@ const QUESTS = [
   {s: "q_doran_hint", d: "doran_done", n:["Il fratello di Kael","Kael's brother","El hermano de Kael"], t: ["Doran Varn, fratello di Kael, serve la Corona Cava. Forse a Vesperia qualcuno sa dove trovarlo.","Doran Varn, Kael's brother, serves the Hollow Crown. Perhaps someone in Vesperia knows where to find him.","Doran Varn, hermano de Kael, sirve a la Corona Hueca. Quizá alguien en Vesperia sepa dónde encontrarlo."]},
   {s: "q_key", d: "has_key", n:["La Chiave dell'Alba","The Key of Dawn","La Llave del Alba"], t: ["Raggiungi l'Archivio Sommerso attraverso le fogne della Città Bassa. Forse Ilyra è ancora viva.","Reach the Drowned Archive through the Lower City sewers. Perhaps Ilyra is still alive.","Llega al Archivo Sumergido por las cloacas de la Ciudad Baja. Quizá Ilyra siga viva."]},
   {s: "q_tower", d: "tower_done", n:["La fiamma madre","The mother flame","La llama madre"], t: ["Spegni la fiamma viola in cima alla Torre della Lanterna per Silk.","Put out the violet flame atop the Lantern Tower for Silk.","Apaga la llama violeta en lo alto de la Torre de la Linterna para Silk."]},
+  {s: "vault_known", d: "vault_done", n:["Le Volte di Aurel","The Vaults of Aurel","Las Bóvedas de Aurel"], t: ["Sotto la cappella dell'Archivio di Vesperia riposano le armi dei Custodi del Sole. Il sigillo si è incrinato.","Beneath the Vesperia Archive chapel rest the Sunwardens' weapons. The seal has cracked.","Bajo la capilla del Archivo de Vesperia descansan las armas de los Custodios del Sol. El sello se ha agrietado."]},
   {s: "invite", d: "masq_done", n:["Il ballo in maschera","The masquerade","El baile de máscaras"], t: ["Il Duca Malvern custodisce un registro dei suoi patti con il buio.","Duke Malvern keeps a ledger of his pacts with the dark.","El Duque Malvern guarda un registro de sus pactos con la oscuridad."]},
 ];
 function journalHTML() {
@@ -2142,7 +2291,10 @@ function showLevelUp() {
   const needAsi = asiLevels(p).includes(L) && !(p.asiDone || []).includes(L);
   const lines = S.party.map(c => { const nf = ((CLASS_FEATS[c.cls] || {})[L] || []).filter(f => f !== "asi").map(f => tr(FEATS[f])); const ns = ((CL(c).spells || {})[L] || []).map(k => tr(SPELLS[k].n));
     return `<div class="row"><div class="t"><b>${esc(c.name)}</b> · ${T_("hp")} ${c.maxhp}<small>${[...nf, ...ns].join(", ") || "—"}</small></div></div>`; }).join("");
-  const m = modal(`<h2>${T_("levelUp")} ${T_("lvl")} ${L}</h2>${lines}${needAsi ? `<h3>${T_("asi")}</h3><div class="abgrid">${AB.map(k => `<button data-asi="${k}" style="background:var(--stone);border-radius:6px;padding:6px 2px"><span class="lbl" style="font-size:10px">${abS(k)}</span><b style="display:block;font-family:var(--f-display);font-size:18px">${p.ab[k]}</b></button>`).join("")}</div>` : `<button class="btn primary" id="lvOk" style="margin-top:12px">${T_("goOn")}</button>`}`, {center: 1, locked: 1});
+  const featOpts = Object.keys(FEATLIST).filter(f => !hasFeat(p, f));
+  const m = modal(`<h2>${T_("levelUp")} ${T_("lvl")} ${L}</h2>${lines}${needAsi ? `<h3>${T_("asi")}</h3><div class="abgrid">${AB.map(k => `<button data-asi="${k}" style="background:var(--stone);border-radius:6px;padding:6px 2px"><span class="lbl" style="font-size:10px">${abS(k)}</span><b style="display:block;font-family:var(--f-display);font-size:18px">${p.ab[k]}</b></button>`).join("")}</div>
+    <h3>${tr(["…oppure scegli un talento","…or choose a feat","…o elige una dote"])}</h3><div class="opts">${featOpts.map(f => `<button class="opt" data-feat="${f}">${medHTML(FEATLIST[f].ic)}<span style="min-width:0"><b>${tr(FEATLIST[f].n)}</b><span>${tr(FEATLIST[f].d)}</span></span></button>`).join("")}</div>` : `<button class="btn primary" id="lvOk" style="margin-top:12px">${T_("goOn")}</button>`}`, {center: 1, locked: 1});
+  m.querySelectorAll("[data-feat]").forEach(b => b.onclick = () => { (p.feats = p.feats || []).push(b.dataset.feat); (p.asiDone = p.asiDone || []).push(L); recalc(p); done(); });
   const done = () => { S.pendingLv.shift(); closeModal(); saveGame(true); if (S.pendingLv.length) showLevelUp(); else if (SCREEN === "story") renderStory(); };
   m.querySelectorAll("[data-asi]").forEach(b => b.onclick = () => { const k = b.dataset.asi; p.ab[k] = Math.min(20, p.ab[k] + 2); (p.asiDone = p.asiDone || []).push(L); recalc(p); done(); });
   const ok = m.querySelector("#lvOk"); if (ok) ok.onclick = done;
@@ -2167,6 +2319,11 @@ const ABIL = {
   smite:{n:FEATS.smite, d:["Gratis: il prossimo colpo in mischia spende uno slot per +2d8 radiosi (+1d8 contro non morti).","Free: your next melee hit spends a slot for +2d8 radiant (+1d8 vs undead).","Gratis: tu siguiente golpe cuerpo a cuerpo gasta un espacio para +2d8 radiante (+1d8 contra muertos vivientes)."], cost:"free"},
   cunning:{n:FEATS.cunning, d:["Azione bonus: scatto (raddoppia il movimento).","Bonus action: dash (double movement).","Acción adicional: correr (duplica el movimiento)."], cost:"bon"},
   turn:{n:FEATS.turn, d:["Azione: i non morti entro 6 caselle fanno un TS SAG o restano paralizzati 2 round. Una volta per riposo.","Action: undead within 6 tiles make a WIS save or are stunned for 2 rounds. Once per rest.","Acción: los muertos vivientes a 6 casillas hacen una salvación de SAB o quedan paralizados 2 rondas. Una vez por descanso."], cost:"act"},
+  disengage:{n:["Disimpegno","Disengage","Retirada"], d:["Azione: puoi muoverti senza provocare attacchi d'opportunità per questo turno.","Action: you can move without provoking opportunity attacks this turn.","Acción: puedes moverte sin provocar ataques de oportunidad este turno."], cost:"act"},
+  cunningdis:{n:["Disimpegno scaltro","Cunning disengage","Retirada astuta"], d:["Azione bonus: disimpegno (nessun attacco d'opportunità).","Bonus action: disengage (no opportunity attacks).","Acción adicional: retirada (sin ataques de oportunidad)."], cost:"bon"},
+  overwatch:{n:["Guardia","Overwatch","Vigilancia"], d:["Azione: termini il turno pronto a colpire. Il primo nemico che si muove entro la tua portata subisce un attacco (reazione).","Action: end your turn ready to strike. The first enemy that moves within your reach takes an attack (reaction).","Acción: terminas el turno listo para golpear. El primer enemigo que se mueva a tu alcance recibe un ataque (reacción)."], cost:"act"},
+  shove:{n:["Atterrare","Knock down","Derribar"], d:["Sostituisce un attacco: prova di Atletica contro il nemico adiacente. Se riesci cade a terra: gli attacchi in mischia contro di lui hanno vantaggio e rialzarsi gli costa metà movimento. Non funziona sui boss.","Replaces an attack: Athletics contest against an adjacent enemy. On success it falls prone: melee attacks against it have advantage and standing up costs half its movement. Doesn't work on bosses.","Sustituye un ataque: prueba de Atletismo contra un enemigo adyacente. Si lo logras cae derribado: los ataques cuerpo a cuerpo contra él tienen ventaja y levantarse le cuesta la mitad del movimiento. No funciona con jefes."], cost:"atk", tgt:"enemy", r:1},
+  power:{n:["Colpo potente","Power attack","Golpe poderoso"], d:["Gratis: il prossimo attacco con l'arma ha −5 a colpire ma +10 ai danni.","Free: your next weapon attack takes −5 to hit but deals +10 damage.","Gratis: tu siguiente ataque con arma tiene −5 al ataque pero +10 al daño."], cost:"free"},
   spiritstrike:{n:["Colpo spirituale","Spiritual strike","Golpe espiritual"], d:["Azione bonus: l'arma spirituale colpisce (1d8 + mod, forza).","Bonus action: the spiritual weapon strikes (1d8 + mod, force).","Acción adicional: el arma espiritual golpea (1d8 + mod, fuerza)."], cost:"bon", tgt:"enemy", r:8},
 };
 
@@ -2176,7 +2333,7 @@ function startCombat(key, win, surprise) {
   // scale to party size: a duo faces one fewer non-boss foe
   const fl = enc.foes.slice();
   if (S.party.length <= 2 && fl.length >= 3) { let wi = -1; fl.forEach((k, i) => { if (!FOES[k].boss && (wi < 0 || FOES[k].xp <= FOES[fl[wi]].xp)) wi = i; }); if (wi >= 0) fl.splice(wi, 1); }
-  CB = {key, win, surprise, map: mp, units: [], order: [], ti: -1, round: 1, log: [], busy: false, sel: null, pend: null, xp: 0, gold: enc.gold || 0, ended: false, inspect: null};
+  CB = {key, win, surprise, map: mp, units: [], order: [], ti: -1, round: 1, log: [], busy: false, sel: null, pend: null, xp: 0, gold: enc.gold || 0, ended: false, inspect: null, nFoes: fl.length, anyDown: false, deploy: !(typeof NO_DEPLOY !== "undefined" && NO_DEPLOY)};
   // obstacles, keeping the board connected
   for (let t = 0; t < 30; t++) {
     CB.ob = new Set(); let g = 0;
@@ -2184,7 +2341,7 @@ function startCombat(key, win, surprise) {
     if (connected()) break;
   }
   const ps = [[3,8],[2,8],[4,8],[3,7],[1,8],[5,8]];
-  S.party.forEach((c, i) => { if (c.hp <= 0) c.hp = 1; CB.units.push({uid: "p_" + c.id, side: "p", ref: c, name: c.name.split(" ")[0], hp: c.hp, maxhp: c.maxhp, ac: acOf(c), spd: speedOf(c), icon: CL(c).icon, x: ps[i][0], y: ps[i][1], cond: {}, down: false}); });
+  S.party.forEach((c, i) => { if (c.hp <= 0) c.hp = 1; CB.units.push({uid: "p_" + c.id, side: "p", ref: c, name: c.name.split(" ")[0], hp: c.hp, maxhp: c.maxhp, ac: acOf(c), spd: speedOf(c), icon: CL(c).icon, x: ps[i][0], y: ps[i][1], cond: {}, down: false, react: 1}); });
   const hpMul = [.75, 1, 1.3][S.diff ?? 1], cnt = {};
   fl.forEach(k => cnt[k] = (cnt[k] || 0) + 1);
   const seen = {};
@@ -2194,15 +2351,17 @@ function startCombat(key, win, surprise) {
     if (d.boss) { x = 3; y = 0; while (unitAtRaw(x, y) && g++ < 20) x = (x + 1) % COLS; }
     else do { x = Math.floor(Math.random() * COLS); y = Math.floor(Math.random() * 3); } while ((unitAtRaw(x, y) || CB.ob.has(K(x, y))) && g++ < 100);
     const hp = Math.max(1, Math.round(d.hp * hpMul));
-    CB.units.push({uid: "e" + i, side: "e", foe: k, def: d, name: tr(d.n) + (cnt[k] > 1 ? " " + seen[k] : ""), hp, maxhp: hp, ac: d.ac, spd: d.spd || 6, icon: d.ic, boss: !!d.boss, x, y, cond: surprise ? {surp: 1} : {}});
+    CB.units.push({uid: "e" + i, side: "e", foe: k, def: d, name: tr(d.n) + (cnt[k] > 1 ? " " + seen[k] : ""), hp, maxhp: hp, ac: d.ac, spd: d.spd || 6, icon: d.ic, boss: !!d.boss, x, y, cond: surprise ? {surp: 1} : {}, react: 1});
   });
-  CB.units.forEach(u => u.init = rnd(20) + (u.side === "p" ? abm(u.ref, "dex") : (u.def.sv || 0)) + Math.random() * .1);
+  CB.units.forEach(u => u.init = rnd(20) + (u.side === "p" ? abm(u.ref, "dex") + (hasFeat(u.ref, "alert") ? 5 : 0) : (u.def.sv || 0)) + Math.random() * .1);
   CB.order = [...CB.units].sort((a, b) => b.init - a.init);
   showScreen("combat"); buildCombat();
   logL(tr(["Tiro per l'iniziativa…","Rolling initiative…","Tirando iniciativa…"]));
   if (surprise) logL(T_("surprised"));
-  setTimeout(nextTurn, 450);
+  if (CB.deploy) { logL(tr(["Schieramento: tocca un tuo personaggio, poi una casella dorata.","Deployment: tap one of your characters, then a golden tile.","Despliegue: toca a uno de tus personajes y luego una casilla dorada."])); renderCombat(); showTipsOnce(); }
+  else setTimeout(nextTurn, 450);
 }
+function startBattle() { if (!CB || !CB.deploy) return; CB.deploy = false; CB.depSel = null; renderCombat(); setTimeout(nextTurn, 250); }
 function unitAtRaw(x, y) { return CB.units.find(u => u.x === x && u.y === y); }
 function connected() {
   const seen = new Set([K(3, ROWS - 1)]), q = [[3, ROWS - 1]];
@@ -2227,7 +2386,56 @@ function reachOf(u, limit) {
 const freeTile = (x, y, self) => { const o = unitAt(x, y); return !CB.ob.has(K(x, y)) && (!o || o === self || (o.side === "e" && o.hp <= 0)); };
 function pathTo(R, k) { const out = []; while (k) { out.unshift(k); k = R.get(k).p; } return out; }
 async function walk(u, path) {
-  for (let i = 1; i < path.length; i++) { const [x, y] = path[i].split(",").map(Number); u.x = x; u.y = y; placeTokens(); fxDust(u); await sleep(150); }
+  let steps = 0; u.mvStop = false;
+  for (let i = 1; i < path.length; i++) {
+    const [x, y] = path[i].split(",").map(Number);
+    const stop = await provoke(u, {x: u.x, y: u.y}, {x, y});
+    if (stop || !alive(u) || !CB || CB.ended) { if (stop) u.mvStop = true; return steps; }
+    u.x = x; u.y = y; steps++; placeTokens(); fxDust(u); await sleep(150);
+    await overwatchCheck(u);
+    if (!alive(u) || !CB || CB.ended) return steps;
+  }
+  return steps;
+}
+function meleeOf(o) {
+  if (o.side === "p") { const c = o.ref, ws = weaponsOf(c), i = ws.findIndex(w => !WEAP[w].ranged); if (i < 0) return null; const p = weapProfile(c, ws[i]);
+    return {hit: p.hit, dice: p.dice, flat: p.flat, type: p.t, weapon: 1, finesse: p.finesse, reach: 1, crit: hasF(c, "impcrit") ? 19 : 20}; }
+  const a = o.def.atk.find(a => !a.ranged && a.r <= 2); if (!a) return null;
+  return {hit: a.b + (S.diff === 0 ? -1 : S.diff === 2 ? 1 : 0), dice: a.d, type: a.t, reach: a.r};
+}
+function owProfile(o) {
+  if (o.side === "p") { const c = o.ref, ws = weaponsOf(c), i = ws.findIndex(w => WEAP[w].ranged);
+    if (i >= 0) { const p = weapProfile(c, ws[i]); return {hit: p.hit, dice: p.dice, flat: p.flat, type: p.t, ranged: 1, weapon: 1, r: p.r}; }
+    if (spellsOf(c).includes("firebolt")) return {hit: spellAtk(c), dice: c.lvl >= 5 ? "2d10" : "1d10", type: "fire", ranged: 1, r: 10};
+    const m = meleeOf(o); return m && Object.assign({r: 1}, m); }
+  const a = o.def.atk[0]; return {hit: a.b + (S.diff === 0 ? -1 : S.diff === 2 ? 1 : 0), dice: a.d, type: a.t, ranged: !!a.ranged, r: a.r};
+}
+const canReact = o => alive(o) && (o.react || 0) > 0 && !o.cond.asleep && !o.cond.stun && !o.cond.surp;
+function provokers(m, from, to) {
+  if (m.side === "p" && hasFeat(m.ref, "mobile")) return [];
+  return CB.units.filter(o => o.side !== m.side && canReact(o) && !o.cond.ow).filter(o => { const mp = meleeOf(o); if (!mp) return false; const r = mp.reach || 1;
+    if (!(dist(o, from) <= r && dist(o, to) > r)) return false; return !m.cond.dis || (o.side === "p" && hasFeat(o.ref, "sentinel")); });
+}
+async function provoke(m, from, to) {
+  let stopped = false;
+  for (const o of provokers(m, from, to)) {
+    if (!alive(m) || CB.ended) return true;
+    o.react--; floatAt(o, tr(["Opportunità!","Opportunity!","¡Oportunidad!"]), "#ffb070", 1);
+    logL(`${o.name}: ${tr(["attacco d'opportunità","opportunity attack","ataque de oportunidad"])}`);
+    const dmg = await attackRoll(o, m, meleeOf(o));
+    if (dmg && o.side === "p" && hasFeat(o.ref, "sentinel")) { stopped = true; floatAt(m, tr(["Bloccato!","Stopped!","¡Detenido!"]), "#e8d8a8", 1); }
+  }
+  return stopped;
+}
+async function overwatchCheck(m) {
+  for (const o of CB.units.filter(o => o.side !== m.side && o.cond.ow && canReact(o))) {
+    if (!alive(m) || CB.ended) return; const p = owProfile(o); if (!p) continue;
+    if (dist(o, m) > (p.r || 1)) continue;
+    if (p.r > 1 && coverOf(o, m) >= 5) continue;
+    o.react--; delete o.cond.ow; floatAt(o, tr(["Guardia!","Overwatch!","¡Vigilancia!"]), "#9fd0ff", 1);
+    logL(`${o.name}: ${tr(["fuoco di guardia","overwatch shot","disparo de vigilancia"])}`);
+    await attackRoll(o, m, p);
+  }
 }
 
 /* ---------- turn flow ---------- */
@@ -2241,7 +2449,10 @@ async function nextTurn() {
   if (!CB || checkEnd()) return;
   let guard = 0;
   do { CB.ti++; if (CB.ti >= CB.order.length) { CB.ti = 0; CB.round++; CB.newRound = true; } } while (!alive(CB.order[CB.ti]) && guard++ < 50);
-  const u = cur(); u.mv = u.spd; u.act = 1; u.bon = 1; u.atkLeft = 0; u.sneakUsed = 0; u.colUsed = 0; delete u.cond.dodge;
+  const u = cur(); u.mv = u.spd; u.act = 1; u.bon = 1; u.atkLeft = 0; u.sneakUsed = 0; u.colUsed = 0; u.react = 1; delete u.cond.dodge; delete u.cond.dis; delete u.cond.ow; delete u.cond.power;
+  if (u.cond.prone && !u.cond.asleep && !u.cond.stun) { delete u.cond.prone; u.mv = Math.floor(u.spd / 2); logL(`${u.name}: ${tr(["si rialza","stands up","se levanta"])}`); }
+  if (u.side === "e" && u.def.gob) u.cond.dis = 1;
+  if (u.side === "p" && u.ref.trinket === "periapt" && u.hp < u.maxhp / 2) heal(u, 2);
   CB.sel = null; CB.pend = null; CB.inspect = null;
   const tok = CB.turnTok = (CB.turnTok || 0) + 1;
   CB.busy = true; renderCombat(); await turnBanner(u);
@@ -2266,7 +2477,7 @@ function selSpec(u, s) {
   if (s.k === "w") { const p = weapProfile(u.ref, weaponsOf(u.ref)[s.i]); return {tgt: "enemy", r: p.r}; }
   if (s.k === "sp") { const sp = SPELLS[s.key]; return {tgt: sp.tgt, r: sp.r || 0, rad: sp.rad || 0}; }
   if (s.k === "ab") { const a = ABIL[s.key]; return {tgt: a.tgt || "none", r: a.r || 0}; }
-  if (s.k === "it") return ITEMS[s.key].use === "throw" ? {tgt: "enemy", r: 5} : {tgt: "ally", r: 1};
+  if (s.k === "it") { const it = ITEMS[s.key]; if (it.tgt) return {tgt: it.tgt, r: it.r || 0, rad: it.rad || 0}; return it.use === "throw" ? {tgt: "enemy", r: 5} : {tgt: "ally", r: 1}; }
   return {tgt: "none"};
 }
 function slotFor(c, lv) { for (let i = lv - 1; i < 4; i++) if (c.slots[i] > 0) return i; return -1; }
@@ -2276,16 +2487,18 @@ function canUse(u, s) {
   if (s.k === "sp") { const sp = SPELLS[s.key]; if (sp.bonus ? u.bon <= 0 : u.act <= 0) return false; return sp.lv === 0 || slotFor(c, sp.lv) >= 0; }
   if (s.k === "it") return u.act > 0 && (S.inv[s.key] || 0) > 0;
   if (s.k === "ab") { const a = ABIL[s.key], k = s.key;
-    if (a.cost === "act" && u.act <= 0) return false; if (a.cost === "bon" && u.bon <= 0) return false;
+    if (a.cost === "act" && u.act <= 0) return false; if (a.cost === "bon" && u.bon <= 0) return false; if (a.cost === "atk" && u.act <= 0 && u.atkLeft <= 0) return false;
+    if (k === "power") return !u.cond.power && (u.act > 0 || u.atkLeft > 0); if (k === "overwatch") return !!owProfile(u); if (k === "cunningdis" || k === "disengage") return !u.cond.dis;
     if (k === "secondwind") return c.res.sw > 0; if (k === "actionsurge") return c.res.as > 0; if (k === "lay") return c.res.lay > 0;
     if (k === "smite") return !u.cond.smite && slotFor(c, 1) >= 0; if (k === "turn") return c.res.ch > 0; if (k === "spiritstrike") return !!u.cond.sw;
     return true; }
   return false;
 }
 function abilitiesOf(u) {
-  const c = u.ref, L = ["dash", "dodge"];
+  const c = u.ref, L = ["dash", "disengage", "dodge", "overwatch", "shove"];
+  if (hasFeat(c, "gwm") || hasFeat(c, "sharpshooter")) L.push("power");
   if (hasF(c, "secondwind")) L.push("secondwind"); if (hasF(c, "actionsurge")) L.push("actionsurge");
-  if (hasF(c, "lay")) L.push("lay"); if (hasF(c, "smite")) L.push("smite"); if (hasF(c, "cunning")) L.push("cunning");
+  if (hasF(c, "lay")) L.push("lay"); if (hasF(c, "smite")) L.push("smite"); if (hasF(c, "cunning")) L.push("cunning", "cunningdis");
   if (hasF(c, "turn")) L.push("turn"); if (u.cond.sw) L.push("spiritstrike");
   return L;
 }
@@ -2308,13 +2521,13 @@ async function onCell(x, y) {
       // approach then attack
       const R = reachOf(u, u.mv); let best = null;
       R.forEach((v, k) => { const [ax, ay] = k.split(",").map(Number); if (!freeTile(ax, ay, u)) return; if (dist({x: ax, y: ay}, t) <= sp.r && (!best || v.d < best.d)) best = {k, d: v.d}; });
-      if (best) { CB.busy = true; await walk(u, pathTo(R, best.k)); u.mv -= best.d; CB.busy = false; return execute(u, t); }
+      if (best) { CB.busy = true; const st = await walk(u, pathTo(R, best.k)); u.mv -= st; if (u.mvStop) u.mv = 0; CB.busy = false; if (!CB || CB.ended) return; if (alive(u) && t.hp > 0 && dist(u, t) <= sp.r && canUse(u, s)) return execute(u, t); renderCombat(); autoEnd(u); return; }
     }
     if (t && t.side === "p" && sp.tgt === "ally" && dist(u, t) <= sp.r) return execute(u, t);
   }
   if (!t && u.mv > 0) {
     const R = reachOf(u, u.mv), k = K(x, y);
-    if (R.has(k) && freeTile(x, y, u)) { CB.busy = true; CB.pend = null; const d = R.get(k).d; await walk(u, pathTo(R, k)); u.mv -= d; CB.busy = false; renderCombat(); autoEnd(u); return; }
+    if (R.has(k) && freeTile(x, y, u)) { CB.busy = true; CB.pend = null; const st = await walk(u, pathTo(R, k)); u.mv -= st; if (u.mvStop) u.mv = 0; CB.busy = false; if (!CB || CB.ended) return; renderCombat(); autoEnd(u); return; }
   }
   if (t) { CB.inspect = t; renderCombat(); }
 }
@@ -2331,7 +2544,7 @@ async function execute(u, target) {
   if (!canUse(u, CB.sel) || CB.sel.k === "it" || CB.sel.k === "ab") CB.sel = canUse(u, defaultSel(u)) ? defaultSel(u) : CB.sel;
   renderCombat(); autoEnd(u);
 }
-function autoEnd(u) { if (!CB.ended && cur() === u && !anyLeft(u)) setTimeout(() => { if (CB && cur() === u && !CB.busy && !CB.ended) endTurn(); }, 450); }
+function autoEnd(u) { if (CB && !CB.ended && cur() === u && (!alive(u) || !anyLeft(u))) setTimeout(() => { if (CB && cur() === u && !CB.busy && !CB.ended) endTurn(); }, 450); }
 
 /* ---------- resolution ---------- */
 function saveRoll(t, ab, dc, cov = 0) {
@@ -2342,24 +2555,39 @@ function saveRoll(t, ab, dc, cov = 0) {
 }
 function adjEnemies(a) { return CB.units.filter(o => o.side !== a.side && alive(o) && dist(o, a) <= 1); }
 function allyNear(t, a) { return CB.units.some(o => o !== a && o.side === a.side && alive(o) && dist(o, t) <= 1); }
+function flanked(a, t) { if (dist(a, t) !== 1) return false; const ox = 2 * t.x - a.x, oy = 2 * t.y - a.y; return CB.units.some(x => x !== a && x.side === a.side && alive(x) && x.x === ox && x.y === oy && !x.cond.asleep && !x.cond.stun && !x.cond.prone); }
+function advInfo(a, t, o) {
+  let adv = false, dis = false; const why = [];
+  const melee = !o.ranged && dist(a, t) <= (o.reach || 1);
+  if (t.cond.asleep || t.cond.stun) { adv = true; why.push("helpless"); }
+  if (t.cond.guided) { adv = true; why.push("guided"); }
+  if (t.cond.prone) { if (melee) { adv = true; why.push("prone"); } else { dis = true; why.push("pronefar"); } }
+  if (melee && flanked(a, t)) { adv = true; why.push("flank"); }
+  if (melee && a.side === "e" && a.def.pack && CB.units.some(x => x !== a && x.side === a.side && alive(x) && dist(x, t) <= 1)) { adv = true; why.push("pack"); }
+  if (t.cond.dodge) { dis = true; why.push("dodge"); }
+  if (a.cond.prone) { dis = true; why.push("selfprone"); }
+  if (o.ranged && adjEnemies(a).length) { dis = true; why.push("closerange"); }
+  if (t.side === "p" && t.ref.trinket === "cloak_displ" && t.dispR !== CB.round) { dis = true; why.push("displace"); }
+  return {adv, dis, why};
+}
+function coverFor(a, t, o) { if (!(o.ranged || dist(a, t) > 1)) return 0; if (a.side === "p" && o.ranged && hasFeat(a.ref, "sharpshooter")) return 0; return coverOf(a, t); }
 async function attackRoll(a, t, o) {
-  let adv = false, dis = false;
-  if (t.cond.asleep || t.cond.stun) adv = true;
-  if (t.cond.guided) { adv = true; delete t.cond.guided; }
-  if (t.cond.dodge) dis = true;
-  if (o.ranged && adjEnemies(a).length) dis = true;
+  const ai = advInfo(a, t, o); let adv = ai.adv, dis = ai.dis;
+  if (t.cond.guided) delete t.cond.guided;
+  if (ai.why.includes("displace")) t.dispR = CB.round;
   const r1 = a.side === "p" ? d20For(a.ref) : rnd(20); let r = r1;
   if (adv !== dis) { const r2 = a.side === "p" ? d20For(a.ref) : rnd(20); r = adv ? Math.max(r1, r2) : Math.min(r1, r2); }
-  let bl = a.cond.bless ? rnd(4) : 0, tot = r + o.hit + bl;
-  const cov = (o.ranged || dist(a, t) > 1) ? coverOf(a, t) : 0, tac = t.ac + cov;
+  const pw = o.power ? -5 : 0;
+  let bl = a.cond.bless ? rnd(4) : 0, tot = r + o.hit + bl + pw;
+  const cov = coverFor(a, t, o), tac = t.ac + cov;
   let crit = r >= (o.crit || 20); const hit = crit || (r !== 1 && tot >= tac);
   if (hit && t.cond.asleep && !o.ranged && dist(a, t) <= 1) crit = true;
   await fxAttackAnim(a, t, o);
-  logL(`${a.name} → ${t.name}: ${r}${sgn(o.hit + bl)}=${tot} vs ${tac}${cov ? ` (${tr(COVER_T)} +${cov})` : ""}${adv !== dis ? (adv ? " ▲" : " ▼") : ""} — ${hit ? (crit ? T_("crit") : T_("hits")) : T_("misses")}`);
+  logL(`${a.name} → ${t.name}: ${r}${sgn(o.hit + bl + pw)}=${tot} vs ${tac}${cov ? ` (${tr(COVER_T)} +${cov})` : ""}${adv !== dis ? (adv ? " ▲" : " ▼") : ""}${ai.why.includes("flank") ? " " + tr(["(fianco)","(flank)","(flanco)"]) : ""} — ${hit ? (crit ? T_("crit") : T_("hits")) : T_("misses")}`);
   if (!hit && cov && tot >= t.ac && r !== 1) floatAt(t, tr(["Coperto!","Covered!","¡Cubierto!"]), "#e8d8a8", 1);
   if (!hit) { fxMiss(a, t); floatAt(t, T_("miss"), "#d8cdb8"); await sleep(380); return 0; }
   fxImpact(t, o.type, crit); if (crit) { floatAt(t, T_("crit"), "#ffd38a", 1); fxShake(); }
-  let dmg = roll(crit ? critDice(o.dice) : o.dice).total + (o.flat || 0);
+  let dmg = roll(crit ? critDice(o.dice) : o.dice).total + (o.flat || 0) + (o.power ? 10 : 0);
   if (a.side === "p") {
     const c = a.ref, und = t.def && t.def.undead;
     if (crit && c.race === "halforc" && o.weapon) dmg += roll("1" + o.dice.replace(/^\d*/, "").replace(/[+-].*$/, "")).total;
@@ -2369,6 +2597,7 @@ async function attackRoll(a, t, o) {
     if (hasF(c, "favored") && und) dmg += 2;
     if (o.weapon && !o.ranged && a.cond.smite) { const i = slotFor(c, 1); if (i >= 0) { c.slots[i]--; delete a.cond.smite; dmg += roll(((und ? 3 : 2) * (crit ? 2 : 1)) + "d8").total; logL(tr(FEATS.smite) + "!"); } }
     if (c.id === "pc" && has("took_flame")) dmg += rnd(4);
+    if (c.trinket === "sun_talisman" && o.weapon && und) dmg += rnd(4);
   } else if (S.diff === 2) dmg += 1;
   await applyDmg(t, dmg, o.type, a);
   if (o.onHit && (t.side === "p" ? !t.down : t.hp > 0)) o.onHit(t);
@@ -2383,7 +2612,7 @@ async function applyDmg(t, amt, type, src) {
   if (t.cond.asleep) delete t.cond.asleep;
   if (t.hp <= 0) {
     if (t.side === "p") { if (t.ref.race === "halforc" && !t.relUsed) { t.relUsed = 1; t.hp = 1; logL(`${t.name}: ${tr(["Resistenza implacabile!","Relentless endurance!","¡Aguante incansable!"])}`); }
-      else { t.hp = 0; t.down = true; delete t.cond.sg; delete t.cond.sw; logL(`${t.name} ${T_("down")}`); fxDeath(t, 1); } }
+      else { t.hp = 0; t.down = true; CB.anyDown = true; delete t.cond.sg; delete t.cond.sw; delete t.cond.ow; delete t.cond.prone; logL(`${t.name} ${T_("down")}`); fxDeath(t, 1); } }
     else { t.hp = 0; CB.xp += t.def.xp; logL(`${t.name} ${T_("dies")}`); fxDeath(t); }
   }
   placeTokens(); await sleep(280);
@@ -2391,10 +2620,13 @@ async function applyDmg(t, amt, type, src) {
 function heal(t, amt) { if (t.side !== "p") return; amt = Math.max(1, amt); t.hp = Math.min(t.maxhp, t.hp + amt); if (t.down && t.hp > 0) t.down = false; floatAt(t, "+" + amt, "#9be0a6"); fxHeal(t); logL(`${t.name} ${T_("heals")} ${amt} ${T_("hp")}`); placeTokens(); }
 const inArea = (c, rad) => CB.units.filter(o => dist(o, c) <= rad && (o.side === "p" || o.hp > 0));
 
+function useAttack(u) { if (u.atkLeft > 0) u.atkLeft--; else { u.act--; u.atkLeft = (hasF(u.ref, "extra") ? 2 : 1) - 1; } }
+const powerOK = (c, ranged) => ranged ? hasFeat(c, "sharpshooter") : hasFeat(c, "gwm");
 async function weaponAttack(u, t, i) {
-  const c = u.ref, p = weapProfile(c, weaponsOf(c)[i]);
-  if (u.atkLeft > 0) u.atkLeft--; else { u.act--; u.atkLeft = (hasF(c, "extra") ? 2 : 1) - 1; }
-  await attackRoll(u, t, {hit: p.hit, dice: p.dice, flat: p.flat, type: p.t, ranged: p.ranged, weapon: 1, finesse: p.finesse, crit: hasF(c, "impcrit") ? 19 : 20});
+  const c = u.ref, p = weapProfile(c, weaponsOf(c)[i]); useAttack(u);
+  const power = !!u.cond.power && powerOK(c, p.ranged); if (power) delete u.cond.power;
+  await attackRoll(u, t, {hit: p.hit, dice: p.dice, flat: p.flat, type: p.t, ranged: p.ranged, weapon: 1, finesse: p.finesse, power, crit: hasF(c, "impcrit") ? 19 : 20});
+  if (!p.ranged && t.hp <= 0 && hasFeat(c, "gwm") && u.bon > 0 && cur() === u) { u.bon--; u.atkLeft++; floatAt(u, tr(["Furia!","Cleave!","¡Furia!"]), "#ffd38a", 1); logL(`${u.name}: ${tr(["attacco bonus","bonus attack","ataque adicional"])}`); }
 }
 async function castSpell(u, key, target) {
   const sp = SPELLS[key], c = u.ref, m = castMod(c), dc = spellDC(c), atk = spellAtk(c);
@@ -2423,11 +2655,21 @@ async function castSpell(u, key, target) {
 }
 async function useAbility(u, key, target) {
   const c = u.ref, a = ABIL[key];
-  if (a.cost === "act") u.act--; if (a.cost === "bon") u.bon--;
+  if (a.cost === "act") u.act--; if (a.cost === "bon") u.bon--; if (a.cost === "atk") useAttack(u);
   logL(`${u.name}: ${tr(a.n)}`);
   switch (key) {
     case "dash": case "cunning": u.mv += u.spd; break;
     case "dodge": fxHeal(u, "#9fc4ff"); u.cond.dodge = 1; placeTokens(); break;
+    case "disengage": case "cunningdis": u.cond.dis = 1; fxPoof(u); break;
+    case "overwatch": u.cond.ow = 1; u.atkLeft = 0; floatAt(u, tr(["Guardia","Overwatch","Vigilancia"]), "#9fd0ff", 1); placeTokens(); break;
+    case "power": u.cond.power = 1; floatAt(u, "✸", "#ffd38a", 1); placeTokens(); break;
+    case "shove": { if (target.boss) { floatAt(target, tr(["Troppo grande","Too big","Demasiado grande"]), "#e8d8a8", 1); break; }
+      await fxAttackAnim(u, target, {type: "blunt"});
+      const ra = rnd(20) + skillBonus(c, "ath"), rd = rnd(20) + (target.def.sv || 0) + 2;
+      logL(`${u.name} → ${target.name}: ${tr(SKILLS.ath[0])} ${ra} vs ${rd}`);
+      if (ra >= rd) { target.cond.prone = 1; fxImpact(target, "blunt", false); floatAt(target, tr(["A terra!","Prone!","¡Derribado!"]), "#ffd38a", 1); }
+      else { fxMiss(u, target); floatAt(target, T_("saveOk"), "#d8cdb8"); }
+      placeTokens(); await sleep(250); break; }
     case "secondwind": c.res.sw--; heal(u, rnd(10) + c.lvl); break;
     case "actionsurge": c.res.as--; u.act++; break;
     case "lay": { const amt = Math.min(c.res.lay, Math.max(1, target.maxhp - target.hp)); c.res.lay -= amt; heal(target, amt); break; }
@@ -2439,25 +2681,55 @@ async function useAbility(u, key, target) {
 async function useItemC(u, key, target) {
   const it = ITEMS[key]; u.act--; take(key); logL(`${u.name}: ${tr(it.n)}`);
   if (it.use === "heal") heal(target, roll(it.dice).total);
+  else if (it.use === "scroll" && it.spell === "fireball") { await fxProjectile(u, target, "fire"); await fxArea(target, 2, "fire"); const dmg = roll("8d6").total;
+    for (const t of inArea(target, 2).filter(t => t !== u && alive(t))) { const ok = saveRoll(t, "dex", 15, coverOf(target, t)); await applyDmg(t, ok ? Math.floor(dmg / 2) : dmg, "fire", u); } }
+  else if (it.use === "scroll" && it.spell === "massheal") allies().forEach(a => heal(a, roll("2d8+2").total));
   else await attackRoll(u, target, {hit: prof(u.ref) + abm(u.ref, "dex"), dice: "2d6", type: "fire", ranged: 1});
 }
 
-/* ---------- AI ---------- */
-function pickTarget(u, r) { const c = allies().filter(p => !p.down && dist(u, p) <= r); if (!c.length) return null; const sc = p => p.hp + (r > 1 ? coverOf(u, p) * 5 : 0) + Math.random() * 6; c.forEach(p => p._s = sc(p)); c.sort((a, b) => a._s - b._s); return c[0]; }
-async function aiMove(u, r) {
+/* ---------- AI: utility-based positioning ---------- */
+function avgDice(e) { let t = 0; String(e).replace(/\s/g, "").split(/(?=[+-])/).forEach(p => { let sg = 1; if (p[0] === "-") { sg = -1; p = p.slice(1); } else if (p[0] === "+") p = p.slice(1); const m = p.match(/^(\d*)d(\d+)$/); t += m ? sg * (+(m[1] || 1)) * (+m[2] + 1) / 2 : sg * (+p || 0); }); return t; }
+function hitP(bonus, ac, adv, dis) { let p = Math.max(.05, Math.min(.95, (21 - (ac - bonus)) / 20)); if (adv && !dis) p = 1 - (1 - p) * (1 - p); else if (dis && !adv) p = p * p; return p; }
+const atkBonusAI = () => S.diff === 0 ? -1 : S.diff === 2 ? 1 : 0;
+function aiValue(u, t, opt) {
+  // expected damage of using opt against t from u's current (possibly hypothetical) tile
+  if (opt.sp && opt.sp.save) { const dc = opt.sp.dc; let v = 0; for (const p of inArea(t, opt.sp.rad || 0).filter(p => p.side === "p" && !p.down)) { const sb = saveBonus(p.ref, opt.sp.save); const ps = Math.max(.05, Math.min(.95, (21 - (dc - sb)) / 20)); v += avgDice(opt.sp.d) * (1 - ps * .5); } return v; }
+  const a = opt.sp || opt.a, o = {ranged: a.r > 1, reach: a.r};
+  const ai = advInfo(u, t, o), cov = (a.r > 1 || dist(u, t) > 1) ? coverOf(u, t) : 0;
+  const p = hitP(a.b + atkBonusAI(), t.ac + cov, ai.adv, ai.dis), d = avgDice(a.d) * (opt.a ? (a.k || 1) : 1);
+  let v = p * d;
+  if (t.hp <= d) v *= 1.35;
+  if (["wizard", "cleric"].includes(t.ref.cls)) v *= 1.15;
+  if (a.para && t.ref.race !== "elf") v *= 1.2;
+  return v;
+}
+function pickTarget(u, r, opt) {
+  const o = opt || {a: u.def.atk[0]}; let best = null, bv = -1;
+  for (const p of allies()) { if (p.down || dist(u, p) > r) continue; const v = aiValue(u, p, o) + Math.random() * .4; if (v > bv) { bv = v; best = p; } }
+  return best;
+}
+function aiReach(u) {
   const R = new Map([[K(u.x, u.y), {d: 0, p: null}]]), q = [[u.x, u.y]];
-  while (q.length) { const [x, y] = q.shift(), d0 = R.get(K(x, y)).d;
+  while (q.length) { const [x, y] = q.shift(), d0 = R.get(K(x, y)).d; if (d0 >= u.mvAI) continue;
     for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) { const nx = x + dx, ny = y + dy, k = K(nx, ny); if ((!dx && !dy) || !inGrid(nx, ny) || CB.ob.has(k) || R.has(k)) continue; const o = unitAt(nx, ny); if (o && o.side === "p" && !o.down) continue; R.set(k, {d: d0 + 1, p: K(x, y)}); q.push([nx, ny]); } }
-  let best = null; const targets = allies().filter(p => !p.down);
-  R.forEach((v, k) => { const [x, y] = k.split(",").map(Number); if (!freeTile(x, y, u)) return; if (targets.some(p => dist({x, y}, p) <= r) && (!best || v.d < best.d)) best = {k, d: v.d}; });
-  if (!best) { R.forEach((v, k) => { const [x, y] = k.split(",").map(Number); if (!freeTile(x, y, u)) return; const dd = Math.min(...targets.map(p => dist({x, y}, p))); if (!best || dd < best.dd || (dd === best.dd && v.d < best.d)) best = {k, d: v.d, dd}; }); }
-  if (!best || best.d === 0) return;
-  let path = pathTo(R, best.k).slice(0, u.spd + 1);
-  while (path.length > 1) { const [x, y] = path[path.length - 1].split(",").map(Number); if (freeTile(x, y, u)) break; path.pop(); }
-  await walk(u, path);
+  return R;
+}
+function pathRisk(u, path) {
+  // expected damage from opportunity attacks and overwatch along a path
+  let risk = 0; const ox = u.x, oy = u.y;
+  for (let i = 1; i < path.length; i++) { const [fx, fy] = path[i - 1].split(",").map(Number), [tx, ty] = path[i].split(",").map(Number);
+    if (!u.cond.dis) for (const o of provokers(u, {x: fx, y: fy}, {x: tx, y: ty})) { const m = meleeOf(o); risk += hitP(m.hit, u.ac, false, false) * avgDice(m.dice) + (m.flat || 0) * .6; }
+    for (const o of allies().filter(o => o.cond.ow && canReact(o))) { const pr = owProfile(o); if (pr && Math.max(Math.abs(o.x - tx), Math.abs(o.y - ty)) <= pr.r) risk += 5; } }
+  u.x = ox; u.y = oy; return risk;
+}
+async function aiMoveToward(u) {
+  // no target reachable this turn: close distance, preferring safe tiles
+  const R = aiReach(u), targets = allies().filter(p => !p.down); let best = null;
+  R.forEach((v, k) => { const [x, y] = k.split(",").map(Number); if (!freeTile(x, y, u)) return; const dd = Math.min(...targets.map(p => dist({x, y}, p))); const sc = dd * 3 + v.d * .2 + pathRisk(u, pathTo(R, k)) * .5; if (!best || sc < best.sc) best = {k, sc}; });
+  if (best && best.k !== K(u.x, u.y)) await walk(u, pathTo(R, best.k));
 }
 async function aiTurn(u) {
-  const d = u.def;
+  const d = u.def; u.mvAI = u.mv;
   if (d.aura) { u.auraCd = u.auraCd || 0;
     if (u.auraCd <= 0) { u.auraCd = d.aura.every - 1; logL(`${u.name}: ${tr(d.aura.n)}`); await fxArea(u, d.aura.rad, d.aura.t); const dmg = roll(d.aura.d).total;
       for (const p of allies().filter(p => !p.down && dist(p, u) <= d.aura.rad)) { const ok = saveRoll(p, d.aura.save, d.aura.dc); await applyDmg(p, ok ? Math.floor(dmg / 2) : dmg, d.aura.t, u); }
@@ -2465,11 +2737,29 @@ async function aiTurn(u) {
   let opt = null;
   if (d.spells) { const sp = d.spells[Math.floor(Math.random() * d.spells.length)]; if (Math.random() < sp.p) opt = {sp, r: sp.r}; }
   if (!opt) opt = {a: d.atk[0], r: d.atk[0].r};
-  let t = pickTarget(u, opt.r);
-  if (!t) { await aiMove(u, opt.r); t = pickTarget(u, opt.r); }
-  if (!t && opt.sp) { opt = {a: d.atk[0], r: d.atk[0].r}; t = pickTarget(u, opt.r); }
-  if (!t) return;
-  const atkB = S.diff === 0 ? -1 : S.diff === 2 ? 1 : 0;
+  const ranged = opt.r > 1;
+  // evaluate every reachable tile
+  const R = aiReach(u), ox = u.x, oy = u.y; let best = null;
+  R.forEach((v, k) => {
+    const [x, y] = k.split(",").map(Number); if (!freeTile(x, y, u)) return;
+    u.x = x; u.y = y;
+    let val = 0; for (const p of allies()) if (!p.down && dist(u, p) <= opt.r) val = Math.max(val, aiValue(u, p, opt));
+    let def = 0;
+    if (ranged) { const adj = allies().filter(p => !p.down && dist(u, p) <= 1).length; def -= adj * 4; for (const p of allies()) if (!p.down) def += coverOf(p, u) * .35; }
+    u.x = ox; u.y = oy;
+    const risk = v.d ? pathRisk(u, pathTo(R, k)) : 0;
+    const sc = val + def - risk - v.d * .05 + (v.d === 0 ? .1 : 0);
+    if (!best || sc > best.sc) best = {k, sc, val};
+  });
+  u.x = ox; u.y = oy;
+  if (best && best.val > 0) { if (best.k !== K(u.x, u.y)) await walk(u, pathTo(R, best.k)); }
+  else if (opt.sp) { opt = {a: d.atk[0], r: d.atk[0].r}; if (!pickTarget(u, opt.r, opt)) await aiMoveToward(u); }
+  else await aiMoveToward(u);
+  if (!CB || CB.ended || u.hp <= 0) return;
+  let t = pickTarget(u, opt.r, opt);
+  if (!t && opt.sp) { opt = {a: d.atk[0], r: d.atk[0].r}; t = pickTarget(u, opt.r, opt); }
+  if (!t) { if (opt.r > 1 || (d.atk[0] && d.atk[0].ranged)) { u.cond.ow = 1; floatAt(u, tr(["Guardia","Overwatch","Vigilancia"]), "#9fd0ff", 1); logL(`${u.name}: ${tr(["resta in guardia","holds overwatch","se queda vigilando"])}`); placeTokens(); } return; }
+  const atkB = atkBonusAI();
   if (opt.sp) {
     const sp = opt.sp; logL(`${u.name}: ${tr(sp.n)}`);
     if (sp.save) { await fxProjectile(u, t, sp.t); await fxArea(t, sp.rad || 0, sp.t); const dmg = roll(sp.d).total; for (const p of inArea(t, sp.rad || 0).filter(p => p.side === "p" && !p.down)) { const ok = saveRoll(p, sp.save, sp.dc + (S.diff === 2 ? 1 : S.diff === 0 ? -1 : 0), sp.save === "dex" ? coverOf(t, p) : 0); await applyDmg(p, ok ? Math.floor(dmg / 2) : dmg, sp.t, u); } }
@@ -2478,10 +2768,10 @@ async function aiTurn(u) {
   }
   const a = opt.a;
   for (let i = 0; i < (a.k || 1); i++) {
-    if (!t || t.down) t = pickTarget(u, a.r); if (!t) break;
-    const dmg = await attackRoll(u, t, {hit: a.b + atkB, dice: a.d, type: a.t, ranged: !!a.ranged});
+    if (!t || t.down) t = pickTarget(u, a.r, opt); if (!t) break;
+    const dmg = await attackRoll(u, t, {hit: a.b + atkB, dice: a.d, type: a.t, ranged: !!a.ranged, reach: a.r});
     if (dmg && a.para && !t.down && t.ref.race !== "elf" && !saveRoll(t, "con", a.para)) { t.cond.stun = 1; logL(`${t.name} ${T_("stunned")}`); placeTokens(); }
-    if (checkEnd()) return;
+    if (checkEnd() || u.hp <= 0) return;
   }
 }
 
@@ -2512,7 +2802,7 @@ Object.assign(ICONS, {
 const FOE_IC = {wolf:"wolf", rat:"rat", goblin:"goblin", gobarcher:"goblin", shadow:"ghost", shade:"ghost", avatar:"maw", avatarw:"maw", ghoul:"skull"};
 const WEAP_IC = {longsword:"sword", warhammer:"hammer", javelin:"javelin", rapier:"dagger", shortsword:"dagger", shortbow:"bow", longbow:"bow", quarterstaff:"staff", mace:"mace"};
 const SPELL_IC = {firebolt:"flame", sacredflame:"sun", magicmissile:"star", sleep:"moon", burninghands:"burst", curewounds:"heart", healingword:"heart", bless:"sun", guidingbolt:"bolt", huntersmark:"target", scorchingray:"flame", mistystep:"wind", spiritualweapon:"sword", fireball:"burst", spiritguardians:"sun", masshealingword:"heart", icestorm:"star"};
-const ABIL_IC = {dash:"wind", dodge:"shield", secondwind:"heart", actionsurge:"bolt", lay:"hand", smite:"sun", cunning:"wind", turn:"sun", spiritstrike:"sword"};
+const ABIL_IC = {dash:"wind", dodge:"shield", secondwind:"heart", actionsurge:"bolt", lay:"hand", smite:"sun", cunning:"wind", turn:"sun", spiritstrike:"sword", disengage:"end", cunningdis:"end", overwatch:"eye", shove:"hand", power:"burst"};
 const TYPE_COL = {fire:"#ff8a3c", cold:"#a9dcff", radiant:"#ffe08a", necrotic:"#b07ae8", force:"#9fb6ff", sleep:"#8fb0ea", mark:"#ff5a72", poison:"#8fd16a", slash:"#f3e6c8", pierce:"#f3e6c8", blunt:"#f3e6c8"};
 const MSTYLE = {
   road:{g:"dirt", base:"#3b3226", ob:"rock", light:"rgba(230,205,170,.12)", amb:"ash"},
@@ -2818,18 +3108,17 @@ async function turnBanner(u) {
 
 /* ---------- odds ---------- */
 function oddsVs(u, t, s) {
-  const c = u.ref; let hit = null, save = null, auto = false, ranged = false;
-  if (s.k === "w") { const p = weapProfile(c, weaponsOf(c)[s.i]); hit = p.hit; ranged = p.ranged; }
-  else if (s.k === "sp") { const k = s.key; if (["firebolt","guidingbolt","scorchingray"].includes(k)) { hit = spellAtk(c); ranged = true; } else if (k === "sacredflame") save = {dc: spellDC(c), b: (t.def.sv || 0) + (S.diff === 2 ? 1 : 0)}; else if (k === "magicmissile" || k === "huntersmark") auto = true; else return null; }
+  const c = u.ref; let hit = null, save = null, auto = false, o = {ranged: false};
+  if (s.k === "w") { const p = weapProfile(c, weaponsOf(c)[s.i]); hit = p.hit; o = {ranged: p.ranged, weapon: 1}; if (u.cond.power && powerOK(c, p.ranged)) hit -= 5; }
+  else if (s.k === "sp") { const k = s.key; if (["firebolt","guidingbolt","scorchingray"].includes(k)) { hit = spellAtk(c); o = {ranged: true}; } else if (k === "sacredflame") save = {dc: spellDC(c), b: (t.def.sv || 0) + (S.diff === 2 ? 1 : 0) + coverOf(u, t)}; else if (k === "magicmissile" || k === "huntersmark") auto = true; else return null; }
   else if (s.k === "ab" && s.key === "spiritstrike") hit = spellAtk(c);
-  else if (s.k === "it") { hit = prof(c) + abm(c, "dex"); ranged = true; }
+  else if (s.k === "ab" && s.key === "shove") { if (t.boss) return 0; const a = skillBonus(c, "ath"), d = (t.def.sv || 0) + 2; let w = 0; for (let x = 1; x <= 20; x++) for (let y = 1; y <= 20; y++) if (x + a >= y + d) w++; return Math.round(w / 4); }
+  else if (s.k === "it" && ITEMS[s.key].use === "throw") { hit = prof(c) + abm(c, "dex"); o = {ranged: true}; }
   else return null;
   if (auto) return 100;
   if (save) return Math.round(Math.max(.05, Math.min(.95, (save.dc - save.b - 1) / 20)) * 100);
-  let p = Math.max(.05, Math.min(.95, (21 - (t.ac - hit - (u.cond.bless ? 2.5 : 0))) / 20));
-  const adv = t.cond.asleep || t.cond.stun || t.cond.guided, dis = t.cond.dodge || (ranged && adjEnemies(u).length);
-  if (adv && !dis) p = 1 - (1 - p) * (1 - p); else if (dis && !adv) p = p * p;
-  return Math.round(p * 100);
+  const ai = advInfo(u, t, o), cov = coverFor(u, t, o);
+  return Math.round(hitP(hit + (u.cond.bless ? 2.5 : 0), t.ac + cov, ai.adv, ai.dis) * 100);
 }
 
 /* ---------- action catalogue for the hotbar ---------- */
@@ -2838,7 +3127,7 @@ function actionsOf(u) {
   weaponsOf(c).forEach((w, i) => { const p = weapProfile(c, w); L.push({s: {k: "w", i}, ic: WEAP_IC[w] || "sword", name: p.name, cost: "a", sub: `${sgn(p.hit)} · ${p.dice}${sgn(p.flat)}`, desc: `${p.ranged ? tr(["A distanza","Ranged","A distancia"]) + " " + p.r : tr(["Mischia","Melee","Cuerpo a cuerpo"])} · ${tr(["colpire","to hit","ataque"])} ${sgn(p.hit)} · ${p.dice}${sgn(p.flat)}`, grp: 0}); });
   spellsOf(c).forEach(k => { const sp = SPELLS[k]; const left = sp.lv ? c.slots.slice(sp.lv - 1).reduce((a, b) => a + b, 0) : null; L.push({s: {k: "sp", key: k}, ic: SPELL_IC[k] || "star", name: tr(sp.n), cost: sp.bonus ? "b" : "a", lv: sp.lv, cnt: left, desc: tr(sp.d), ff: sp.ff, grp: 1}); });
   abilitiesOf(u).forEach(k => { const a = ABIL[k]; let cnt = null; if (k === "secondwind") cnt = c.res.sw; if (k === "actionsurge") cnt = c.res.as; if (k === "lay") cnt = c.res.lay; if (k === "turn") cnt = c.res.ch; L.push({s: {k: "ab", key: k}, ic: ABIL_IC[k] || "star", name: tr(a.n), cost: a.cost === "act" ? "a" : a.cost === "bon" ? "b" : "f", cnt, desc: tr(a.d), grp: 2}); });
-  Object.keys(S.inv).filter(k => S.inv[k] > 0 && (ITEMS[k].use === "heal" || ITEMS[k].use === "throw")).forEach(k => L.push({s: {k: "it", key: k}, ic: ITEMS[k].use === "heal" ? "potion" : "flame", name: tr(ITEMS[k].n), cost: "a", cnt: S.inv[k], desc: tr(ITEMS[k].d), grp: 3}));
+  Object.keys(S.inv).filter(k => S.inv[k] > 0 && ["heal", "throw", "scroll"].includes(ITEMS[k].use)).forEach(k => L.push({s: {k: "it", key: k}, ic: ITEMS[k].use === "heal" ? "potion" : ITEMS[k].use === "scroll" ? "scroll" : "flame", name: tr(ITEMS[k].n), cost: "a", cnt: S.inv[k], desc: tr(ITEMS[k].d), grp: 3}));
   return L;
 }
 const sameSel = (a, b) => a && b && a.k === b.k && a.i === b.i && a.key === b.key;
@@ -2919,9 +3208,20 @@ function pickSheet() {}
 
 /* ---------- end of battle screens ---------- */
 function winCombat() {
-  syncBack(); const gx = CB.xp, gg = CB.gold, win = CB.win;
-  const m = modal(`<div class="endcard win"><div class="seal">${icon("sun")}</div><h2>${T_("victory")}</h2><p class="lbl">${T_("rewards")}</p><div class="rew"><span><b>+${gx}</b>${T_("xp")}</span>${gg ? `<span><b>+${gg}</b>${T_("gp")}</span>` : ""}</div><button class="btn primary" id="vOk">${T_("goOn")}</button></div>`, {center: 1, locked: 1});
-  m.querySelector("#vOk").onclick = () => { closeModal(); CB = null; S.xp += gx; S.gold += gg; checkLevel(); goScene(win); };
+  syncBack(); const win = CB.win, fastR = 3 + Math.ceil(CB.nFoes / 2);
+  const ch1 = !CB.anyDown, ch2 = CB.round <= fastR;
+  const gx = Math.round(CB.xp * (ch1 ? 1.2 : 1)), gg = CB.gold + (ch2 ? 15 : 0);
+  const loot = rollLoot(CB.key);
+  const chal = `<div class="chal"><span class="${ch1 ? "ok" : ""}">${ch1 ? "✓" : "✗"} ${tr(["Nessun caduto","Nobody fell","Nadie cayó"])} <small>+20% ${T_("xp")}</small></span><span class="${ch2 ? "ok" : ""}">${ch2 ? "✓" : "✗"} ${tr(["Entro","Within","En"])} ${fastR} ${tr(["round","rounds","rondas"])} <small>+15 ${T_("gp")}</small></span></div>`;
+  const m = modal(`<div class="endcard win"><div class="seal">${icon("sun")}</div><h2>${T_("victory")}</h2>${chal}<p class="lbl">${T_("rewards")}</p><div class="rew"><span><b>+${gx}</b>${T_("xp")}</span>${gg ? `<span><b>+${gg}</b>${T_("gp")}</span>` : ""}</div>${loot.length ? `<div class="loot">${loot.map(k => `<div class="li${ITEMS[k].slot === "t" ? " rare" : ""}">${medHTML(ITEMS[k].slot === "t" ? "star" : ITEMS[k].use === "scroll" ? "scroll" : ITEMS[k].use === "heal" ? "potion" : "flame", "sm")}<span>${tr(ITEMS[k].n)}</span></div>`).join("")}</div>` : ""}<button class="btn primary" id="vOk">${T_("goOn")}</button></div>`, {center: 1, locked: 1});
+  m.querySelector("#vOk").onclick = () => { closeModal(); CB = null; S.xp += gx; S.gold += gg; loot.forEach(k => S.inv[k] = (S.inv[k] || 0) + 1); checkLevel(); goScene(win); };
+}
+function rollLoot(key) {
+  const out = [], got = S.lootGot = S.lootGot || {};
+  (LOOT[key] || []).forEach(k => { if (ITEMS[k].slot === "t") { if (got[k]) return; got[k] = 1; } out.push(k); });
+  const act = has("act2_done") ? 3 : has("act1_done") ? 2 : 1, r = Math.random();
+  if (r < .35) out.push("potion"); else if (r < .5) out.push("flask"); else if (r < .58 && act >= 2) out.push("scroll_heal"); else if (r < .64 && act >= 2) out.push("scroll_fire"); else if (r < .72 && act >= 2) out.push("greater");
+  return out;
 }
 function loseCombat() {
   const m = modal(`<div class="endcard lose"><div class="seal">${icon("skull")}</div><h2>${T_("defeat")}</h2><p>${T_("defeatTxt")}</p><div style="display:grid;gap:8px"><button class="btn primary" id="lRetry">${T_("retry")}</button><button class="btn small" id="lTitle">${T_("toTitle")}</button></div></div>`, {center: 1, locked: 1});
@@ -3492,6 +3792,7 @@ const FOE_LOOK = {
   hknight: {armor: "#24222a", metal: 1, hat: "helm", weapon: "greatsword", eyes: "#ff3a4a", S: 1.12, W: 1.15, pants: "#1a181e", cloak: "#3a0a12"},
   keeper: {ghost: 1, robe: "#1a3a3a", eyes: "#9ff0e0", crown: "#2a5a3a", S: 1.15},
   jailer: {armor: "#4a3a2e", mask: "iron", hat: "helm", weapon: "mace", W: 1.22, pants: "#2a2420", skin: "#c49a7a"},
+  obsidian: {armor: "#2a2236", metal: 1, hat: "helm", weapon: "fists", eyes: "#c08cff", S: 1.2, W: 1.25, pants: "#1a1424", empty: 1, glow: "#a060f0"},
   seraphine: {robe: "#140d18", armor: "#140d18", skin: "#a9a6ae", hair: "#e2ded6", weapon: "staff", orb: "#c08cff", S: 1.14, cloak: "#0c080f"},
   avatar: {maw: 1}, avatarw: {maw: 1, chains: 1},
 };
@@ -3655,9 +3956,89 @@ const _renderCombat0 = renderCombat;
 renderCombat = function () {
   _renderCombat0(); if (!CB) return; const u = cur(); const mine = u && u.side === "p" && !CB.busy && !CB.ended;
   CB.units.forEach(o => { const tk = $("#t_" + o.uid); if (!tk) return; const ch = tk.querySelector(".chance"); if (!tk.classList.contains("tg") || !mine) return;
-    const cov = coverOf(u, o); if (cov) { ch.innerHTML = `${ch.textContent}<i class="cv">${icon("shield")}+${cov}</i>`; tk.classList.add("cov"); } else tk.classList.remove("cov"); });
+    const cov = coverFor(u, o, {ranged: selSpec(u).r > 1}); if (cov) { ch.innerHTML = `${ch.textContent}<i class="cv">${icon("shield")}+${cov}</i>`; tk.classList.add("cov"); } else tk.classList.remove("cov"); });
   const info = $("#info p.hint"); if (mine && info && CB.sel) { const sp = selSpec(u); if (sp.tgt === "enemy" && sp.r > 1 && foes().some(f => coverOf(u, f))) info.insertAdjacentHTML("beforeend", ` · <span class="covh">${icon("shield")} ${tr(["copertura +2/+5 CA","cover +2/+5 AC","cobertura +2/+5 CA"])}</span>`); }
 };
+/* =================== TACTICAL LAYER: deployment, risk preview, inspection, tips =================== */
+Object.assign(ICONS, {help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.2h.01"/>'});
+const TIPS = [
+  ["shield", ["Copertura", "Cover", "Cobertura"], ["Ostacoli o creature tra il tiratore e il bersaglio danno +2 CA (mezza) o +5 (tre quarti). Vale anche per te: riparati dietro rocce e colonne.", "Obstacles or creatures between shooter and target give +2 AC (half) or +5 (three-quarters). It works for you too: hide behind rocks and pillars.", "Obstáculos o criaturas entre el tirador y el objetivo dan +2 CA (media) o +5 (tres cuartos). También te protege a ti: escóndete tras rocas y columnas."]],
+  ["swords", ["Fianco", "Flanking", "Flanqueo"], ["Attacca in mischia un nemico che ha un tuo alleato sul lato opposto: hai vantaggio. I lupi cacciano in branco e fanno lo stesso con te.", "Melee an enemy with one of your allies on the opposite side: you get advantage. Wolves hunt in packs and do the same to you.", "Ataca cuerpo a cuerpo a un enemigo con un aliado tuyo en el lado opuesto: tienes ventaja. Los lobos cazan en manada y te lo hacen a ti."]],
+  ["end", ["Attacchi d'opportunità", "Opportunity attacks", "Ataques de oportunidad"], ["Allontanarsi da un nemico adiacente gli concede un attacco gratuito. Usa Disimpegno per sganciarti. Le caselle con il punto arancione sono a rischio.", "Moving away from an adjacent enemy gives it a free attack. Use Disengage to break away. Tiles with an orange dot are risky.", "Alejarte de un enemigo adyacente le da un ataque gratis. Usa Retirada para separarte. Las casillas con punto naranja son peligrosas."]],
+  ["eye", ["Guardia", "Overwatch", "Vigilancia"], ["Termina il turno pronto a colpire: il primo nemico che si muove entro la tua portata subisce un attacco. Gli arcieri nemici fanno lo stesso: occhio al simbolo ◉.", "End your turn ready to strike: the first enemy that moves within your reach takes an attack. Enemy archers do it too: watch for the ◉ symbol.", "Termina el turno listo para golpear: el primer enemigo que se mueva a tu alcance recibe un ataque. Los arqueros enemigos también: atento al símbolo ◉."]],
+  ["hand", ["Atterrare", "Knock down", "Derribar"], ["Al posto di un attacco butti a terra un nemico adiacente: gli attacchi in mischia contro di lui hanno vantaggio e rialzarsi gli costa metà movimento.", "Instead of an attack, knock an adjacent enemy prone: melee attacks against it have advantage and standing up costs half its movement.", "En lugar de un ataque, derriba a un enemigo adyacente: los ataques cuerpo a cuerpo contra él tienen ventaja y levantarse le cuesta la mitad del movimiento."]],
+  ["star", ["Sfide e bottino", "Challenges and loot", "Desafíos y botín"], ["Vinci senza caduti o in pochi round per avere ricompense extra. I nemici più forti custodiscono oggetti magici unici.", "Win with nobody down or within a few rounds for extra rewards. The strongest foes carry unique magic items.", "Gana sin caídos o en pocas rondas para obtener recompensas extra. Los enemigos más fuertes guardan objetos mágicos únicos."]],
+];
+function showTips(force) {
+  if (!force && PREF.tipsSeen) return; PREF.tipsSeen = 1; store(PREF_KEY, PREF);
+  const m = modal(`<h2>${tr(["Tattica", "Tactics", "Táctica"])}</h2><p style="color:var(--muted);font-size:14px">${tr(["Prima di ogni scontro puoi schierare il gruppo: tocca un personaggio e poi una casella dorata.", "Before each fight you can deploy the party: tap a character, then a golden tile.", "Antes de cada combate puedes desplegar al grupo: toca un personaje y luego una casilla dorada."])}</p>
+    <div class="tips">${TIPS.map(([ic, n, d]) => `<div class="tip">${medHTML(ic, "sm")}<div><b>${tr(n)}</b><p>${tr(d)}</p></div></div>`).join("")}</div>
+    <button class="btn primary" id="tipX" style="margin-top:12px">${T_("goOn")}</button>`, {center: 1});
+  m.querySelector("#tipX").onclick = closeModal;
+}
+function showTipsOnce() { if (!PREF.tipsSeen) setTimeout(() => showTips(), 350); }
+
+/* ---------- deployment ---------- */
+const depZone = (x, y) => y >= ROWS - 2 && !CB.ob.has(K(x, y));
+function deployTap(x, y) {
+  const t = unitAt(x, y), sel = CB.depSel;
+  if (t && t.side === "p") { if (sel && sel !== t) { const sx = sel.x, sy = sel.y; sel.x = t.x; sel.y = t.y; t.x = sx; t.y = sy; CB.depSel = null; } else CB.depSel = sel === t ? null : t; SFX.ui(); }
+  else if (sel && !t && depZone(x, y)) { sel.x = x; sel.y = y; CB.depSel = null; SFX.step(); }
+  renderCombat();
+}
+const _onCellT = onCell;
+onCell = async function (x, y) { if (CB && CB.deploy) return deployTap(x, y); return _onCellT(x, y); };
+
+/* ---------- risk of moving to a tile ---------- */
+function tileRisk(u, R, k) {
+  const path = pathTo(R, k);
+  for (let i = 1; i < path.length; i++) { const [fx, fy] = path[i - 1].split(",").map(Number), [tx, ty] = path[i].split(",").map(Number);
+    if (provokers(u, {x: fx, y: fy}, {x: tx, y: ty}).length) return "oa";
+    for (const o of CB.units) if (o.side !== u.side && o.cond.ow && canReact(o)) { const p = owProfile(o); if (p && Math.max(Math.abs(o.x - tx), Math.abs(o.y - ty)) <= p.r) return "ow"; } }
+  return null;
+}
+
+/* ---------- status markers ---------- */
+const _placeTokensT = placeTokens;
+placeTokens = function () {
+  _placeTokensT(); if (!CB) return;
+  CB.units.forEach(u => { const st = $("#t_" + u.uid + " .st"); if (!st) return; let h = "";
+    if (u.cond.ow) h += `<i class="c-o">◉</i>`; if (u.cond.prone) h += `<i class="c-x">▽</i>`; if (u.cond.power) h += `<i class="c-b">✸</i>`; if (u.cond.dis) h += `<i>»</i>`;
+    if (h) st.insertAdjacentHTML("beforeend", h);
+    const tk = $("#t_" + u.uid); if (tk) tk.classList.toggle("depsel", !!CB.deploy && CB.depSel === u); });
+};
+
+/* ---------- render additions ---------- */
+const _renderCombatT = renderCombat;
+renderCombat = function () {
+  _renderCombatT(); if (!CB || !$("#board")) return;
+  if (!$("#helpB")) { $("#ini").insertAdjacentHTML("afterbegin", `<button class="iconbtn helpb" id="helpB" aria-label="?">${icon("help")}</button>`); $("#helpB").onclick = () => showTips(true); }
+  if (CB.deploy) return renderDeploy();
+  const u = cur(), mine = u && u.side === "p" && !CB.busy && !CB.ended;
+  let risky = false;
+  if (mine && u.mv > 0) { const R = reachOf(u, u.mv);
+    document.querySelectorAll("#board .cell.reach").forEach(cel => { const k = K(+cel.dataset.x, +cel.dataset.y); if (!R.has(k)) return; const r = tileRisk(u, R, k); if (r) { cel.classList.add("risk"); risky = true; } }); }
+  if (mine && CB.sel) { const sp = selSpec(u);
+    if (sp.tgt === "enemy") CB.units.forEach(o => { const tk = $("#t_" + o.uid); if (!tk || !tk.classList.contains("tg")) return; const ai = advInfo(u, o, {ranged: sp.r > 1}); const ch = tk.querySelector(".chance");
+      if (ai.adv && !ai.dis) ch.insertAdjacentHTML("afterbegin", `<i class="adv">▲</i>`); else if (ai.dis && !ai.adv) ch.insertAdjacentHTML("afterbegin", `<i class="dis">▼</i>`); }); }
+  const info = $("#info");
+  if (CB.inspect && CB.inspect.side === "e") { const e = CB.inspect, d = e.def, cd = e.cond;
+    const atk = [...d.atk, ...(d.spells || [])].map(a => `${tr(a.n)} ${a.b != null ? sgn(a.b) + " · " : tr(["TS ","save ","salv. "]) + abS(a.save) + " " + a.dc + " · "}${a.d}${a.r > 1 ? " · " + a.r + "▸" : ""}`).join(" | ");
+    const tags = []; if (d.vuln) tags.push(`<span class="vu">${tr(["vulnerabile","vulnerable","vulnerable"])}: ${d.vuln}</span>`); if (d.res) tags.push(`<span class="re">${tr(["resiste","resists","resiste"])}: ${d.res}</span>`); if (d.undead) tags.push(tr(["non morto","undead","muerto viviente"])); if (cd.ow) tags.push(tr(["in guardia","on overwatch","vigilando"])); if (cd.prone) tags.push(tr(["a terra","prone","derribado"]));
+    if (mine) { const cv = coverOf(u, e); if (cv) tags.push(`${tr(COVER_T)} +${cv}`); }
+    info.innerHTML = `<b>${esc(e.name)}</b><span class="cost-t a">${T_("ac")} ${e.ac}</span><p>${esc(atk)}</p><p class="hint">${tags.join(" · ")}</p>`; }
+  else if (mine && risky) { const h = info.querySelector("p.hint"); if (h) h.insertAdjacentHTML("beforeend", ` · <span class="rk">● ${tr(["rischio di attacchi","risk of attacks","riesgo de ataques"])}</span>`); }
+};
+function renderDeploy() {
+  document.querySelectorAll("#board .cell").forEach(cel => { const x = +cel.dataset.x, y = +cel.dataset.y, t = unitAt(x, y); cel.className = "cell" + (depZone(x, y) && !(t && t.side === "e") ? " dep" : ""); });
+  placeTokens();
+  $("#info").innerHTML = `<b>${tr(["Schieramento","Deployment","Despliegue"])}</b><span class="cost-t a">${CB.nFoes} ${tr(["nemici","enemies","enemigos"])}</span><p>${tr(["Tocca un personaggio, poi una casella dorata.","Tap a character, then a golden tile.","Toca un personaje y luego una casilla dorada."])}</p><p class="hint">${tr(["sfida: vinci entro","challenge: win within","desafío: gana en"])} ${3 + Math.ceil(CB.nFoes / 2)} ${tr(["round","rounds","rondas"])}</p>`;
+  const s = CB.depSel;
+  $("#cbp").innerHTML = s ? `<div class="por p">${icon(uIcon(s))}</div><div class="who2"><div class="nm"><b>${esc(s.name)}</b><small>${tr(CL(s.ref).n)}</small></div><div class="hpbar"><i style="width:${s.hp / s.maxhp * 100}%"></i><span>${s.hp} / ${s.maxhp}</span></div></div>` : `<div class="who2"><p class="hint" style="margin:0;color:var(--muted);font-family:var(--f-ui);font-size:13px">${tr(["Nessun personaggio selezionato","No character selected","Ningún personaje seleccionado"])}</p></div>`;
+  $("#hot").innerHTML = `<button class="startb" id="startB">${icon("swords")}<span>${tr(["Inizia la battaglia","Begin the battle","Comenzar la batalla"])}</span></button>`;
+  $("#startB").onclick = () => { SFX.turn("p"); startBattle(); };
+  $("#aEnd").disabled = true;
+}
 /* =================== BOOT =================== */
 let resizeT = null;
 window.addEventListener("resize", () => { clearTimeout(resizeT); resizeT = setTimeout(() => {
