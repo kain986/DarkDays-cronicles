@@ -141,4 +141,4 @@ Regole:
 - apre i link esterni nel browser (per esempio il download degli aggiornamenti);
 - espone `DDCAndroid.setOrientation("land" | "port" | "auto")` e `DDCAndroid.appVersion()`.
 
-Per rilasciare: aumenta `versionCode`/`versionName`, aggiorna `CHANGELOG.md`, poi `git tag vX.Y && git push origin vX.Y`.
+Per rilasciare: aumenta `versionCode`/`versionName`, aggiungi la sezione in `CHANGELOG.md` e fai il push su `main`. La CI crea la release `vX.Y` con l'APK, se non esiste già.

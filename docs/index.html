@@ -4405,7 +4405,7 @@ renderTitle = function () {
 };
 
 /* ---------- update check (Android app only; reads the latest GitHub release) ---------- */
-const UPD = {repo: "kain986/darkdays-cronicles", api: "https://api.github.com/repos/kain986/darkdays-cronicles/releases/latest", page: "https://github.com/kain986/darkdays-cronicles/releases/latest"};
+const UPD = {repo: "kain986/DarkDays-cronicles", api: "https://api.github.com/repos/kain986/DarkDays-cronicles/releases/latest", page: "https://github.com/kain986/DarkDays-cronicles/releases/latest"};
 function verNewer(a, b) { const pa = String(a).replace(/^v/i, "").split(/[.-]/).map(n => parseInt(n, 10) || 0), pb = String(b).replace(/^v/i, "").split(/[.-]/).map(n => parseInt(n, 10) || 0);
   for (let i = 0; i < Math.max(pa.length, pb.length); i++) { const x = pa[i] || 0, y = pb[i] || 0; if (x !== y) return x > y; } return false; }
 async function fetchLatest() {

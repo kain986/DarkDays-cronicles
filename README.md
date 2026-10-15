@@ -13,9 +13,9 @@ Quaranta giorni senza alba. Sopra la valle di Valtenebra pende un disco nero orl
 ## Scarica e gioca
 
 - **Android (APK):** scarica l'ultima versione da
-  [Releases → DarkDaysChronicles.apk](https://github.com/kain986/darkdays-cronicles/releases/latest/download/DarkDaysChronicles.apk).
+  [Releases → DarkDaysChronicles.apk](https://github.com/kain986/DarkDays-cronicles/releases/latest/download/DarkDaysChronicles.apk).
   Aprilo sul telefono e consenti l'installazione da questa fonte. Serve Android 8.0 o superiore.
-- **Nel browser:** [kain986.github.io/darkdays-cronicles](https://kain986.github.io/darkdays-cronicles/)
+- **Nel browser:** [kain986.github.io/DarkDays-cronicles](https://kain986.github.io/DarkDays-cronicles/)
   (va attivato una volta da *Settings → Pages → Branch `main`, cartella `/docs`*).
 
 Il gioco funziona offline. Nell'app controlla da solo se è uscita una versione nuova (al massimo ogni 6 ore) e propone di scaricarla; dal titolo c'è anche il pulsante **Controlla aggiornamenti**.
@@ -102,14 +102,10 @@ Il workflow [`.github/workflows/build-apk.yml`](.github/workflows/build-apk.yml)
 Per pubblicare una versione:
 
 1. aggiorna `versionCode` e `versionName` in `app/build.gradle.kts`;
-2. aggiungi una voce in [CHANGELOG.md](CHANGELOG.md);
-3. crea un tag:
+2. aggiungi la sezione `## X.Y — data` in [CHANGELOG.md](CHANGELOG.md);
+3. fai il push su `main`.
 
-```bash
-git tag v2.2 && git push origin v2.2
-```
-
-Il workflow crea la *Release* con l'APK allegato. Il gioco installato la vede tramite l'API di GitHub e la propone ai giocatori.
+Se la release `vX.Y` non esiste ancora, il workflow la crea con l'APK allegato e usa la sezione del CHANGELOG come note di rilascio. In alternativa puoi pubblicare un tag `vX.Y`. Il gioco installato vede la nuova release tramite l'API di GitHub e la propone ai giocatori.
 
 ### Firma
 
