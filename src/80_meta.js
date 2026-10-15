@@ -201,7 +201,7 @@ function openChapters() {
 const _renderTitleC = renderTitle;
 renderTitle = function () {
   _renderTitleC();
-  const row = $("#title .trow"); if (row && !$("#tChap")) { row.insertAdjacentHTML("afterend", `<button class="btn small" id="tChap">${tr(["Capitoli", "Chapters", "Capítulos"])}</button>`); $("#tChap").onclick = openChapters; }
+  const row = $("#title .trow"); if (row && !$("#tChap")) { row.insertAdjacentHTML(isLand() ? "beforeend" : "afterend", `<button class="btn small" id="tChap">${tr(["Capitoli", "Chapters", "Capítulos"])}</button>`); $("#tChap").onclick = openChapters; }
   const cont = $("#tCont"), sv = load(SAVE_KEY); if (cont && sv) { const c = chapterOf(sv); cont.querySelector("small") ? cont.querySelector("small").textContent = `${T_("cont")} · ${tr(c.num)}` : null; }
 };
 const _slotLineC = slotLine;

@@ -567,6 +567,21 @@ a.btn{text-decoration:none}
 .land .banner{top:40%}
 .land .startb{min-width:0}
 @media (max-height:420px){.land #combat #info{max-height:52px}.land #combat #info p:not(.hint){display:none}.land .cbp{height:52px}.land .slot{height:58px;width:54px}.land .endbtn{height:58px}}
+@media (max-height:480px){
+  .land .title-inner{gap:7px;padding:10px 18px calc(10px + env(safe-area-inset-bottom,0px));justify-content:center}
+  .land .title-inner .orn,.land .title-inner .tag,.land .title-inner .foot{display:none}
+  .land .logo .lg1{font-size:clamp(28px,5vw,40px)}
+  .land .logo .lg2{font-size:15px;margin-top:7px}
+  .land .tgrid>div{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:10px}
+  .land .tgrid .lbl{margin:0;min-width:74px;font-size:10px}
+  .land .title-inner .seg button{padding:5px 4px;font-size:14px}
+  .land .title-inner .btn{padding:7px 12px;font-size:16px}
+  .land .title-inner .btn.big{padding:7px 14px;font-size:18px}
+  .land .title-inner .btn.big small{font-size:10px}
+  .land .trow{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .land .trow .btn{font-size:14px;padding:7px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .land .updb{padding:6px 10px}
+}
 /* ---------- chapters ---------- */
 .chap{padding:12px 14px;margin-bottom:8px;border-radius:10px;background:linear-gradient(#221b28,#18131c);box-shadow:inset 0 0 0 1px #3a3044}
 .chap.done{box-shadow:inset 0 0 0 1px #caa650}
@@ -630,7 +645,7 @@ a.btn{text-decoration:none}
 /* ===== 10_data.js ===== */
 "use strict";
 /* =================== LANGUAGE =================== */
-var GAME_VERSION = "2.2"; // replaced by tools/build.mjs
+var GAME_VERSION = "2.2.1"; // replaced by tools/build.mjs
 var IS_APP = false;      // true only in the Android build (enables the update check)
 let LG = 0; // 0 it, 1 en, 2 es
 const LANG_CODES = ["it","en","es"];
@@ -4304,7 +4319,7 @@ function renderDeploy() {
 // stands on the left and the enemy on the right, with the action panel on the side.
 const LANDQ = typeof matchMedia !== "undefined" ? matchMedia("(orientation: landscape) and (max-height: 620px)") : null;
 const isLand = () => !!(LANDQ && LANDQ.matches);
-BG.title_land = {sky: ["#060509", "#2b1f30"], sun: [.27, .3, .22], L: ["peaks", "fort", "fog"]};
+BG.title_land = {sky: ["#060509", "#2b1f30"], sun: [.24, .34, .13], L: ["peaks", "hills", "fog"]};
 function applyLand() { const a = typeof document !== "undefined" && $("#app"); if (a) a.classList.toggle("land", isLand()); }
 function onLandChange() {
   applyLand();
@@ -4327,7 +4342,10 @@ floatAt = function (u, txt, col, big) {
 const _fxInitL = fxInit;
 fxInit = function () { _fxInitL(); if (isLand()) FX.amb = null; };
 const _renderTitleL = renderTitle;
-renderTitle = function () { _renderTitleL(); applyLand(); if (isLand()) ambient($("#tcv"), "title_land"); };
+renderTitle = function () {
+  _renderTitleL(); applyLand();
+  if (isLand()) ambient($("#tcv"), "title_land");
+};
 // Android: orientation preference (the app starts in landscape)
 function setOrientation(m) { PREF.orient = m; store(PREF_KEY, PREF); try { if (window.DDCAndroid && window.DDCAndroid.setOrientation) window.DDCAndroid.setOrientation(m); } catch (e) {} }
 try { if (typeof window !== "undefined" && window.DDCAndroid && window.DDCAndroid.setOrientation) window.DDCAndroid.setOrientation(PREF.orient || "land"); } catch (e) {}
@@ -4926,7 +4944,7 @@ function openChapters() {
 const _renderTitleC = renderTitle;
 renderTitle = function () {
   _renderTitleC();
-  const row = $("#title .trow"); if (row && !$("#tChap")) { row.insertAdjacentHTML("afterend", `<button class="btn small" id="tChap">${tr(["Capitoli", "Chapters", "Capítulos"])}</button>`); $("#tChap").onclick = openChapters; }
+  const row = $("#title .trow"); if (row && !$("#tChap")) { row.insertAdjacentHTML(isLand() ? "beforeend" : "afterend", `<button class="btn small" id="tChap">${tr(["Capitoli", "Chapters", "Capítulos"])}</button>`); $("#tChap").onclick = openChapters; }
   const cont = $("#tCont"), sv = load(SAVE_KEY); if (cont && sv) { const c = chapterOf(sv); cont.querySelector("small") ? cont.querySelector("small").textContent = `${T_("cont")} · ${tr(c.num)}` : null; }
 };
 const _slotLineC = slotLine;

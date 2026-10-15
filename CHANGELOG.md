@@ -1,5 +1,8 @@
 # Cronologia delle versioni
 
+## 2.2.1 — 2026-10-15
+- Schermata iniziale in orizzontale rifatta per i telefoni: entra tutta nello schermo senza scorrere, il Sole Nero ha la giusta misura, Carica / Imprese / Capitoli stanno su una riga.
+
 ## 2.2 — 2026-10-15
 
 **Terreni con effetti**
