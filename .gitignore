@@ -4,3 +4,7 @@ app/build/
 local.properties
 .idea/
 *.iml
+dist/
+node_modules/
+*.args
+DarkDaysChronicles.apk

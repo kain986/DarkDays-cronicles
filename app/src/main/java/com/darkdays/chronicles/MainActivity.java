@@ -1,6 +1,11 @@
 package com.darkdays.chronicles;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.net.Uri;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceRequest;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -25,7 +30,20 @@ public class MainActivity extends Activity {
         s.setDomStorageEnabled(true);          // salvataggi della partita (localStorage)
         s.setTextZoom(100);                    // ignora lo zoom testo di sistema, il layout resta stabile
         s.setMediaPlaybackRequiresUserGesture(false);
-        web.setWebViewClient(new WebViewClient());
+        web.setWebViewClient(new WebViewClient() {
+            // Links to the web (e.g. downloading an update) open in the phone's browser, not inside the game.
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                Uri uri = request.getUrl();
+                String scheme = uri.getScheme();
+                if ("http".equals(scheme) || "https".equals(scheme)) {
+                    try { startActivity(new Intent(Intent.ACTION_VIEW, uri)); } catch (Exception ignored) { }
+                    return true;
+                }
+                return false;
+            }
+        });
+        web.addJavascriptInterface(new Bridge(), "DDCAndroid");
         setContentView(web);
 
         if (savedInstanceState != null) {
@@ -34,6 +52,24 @@ public class MainActivity extends Activity {
             web.loadUrl("file:///android_asset/index.html");
         }
         hideSystemBars();
+    }
+
+    /** Called from the game (window.DDCAndroid) to change the screen orientation. */
+    private class Bridge {
+        @JavascriptInterface
+        public void setOrientation(final String mode) {
+            runOnUiThread(() -> {
+                int o = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
+                if ("port".equals(mode)) o = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
+                else if ("auto".equals(mode)) o = ActivityInfo.SCREEN_ORIENTATION_FULL_USER;
+                setRequestedOrientation(o);
+            });
+        }
+
+        @JavascriptInterface
+        public String appVersion() {
+            try { return getPackageManager().getPackageInfo(getPackageName(), 0).versionName; } catch (Exception e) { return ""; }
+        }
     }
 
     @SuppressWarnings("deprecation")

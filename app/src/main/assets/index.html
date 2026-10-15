@@ -1,5 +1,12 @@
-<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="description" content="Dark Days Chronicles — turn-based tactical RPG inspired by D&D 5th edition, in Italian, English and Spanish.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
 <title>Dark Days Chronicles</title>
 <meta name="theme-color" content="#121016">
 <meta name="mobile-web-app-capable" content="yes">
@@ -485,6 +492,92 @@ svg.ic{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;str
 .loot .li.rare{box-shadow:inset 0 0 0 1px #caa650,0 0 14px rgba(240,200,120,.25);color:#f3e2b4}
 .taglist .ft{box-shadow:inset 0 0 0 1px #caa650;color:#f3e2b4}
 .taglist .tk{box-shadow:inset 0 0 0 1px #8fb0f0;color:#cfe0ff}
+/* ---------- meta: saves, bestiary, achievements, options ---------- */
+.pagebody{font-size:calc(17px * var(--txt, 1))}
+.choice{font-size:calc(16px * var(--txt, 1))}
+.codebox{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:#120e16;color:var(--bone);font:12px/1.4 ui-monospace,Menlo,Consolas,monospace;resize:vertical;word-break:break-all}
+.who button svg{width:16px;height:16px;vertical-align:-3px}
+.btn.small svg{width:16px;height:16px;vertical-align:-3px}
+.trow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bestiary{display:grid;gap:8px}
+.beast{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:center;padding:6px 8px;border-radius:10px;background:linear-gradient(#211a27,#18131c);box-shadow:inset 0 0 0 1px #3a3044}
+.beast .bimg{width:64px;height:80px;object-fit:contain;max-width:none;background:radial-gradient(ellipse at 50% 80%,#e6d3a8 0,#c9a868 55%,transparent 75%);border-radius:8px}
+.beast.unk{grid-template-columns:40px 1fr;padding:4px 8px}
+.beast.unk .bimg{width:40px;height:40px;font-size:20px!important;display:grid;place-items:center;font-family:var(--f-display);font-size:28px;color:var(--muted);background:#120e16}
+.beast .bt{min-width:0;display:grid;gap:1px}
+.beast .bt b{font-family:var(--f-display);font-weight:400;font-size:17px;color:#f3e2b4}
+.beast .bt small{font-family:var(--f-ui);font-size:12px;color:var(--muted);line-height:1.3}
+.beast .bt .vu{color:#9be0a6}.beast .bt .re{color:#ff9aa9}
+.beast .bt .kills{color:var(--brass)}
+.achs{display:grid;gap:8px}
+.ach{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:center;opacity:.45;filter:grayscale(.8)}
+.ach.got{opacity:1;filter:none}
+.ach b{font-family:var(--f-display);font-weight:400;font-size:17px;color:#f3e2b4;display:block}
+.ach small{font-family:var(--f-ui);font-size:12px;color:var(--muted)}
+#app.lowfx .tok.cur .in::before,#app.lowfx .tok.boss .aura,#app.lowfx .cell.tgt::before{animation:none}
+/* ---------- update banner ---------- */
+.updb{display:flex;align-items:center;gap:10px;text-align:left;padding:10px 12px;border-radius:10px;background:linear-gradient(#24314a,#161d2c);box-shadow:inset 0 0 0 1px #8fb0f0,0 0 18px rgba(140,180,255,.25);color:#e2ecff;animation:fadeIn .4s}
+.updb svg{width:24px;height:24px;flex:none;color:#ffe08a}
+.updb b{display:block;font-family:var(--f-ui);font-size:14px}
+.updb small{font-family:var(--f-ui);font-size:12px;color:#a9c4ff}
+.relnotes{max-height:40vh;overflow-y:auto;padding:10px 12px;margin:8px 0 12px;border-radius:8px;background:#120e16;box-shadow:inset 0 0 0 1px var(--line);font-family:var(--f-ui);font-size:13px;line-height:1.45}
+a.btn{text-decoration:none}
+/* ---------- landscape (phones held sideways) ---------- */
+#app.land{max-width:none}
+.land .modal{align-items:center;padding:10px}
+.land .sheet{max-width:640px;border:1px solid var(--brass-dim);border-radius:14px;max-height:94%}
+/* title: illustration on the left, menu panel on the right */
+.land .title-inner{position:absolute;top:0;right:0;bottom:0;width:min(460px,54%);margin:0;overflow-y:auto;padding:14px 20px calc(14px + env(safe-area-inset-bottom,0px));gap:9px;background:linear-gradient(90deg,rgba(6,5,9,0),rgba(6,5,9,.9) 16%,#060509 34%)}
+.land .logo .lg1{font-size:clamp(34px,6.5vw,52px)}
+.land .tgrid{grid-template-columns:1fr;gap:6px}
+.land .title-inner .seg button{padding:6px 4px}
+.land .title-inner .btn.big{padding:9px 14px;font-size:20px}
+.land .tag{font-size:16px}
+.land .sndbtn{right:auto;left:16px}
+/* creation: wider cards in two columns */
+.land #create .scroll{padding-inline:max(16px,calc((100% - 820px) / 2))}
+.land #create .opts{grid-template-columns:1fr 1fr}
+.land #create .top,.land #create .navbar{padding-inline:max(16px,calc((100% - 820px) / 2))}
+.land #create .top{display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:center;padding-block:6px}
+.land #create .top .hero{grid-row:1/4;margin:0}
+.land #create .hero .med.big{width:42px;height:42px;padding:10px}
+.land #create .hero b{font-size:20px}
+.land #create .steps{margin-top:4px}
+.land #create .navbar{padding-block:6px}
+/* story: picture left, text right, like an open book */
+.land .story-scroll{display:grid;grid-template-columns:minmax(0,42%) minmax(0,1fr);align-items:start}
+.land .story-scroll .art{position:sticky;top:0}
+.land .story-scroll .art canvas{height:calc(100dvh - 58px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+.land .story-scroll .art::after{top:0;bottom:0;left:auto;right:0;width:34%;height:auto;background:linear-gradient(90deg,rgba(18,16,22,0),var(--ink))}
+.land .pagebody{padding:14px 22px 28px 10px;max-width:72ch}
+.land .hud{padding-inline:16px}
+/* combat: map left (turned 90°), panel right */
+.land #combat{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,36%);grid-template-rows:auto auto auto minmax(0,1fr) auto}
+.land #combat #bw{grid-column:1;grid-row:1/-1;padding:24px 10px 6px}
+.land #combat #ini{grid-column:2;grid-row:1}
+.land #combat #cbp{grid-column:2;grid-row:2}
+.land #combat #info{grid-column:2;grid-row:3;height:auto;max-height:76px}
+.land #combat .hotrow{grid-column:2;grid-row:4;min-height:0;align-items:flex-start}
+.land #combat #cblog{grid-column:2;grid-row:5}
+.land .hot{flex-wrap:wrap;align-content:flex-start;overflow-y:auto;max-height:100%;scroll-snap-type:none}
+.land .hot .sep{display:none}
+.land .endbtn{height:70px;flex:none}
+.land #board{position:absolute;left:50%;top:calc(50% + 9px);translate:-50% -50%;rotate:90deg}
+.land .tok .in{rotate:-90deg}
+.land .banner{top:40%}
+.land .startb{min-width:0}
+@media (max-height:420px){.land #combat #info{max-height:52px}.land #combat #info p:not(.hint){display:none}.land .cbp{height:52px}.land .slot{height:58px;width:54px}.land .endbtn{height:58px}}
+/* ---------- chapters ---------- */
+.chap{padding:12px 14px;margin-bottom:8px;border-radius:10px;background:linear-gradient(#221b28,#18131c);box-shadow:inset 0 0 0 1px #3a3044}
+.chap.done{box-shadow:inset 0 0 0 1px #caa650}
+.chap.next{opacity:.7;border:1px dashed #5a4b66;box-shadow:none;background:transparent}
+.chap .cnum{font-family:var(--f-ui);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brass)}
+.chap b{display:block;font-family:var(--f-display);font-weight:400;font-size:22px;color:#f3e2b4}
+.chap p{margin:4px 0 6px!important;font-size:14px;color:var(--muted)}
+.chap small{display:block;font-family:var(--f-ui);font-size:12px;color:#9be0a6;margin-bottom:6px}
+.jch{display:flex;flex-direction:column;margin:0 0 6px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.jch span{font-family:var(--f-ui);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brass)}
+.jch b{font-family:var(--f-display);font-weight:400;font-size:20px;color:#f3e2b4}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 
@@ -494,9 +587,13 @@ svg.ic{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;str
   <section id="story" class="screen" hidden></section>
   <section id="combat" class="screen" hidden></section>
 </div>
+
 <script>
+/* ===== 10_data.js ===== */
 "use strict";
 /* =================== LANGUAGE =================== */
+var GAME_VERSION = "2.1"; // replaced by tools/build.mjs
+var IS_APP = true;      // true only in the Android build (enables the update check)
 let LG = 0; // 0 it, 1 en, 2 es
 const LANG_CODES = ["it","en","es"];
 const tr = a => a == null ? "" : (Array.isArray(a) ? (a[LG] != null ? a[LG] : a[0]) : String(a));
@@ -671,8 +768,9 @@ const CLASSES = {
 };
 const FULL = {1:[2,0,0,0],2:[3,0,0,0],3:[4,2,0,0],4:[4,3,0,0],5:[4,3,2,0],6:[4,3,3,0],7:[4,3,3,1]};
 const HALF = {1:[0,0,0,0],2:[2,0,0,0],3:[3,0,0,0],4:[3,0,0,0],5:[4,2,0,0],6:[4,2,0,0],7:[4,3,0,0]};
-const XPT = [0,0,300,900,2000,4000,7000,11000];
-const MAXLV = 7;
+// XP needed for each level. Chapter I caps at level 7; later chapters raise MAXLV via maxLevel.
+const XPT = [0,0,300,900,2000,4000,7000,11000,15000,20000,26000,33000,41000];
+let MAXLV = 7;
 
 /* feature names */
 const FEATS = {
@@ -885,8 +983,52 @@ const ENC = {
   vault_boss_hard:{map:"mirror", foes:["obsidian","shade","shade","shadow","shadow"], gold:80},
   avatar_weak:{map:"throne", foes:["avatarw"]},
 };
-/* =================== STORY =================== */
+
+/* ===== 15_chapters.js ===== */
+/* =================== CHAPTERS =================== */
+// The story is split into chapters. Each chapter lives in src/chapters/<id>_<name>/ and registers
+// itself with defineChapter(). Party, items, level and story flags carry over from one chapter to
+// the next, so a later chapter can react to earlier choices (e.g. has("doran_ally")).
+const SC = {};
 const cat = (...parts) => { const p = parts.filter(Boolean); return [0,1,2].map(i => p.map(x => x[i]).join("\n\n")); };
+const CHAPTERS = [];
+function defineChapter(c) { if (CHAPTERS.some(x => x.id === c.id)) throw new Error("duplicate chapter " + c.id); CHAPTERS.push(c); return c; }
+const chapterById = id => CHAPTERS.find(c => c.id === id) || CHAPTERS[0];
+const chapterOf = s => chapterById((s && s.chapter) || "ch1");
+function nextChapter(id) { const i = CHAPTERS.findIndex(c => c.id === id); return i >= 0 ? CHAPTERS[i + 1] || null : null; }
+const chapterName = c => `${tr(c.num)} — ${tr(c.title)}`;
+// Shown when a chapter is finished and the next one has not been released yet.
+SC.ch_wait = {bg:"dawn", loc:["Fine del capitolo","End of chapter","Fin del capítulo"],
+  t:()=>{ const c = chapterOf(S); return cat(
+    ["Il tuo viaggio non finisce qui.","Your journey doesn't end here.","Tu viaje no termina aquí."],
+    [`Hai completato ${tr(c.num)} — ${tr(c.title)}. La partita è conservata con il gruppo, gli oggetti e tutte le scelte che hai fatto: quando un aggiornamento porterà il capitolo successivo, potrai riprenderla da qui.`,
+     `You have completed ${tr(c.num)} — ${tr(c.title)}. Your game is kept with your party, items and every choice you made: when an update brings the next chapter, you can resume from here.`,
+     `Has completado ${tr(c.num)} — ${tr(c.title)}. La partida se conserva con tu grupo, los objetos y todas tus decisiones: cuando una actualización traiga el siguiente capítulo, podrás continuar desde aquí.`]); },
+  ch:[{t:["Torna al titolo","Back to title","Volver al título"], toTitle:1}]};
+
+/* ===== chapters/ch1_il_sole_nero/00_chapter.js ===== */
+/* =================== CHAPTER I — THE BLACK SUN =================== */
+// Registry entry for this chapter. A future chapter adds its own folder under src/chapters/
+// with the same structure: 00_chapter.js (defineChapter + start scene) and the act files.
+defineChapter({
+  id: "ch1",
+  num: ["Capitolo I", "Chapter I", "Capítulo I"],
+  title: ["Il Sole Nero", "The Black Sun", "El Sol Negro"],
+  blurb: ["Quaranta giorni senza alba. Un marchio sulla tua mano, una madre che piange i suoi figli, una città che dimentica. Tre atti, dal villaggio di Ashford alla Corona di Cenere.",
+          "Forty days without a dawn. A mark on your hand, a mother mourning her children, a city that forgets. Three acts, from the village of Ashford to the Crown of Ash.",
+          "Cuarenta días sin amanecer. Una marca en tu mano, una madre que llora a sus hijos, una ciudad que olvida. Tres actos, de la aldea de Ashford a la Corona de Ceniza."],
+  start: "ch1_start",
+  maxLevel: 7,
+  endings: {end_dawn: ["L'Alba", "The Dawn", "El Alba"], end_twilight: ["Il Crepuscolo libero", "The Free Twilight", "El Crepúsculo libre"], end_dark: ["Il Re di Cenere", "The Ash King", "El Rey de Ceniza"]},
+});
+SC.ch1_start = {bg:"road", loc:["Valtenebra","Valtenebra","Valtenebra"],
+  t:["CAPITOLO I — IL SOLE NERO\n\nNelle cronache di Valtenebra quei giorni non hanno un nome. Chi li ha vissuti li chiama soltanto i giorni bui.",
+     "CHAPTER I — THE BLACK SUN\n\nIn the chronicles of Valtenebra those days have no name. Those who lived through them simply call them the dark days.",
+     "CAPÍTULO I — EL SOL NEGRO\n\nEn las crónicas de Valtenebra esos días no tienen nombre. Quienes los vivieron los llaman simplemente los días oscuros."],
+  ch:[{t:["Comincia","Begin","Comenzar"], go:"a1_intro"}]};
+
+/* ===== chapters/ch1_il_sole_nero/10_act1.js ===== */
+/* =================== CHAPTER I — ACT I: THE LANTERN AND THE WOOD =================== */
 const LOC = {
   road:["Strada di Valtenebra","Valtenebra road","Camino de Valtenebra"],
   ashford:["Ashford","Ashford","Ashford"],
@@ -914,7 +1056,6 @@ const LOC = {
   throne:["Sala del trono","Throne room","Salón del trono"],
 };
 const BACK_SQUARE = ["Tornare in piazza","Return to the square","Volver a la plaza"];
-const SC = {};
 
 /* -------------------- ACT I -------------------- */
 SC.a1_intro = {bg:"road", loc:LOC.road,
@@ -1324,7 +1465,9 @@ SC.a1_return = {bg:"village", loc:LOC.ashford, once(){ set("children_saved"); se
     {t:["«Partiremo all'alba.» «Quale alba?» chiede Kael.","“We leave at dawn.” “What dawn?” asks Kael.","«Partiremos al alba.» «¿Qué alba?» pregunta Kael."], req:()=>inP("kael"), go:"a2_title"},
     {t:["«Partiamo per Vesperia.»","“We leave for Vesperia.”","«Partimos hacia Vesperia.»"], req:()=>!inP("kael"), go:"a2_title"},
     {t:["Prima voglio sistemare alcune faccende ad Ashford","First I want to settle some business in Ashford","Antes quiero arreglar unos asuntos en Ashford"], go:"ashford"}]};
-/* -------------------- ACT II -------------------- */
+
+/* ===== chapters/ch1_il_sole_nero/20_act2.js ===== */
+/* =================== CHAPTER I — ACT II: VESPERIA, CITY OF CANDLES =================== */
 SC.a2_title = {bg:"road", loc:LOC.greyroad,
   t:["ATTO II — VESPERIA, LA CITTÀ DELLE CANDELE\n\nTre giorni di cammino nel buio lungo la Strada Grigia. Dormite a turno, le armi in mano. Il marchio sulla tua mano pulsa più forte a ogni miglio che vi avvicina a Vesperia.",
      "ACT II — VESPERIA, CITY OF CANDLES\n\nThree days' march in the dark along the Grey Road. You sleep in shifts, weapons in hand. The mark on your hand throbs harder with every mile that brings you closer to Vesperia.",
@@ -1677,7 +1820,9 @@ SC.v_door = {bg:"mirror", loc:LOC_V,
 SC.v_end = {bg:"mirror", loc:LOC_V, once(){ set("vault_done"); xp(250); },
   t:["Il gigante si frantuma in mille schegge nere che tintinnano sul pavimento come pioggia. Sulla rastrelliera, le Armi dei Custodi brillano di una luce che non vedevate da quaranta giorni: la luce del sole.\n\nNe prendete una, la più bella. Le altre restano dove sono, per chi verrà dopo di voi.","The giant shatters into a thousand black shards that tinkle on the floor like rain. On the rack, the Sunwardens' Weapons shine with a light you haven't seen in forty days: sunlight.\n\nYou take one, the finest. The others stay where they are, for whoever comes after you.","El gigante se hace añicos en mil esquirlas negras que tintinean en el suelo como lluvia. En el armero, las Armas de los Custodios brillan con una luz que no veíais desde hacía cuarenta días: la luz del sol.\n\nTomáis una, la más bella. Las demás se quedan donde están, para quien venga después."],
   ch:[{t:["Tornare a Vesperia","Return to Vesperia","Volver a Vesperia"], go:"vesperia"}]};
-/* -------------------- ACT III -------------------- */
+
+/* ===== chapters/ch1_il_sole_nero/30_act3.js ===== */
+/* =================== CHAPTER I — ACT III: THE CROWN OF ASH =================== */
 const beacons = () => has("children_saved") && has("oil_done");
 SC.a3_title = {bg:"mountain", loc:LOC.pass,
   t:()=>cat(["ATTO III — LA CORONA DI CENERE\n\nLa Corona di Cenere è un picco spento a nord di Vesperia, dove un tempo sorgeva il santuario più alto dei Custodi del Sole. Ora la neve è cenere grigia, e dal picco sale una colonna di buio così densa da sembrare solida.\n\nPrima di partire, contate i vostri alleati.","ACT III — THE CROWN OF ASH\n\nThe Crown of Ash is a dead peak north of Vesperia, where the Sunwardens' highest sanctuary once stood. Now the snow is grey ash, and from the summit rises a column of darkness so dense it looks solid.\n\nBefore leaving, you count your allies.","ACTO III — LA CORONA DE CENIZA\n\nLa Corona de Ceniza es un pico muerto al norte de Vesperia, donde antaño se alzaba el santuario más alto de los Custodios del Sol. Ahora la nieve es ceniza gris, y de la cima se alza una columna de oscuridad tan densa que parece sólida.\n\nAntes de partir, contáis a vuestros aliados."],
@@ -1821,6 +1966,8 @@ SC.end_dark = {bg:"dark", loc:LOC.throne, once(){ set("game_done"); set("end_dar
      "Dejas entrar la voz. El hambre de Morrhan te llena, y con el hambre llega el poder: ves cada alma del valle como una vela que podrías apagar de un soplo.\n\nEl Sol Negro no se rompe. Se inclina.\n\nBrenna se marcha sin mirar atrás. Los demás la siguen, uno a uno. Desde ese día el valle de Valtenebra tiene un nuevo señor, que se sienta en un trono de ceniza y nunca duerme. Dicen que en las noches más largas, que ahora son todas, se le oye hablar solo, con mil voces."],
     ["FINALE: IL RE DI CENERE","ENDING: THE ASH KING","FINAL: EL REY DE CENIZA"]),
   ch:[{t:["Torna al titolo","Back to title","Volver al título"], end:1}]};
+
+/* ===== 30_engine.js ===== */
 /* =================== UTIL =================== */
 const $ = (s, r = document) => r.querySelector(s);
 const rnd = n => 1 + Math.floor(Math.random() * n);
@@ -2139,8 +2286,9 @@ function renderCreate() {
 }
 function startGame() {
   const c = crChar();
-  S = {v: 1, lang: LG, diff: PREF.diff, scene: "a1_intro", flags: {}, seen: {}, gold: 10 + BGS[CR.bg].gold, xp: 0, level: 1, inv: {potion: 2}, party: [c], dark: 0};
-  goScene("a1_intro");
+  const ch = CHAPTERS[0];
+  S = {v: 2, lang: LG, diff: PREF.diff, chapter: ch.id, scene: ch.start, flags: {}, seen: {}, gold: 10 + BGS[CR.bg].gold, xp: 0, level: 1, inv: {potion: 2}, party: [c], dark: 0};
+  goScene(ch.start);
 }
 
 /* =================== SHEETS =================== */
@@ -2163,6 +2311,10 @@ function sheetHTML(c, creation) {
 function visibleChoices(sc) { return (sc.ch || []).filter(ch => !ch.req || ch.req()); }
 function goScene(id, noOnce) {
   if (typeof id === "function") id = id();
+  if (!S.chapter) S.chapter = "ch1";
+  // a finished chapter waits here; once an update adds the next chapter, continue straight into it
+  if (id === "ch_wait") { const nx = nextChapter(S.chapter); if (nx) { S.chapter = nx.id; id = nx.start; } }
+  MAXLV = chapterOf(S).maxLevel || MAXLV;
   const sc = SC[id]; if (!sc) { console.error("missing scene", id); return; }
   S.scene = id;
   if (!S.seen[id] && !noOnce) { S.seen[id] = 1; sc.once && sc.once(); }
@@ -2196,6 +2348,7 @@ function renderStory() {
 async function choose(i) {
   if (BUSY) return; const ch = visibleChoices(SC[S.scene])[i]; if (!ch) return;
   if (ch.end) { endGame(); return; }
+  if (ch.toTitle) { saveGame(true); renderTitle(); return; }
   if (ch.cost) { if (S.gold < ch.cost) { toast(T_("noGold")); return; } S.gold -= ch.cost; }
   if (ch.fx) ch.fx();
   if (ch.rest) { longRest(); toastQ(UI.rested); }
@@ -2220,7 +2373,21 @@ function doCheck(spec) {
     m.querySelector("#dgo").onclick = () => { closeModal(); res(ok); };
   });
 }
-function endGame() { toastQ(T_("credits")); renderTitle(); }
+function endGame() {
+  // end of a chapter: remember the ending, carry the party over and offer the next chapter
+  const ch = chapterOf(S), ending = S.scene, nx = nextChapter(ch.id);
+  S.chaptersDone = S.chaptersDone || {}; S.chaptersDone[ch.id] = ending;
+  longRest();
+  S.scene = "ch_wait"; if (nx) { S.chapter = nx.id; S.scene = nx.start; }
+  S.savedAt = Date.now(); store(SAVE_KEY, S); store("ddc-chapter-" + ch.id, S);
+  const endName = ch.endings && ch.endings[ending] ? tr(ch.endings[ending]) : "";
+  const m = modal(`<div class="endcard win"><div class="seal">${icon("sun")}</div><p class="lbl">${tr(ch.num)}</p><h2>${tr(["Capitolo completato","Chapter complete","Capítulo completado"])}</h2>
+    <p>${esc(tr(ch.title))}${endName ? ` · ${tr(["finale","ending","final"])}: <b>${esc(endName)}</b>` : ""}</p>
+    <p style="font-size:14px;color:var(--muted)">${nx ? tr(["Il tuo gruppo, gli oggetti e le tue scelte passano al capitolo successivo.","Your party, items and choices carry over to the next chapter.","Tu grupo, tus objetos y tus decisiones pasan al siguiente capítulo."]) : tr(["La partita è salvata. Quando un aggiornamento porterà il prossimo capitolo, potrai continuarla con gli stessi personaggi da «Continua» o da «Capitoli».","Your game is saved. When an update brings the next chapter, you can continue it with the same characters from “Continue” or “Chapters”.","La partida está guardada. Cuando una actualización traiga el próximo capítulo, podrás continuarla con los mismos personajes desde «Continuar» o «Capítulos»."])}</p>
+    <div style="display:grid;gap:8px">${nx ? `<button class="btn primary" id="chNext">${esc(chapterName(nx))}</button>` : ""}<button class="btn ${nx ? "small" : "primary"}" id="chTitle">${T_("toTitle")}</button></div></div>`, {center: 1, locked: 1});
+  const n = m.querySelector("#chNext"); if (n) n.onclick = () => { closeModal(); goScene(S.scene); };
+  m.querySelector("#chTitle").onclick = () => { closeModal(); toastQ(T_("credits")); renderTitle(); };
+}
 
 /* =================== MENU =================== */
 let menuMember = 0;
@@ -2232,7 +2399,7 @@ function openMenu(tab) {
     ${SCREEN === "story" ? `<h3>${tr(["Riposo breve","Short rest","Descanso corto"])} · ${2 - (S.shortRests || 0)}/2</h3><p style="font-size:14px;color:var(--muted);margin:0 0 8px">${tr(["Un'ora di sosta: ogni personaggio spende dadi vita per curarsi e recupera Recupero, Impeto d'azione e Incanalare divinità. Il mago recupera alcuni slot. Si ricarica con il riposo lungo.","An hour's rest: each character spends hit dice to heal and regains Second Wind, Action Surge and Channel Divinity. The wizard recovers some slots. Recharges on a long rest.","Una hora de descanso: cada personaje gasta dados de golpe para curarse y recupera Nuevas energías, Oleada de acción y Canalizar divinidad. El mago recupera algunos espacios. Se recarga con un descanso largo."])}</p><button class="btn small" id="shortR" ${(S.shortRests || 0) >= 2 ? "disabled" : ""}>${tr(["Riposa un'ora","Rest for an hour","Descansar una hora"])}</button>` : ""}`; }
   if (tab === "inv") body = invHTML();
   if (tab === "journal") body = journalHTML();
-  if (tab === "opts") body = `<h3>${T_("lang")}</h3>${langSeg()}<h3>${T_("diff")}</h3>${diffSeg(S.diff)}<h3>${tr(["Velocità combattimento","Combat speed","Velocidad de combate"])}</h3><div class="seg"><button data-fast="0" aria-pressed="${!PREF.fast}">${tr(["Normale","Normal","Normal"])}</button><button data-fast="1" aria-pressed="${!!PREF.fast}">${tr(["Veloce","Fast","Rápida"])}</button></div>${audioOptsHTML()}<h3>&nbsp;</h3><div style="display:grid;gap:8px"><button class="btn small" id="oSave">${T_("save")}</button><button class="btn small" id="oTitle">${T_("toTitle")}</button></div><p style="font-size:14px;color:var(--muted);margin-top:14px">${T_("install")}</p>`;
+  if (tab === "opts") body = `<h3>${T_("lang")}</h3>${langSeg()}<h3>${T_("diff")}</h3>${diffSeg(S.diff)}<h3>${tr(["Velocità combattimento","Combat speed","Velocidad de combate"])}</h3><div class="seg"><button data-fast="0" aria-pressed="${!PREF.fast}">${tr(["Normale","Normal","Normal"])}</button><button data-fast="1" aria-pressed="${!!PREF.fast}">${tr(["Veloce","Fast","Rápida"])}</button></div>${audioOptsHTML()}<div style="display:grid;gap:8px;margin-top:8px"><button class="btn small" id="oSave">${T_("save")}</button><button class="btn small" id="oTitle">${T_("toTitle")}</button></div><p style="font-size:14px;color:var(--muted);margin-top:14px">${T_("install")}</p>`;
   const m = modal(`<div class="tabs">${tabs.map(([k, n]) => `<button data-tab="${k}" aria-pressed="${k === tab}">${n}</button>`).join("")}</div>${body}<button class="btn small" id="mClose" style="margin-top:14px">${T_("close")}</button>`);
   m.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => openMenu(b.dataset.tab));
   m.querySelectorAll("[data-mm]").forEach(b => b.onclick = () => { menuMember = +b.dataset.mm; openMenu("party"); });
@@ -2299,6 +2466,8 @@ function showLevelUp() {
   m.querySelectorAll("[data-asi]").forEach(b => b.onclick = () => { const k = b.dataset.asi; p.ab[k] = Math.min(20, p.ab[k] + 2); (p.asiDone = p.asiDone || []).push(L); recalc(p); done(); });
   const ok = m.querySelector("#lvOk"); if (ok) ok.onclick = done;
 }
+
+/* ===== 40_combat_rules.js ===== */
 /* =================== COMBAT =================== */
 const COLS = 7, ROWS = 9;
 let CB = null, CBSNAP = null;
@@ -2777,6 +2946,8 @@ async function aiTurn(u) {
 
 /* ---------- end of battle ---------- */
 function syncBack() { allies().forEach(a => { a.ref.hp = a.down ? 1 : Math.max(1, a.hp); }); }
+
+/* ===== 41_combat_ui.js ===== */
 /* =================== COMBAT PRESENTATION =================== */
 if (typeof CanvasRenderingContext2D !== "undefined" && !CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h) { this.rect(x, y, w, h); };
 Object.assign(ICONS, {
@@ -2852,9 +3023,11 @@ function buildCombat() {
 }
 function sizeBoard() {
   const bw = $("#bw"); if (!bw || !CB) return;
-  const W = Math.min(bw.clientWidth, 560) - 32, H = bw.clientHeight - 36;
-  const cell = Math.max(24, Math.floor(Math.min(W / COLS, H / ROWS)));
-  if (cell === CB.cell && $("#terrain").width) return;
+  const land = isLand();
+  const W = (land ? bw.clientWidth : Math.min(bw.clientWidth, 560)) - (land ? 20 : 32), H = bw.clientHeight - (land ? 30 : 36);
+  const cell = Math.max(24, Math.floor(land ? Math.min(W / ROWS, H / COLS) : Math.min(W / COLS, H / ROWS)));
+  if (cell === CB.cell && $("#terrain").width && CB.landAt === land) return;
+  CB.landAt = land;
   CB.cell = cell;
   const b = $("#board"); b.style.setProperty("--cell", CB.cell + "px");
   paintTerrain(); fxInit(); placeTokens();
@@ -2981,7 +3154,10 @@ function fxInit() {
   if (!FX.run) { FX.run = true; FX.last = performance.now(); requestAnimationFrame(fxLoop); }
 }
 const cpos = u => ({x: (u.x + .5) * CB.cell, y: (u.y + .5) * CB.cell});
-function part(o) { if (FX.parts.length > 420) return; FX.parts.push(Object.assign({vx: 0, vy: 0, g: 0, drag: .97, life: 0, max: 40, size: 3, col: "#fff", shape: "dot", add: true}, o)); }
+function part(o) { if (FX.parts.length > 420) return; const q = Object.assign({vx: 0, vy: 0, g: 0, gx: 0, drag: .97, life: 0, max: 40, size: 3, col: "#fff", shape: "dot", add: true}, o);
+  // the board is turned 90° in landscape: rotate "screen" motion into board space so smoke still rises
+  if (isLand()) { const vx = q.vx; q.vx = q.vy; q.vy = -vx; q.gx = q.g; q.g = 0; }
+  FX.parts.push(q); }
 function anim(o) { return new Promise(res => { let done = false; const fin = () => { if (!done) { done = true; res(); } }; FX.anims.push(Object.assign({t: 0, done: fin}, o)); setTimeout(fin, (o.dur || 20) * 20 + 400); }); }
 function fxLoop(now) {
   if (!CB || SCREEN !== "combat" || !FX.x) { FX.run = false; FX.parts = []; FX.anims = []; return; }
@@ -3004,7 +3180,7 @@ function fxLoop(now) {
   // particles
   for (let i = FX.parts.length - 1; i >= 0; i--) {
     const q = FX.parts[i]; q.life++; if (q.life >= q.max) { FX.parts.splice(i, 1); continue; }
-    q.vx *= q.drag; q.vy = q.vy * q.drag + q.g; q.x += q.vx; q.y += q.vy;
+    q.vx = q.vx * q.drag + (q.gx || 0); q.vy = q.vy * q.drag + q.g; q.x += q.vx; q.y += q.vy;
     const k = 1 - q.life / q.max; let al = q.tw ? (.4 + .6 * Math.abs(Math.sin(q.life * .12))) * Math.min(1, k * 3) : k;
     x.globalCompositeOperation = q.add ? "lighter" : "source-over"; x.globalAlpha = Math.max(0, al);
     if (q.shape === "smoke") { const r = q.size * (1 + (1 - k) * 2.2); const g = x.createRadialGradient(q.x, q.y, 0, q.x, q.y, r); g.addColorStop(0, q.col); g.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = g; x.beginPath(); x.arc(q.x, q.y, r, 0, 7); x.fill(); }
@@ -3047,7 +3223,7 @@ async function fxAttackAnim(a, t, o) {
     await fxProjectile(a, t, type); return;
   }
   const dx = (t.x - a.x) * CB.cell * .3, dy = (t.y - a.y) * CB.cell * .3, inr = tk.querySelector(".in");
-  inr.style.transform = `translate(${dx}px,${dy}px) scale(1.06)`; await sleep(110);
+  inr.style.transform = isLand() ? `translate(${-dy}px,${dx}px) scale(1.06)` : `translate(${dx}px,${dy}px) scale(1.06)`; await sleep(110);
   fxSlash(a, t, a.side === "e" ? "#ff8a9e" : (TYPE_COL[type] || "#f3e6c8"));
   await sleep(90); inr.style.transform = "";
 }
@@ -3228,6 +3404,8 @@ function loseCombat() {
   m.querySelector("#lRetry").onclick = () => { closeModal(); const k = CB.key, w = CB.win, s = CB.surprise; S = JSON.parse(CBSNAP); startCombat(k, w, s); };
   m.querySelector("#lTitle").onclick = () => { closeModal(); CB = null; renderTitle(); };
 }
+
+/* ===== 50_ui_screens.js ===== */
 /* =================== UI POLISH: title, creation, story, dice =================== */
 Object.assign(ICONS, {
   r_human:'<circle cx="12" cy="7.5" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>',
@@ -3386,6 +3564,8 @@ function doCheck(spec) {
   });
 }
 window.addEventListener("resize", () => setTimeout(() => { if (SCREEN === "story" && S) ambient($("#artcv"), SC[S.scene].bg); else if (SCREEN === "title") ambient($("#tcv"), "title"); }, 200));
+
+/* ===== 60_audio.js ===== */
 /* =================== AUDIO: procedural music & sound effects (Web Audio) =================== */
 const AU = {ctx: null, mood: null, want: null, bar: 0, step: 0, nextT: 0, timer: null, lastStep: 0};
 const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
@@ -3617,6 +3797,8 @@ function bindAudioOpts(m) {
   vs.oninput = () => { auUnlock(); PREF.sfx = vs.value / 100; auVolumes(); store(PREF_KEY, PREF); };
   vs.onchange = () => SFX.hit("slash");
 }
+
+/* ===== 70_maps_minis_cover.js ===== */
 /* =================== INK-AND-QUILL MAPS, PAINTED MINIATURES, COVER =================== */
 const INK = a => `rgba(42,27,15,${a})`;
 let IRS = 1; const IR = () => (IRS = (IRS * 16807) % 2147483647) / 2147483647;
@@ -3959,6 +4141,8 @@ renderCombat = function () {
     const cov = coverFor(u, o, {ranged: selSpec(u).r > 1}); if (cov) { ch.innerHTML = `${ch.textContent}<i class="cv">${icon("shield")}+${cov}</i>`; tk.classList.add("cov"); } else tk.classList.remove("cov"); });
   const info = $("#info p.hint"); if (mine && info && CB.sel) { const sp = selSpec(u); if (sp.tgt === "enemy" && sp.r > 1 && foes().some(f => coverOf(u, f))) info.insertAdjacentHTML("beforeend", ` · <span class="covh">${icon("shield")} ${tr(["copertura +2/+5 CA","cover +2/+5 AC","cobertura +2/+5 CA"])}</span>`); }
 };
+
+/* ===== 71_tactics.js ===== */
 /* =================== TACTICAL LAYER: deployment, risk preview, inspection, tips =================== */
 Object.assign(ICONS, {help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.2h.01"/>'});
 const TIPS = [
@@ -4039,6 +4223,262 @@ function renderDeploy() {
   $("#startB").onclick = () => { SFX.turn("p"); startBattle(); };
   $("#aEnd").disabled = true;
 }
+
+/* ===== 72_landscape.js ===== */
+/* =================== LANDSCAPE LAYOUT =================== */
+// Phones held sideways get a two-column layout: the battle map is turned 90° so the party
+// stands on the left and the enemy on the right, with the action panel on the side.
+const LANDQ = typeof matchMedia !== "undefined" ? matchMedia("(orientation: landscape) and (max-height: 620px)") : null;
+const isLand = () => !!(LANDQ && LANDQ.matches);
+BG.title_land = {sky: ["#060509", "#2b1f30"], sun: [.27, .3, .22], L: ["peaks", "fort", "fog"]};
+function applyLand() { const a = typeof document !== "undefined" && $("#app"); if (a) a.classList.toggle("land", isLand()); }
+function onLandChange() {
+  applyLand();
+  if (SCREEN === "combat" && CB) { sizeBoard(); renderCombat(); }
+  else if (SCREEN === "story" && S) renderStory();
+  else if (SCREEN === "title") renderTitle();
+  else if (SCREEN === "create") renderCreate();
+}
+if (LANDQ) { if (LANDQ.addEventListener) LANDQ.addEventListener("change", onLandChange); else if (LANDQ.addListener) LANDQ.addListener(onLandChange); }
+applyLand();
+// floating combat text lives outside the turned board so it always reads upright and rises upward
+const _floatAtL = floatAt;
+floatAt = function (u, txt, col, big) {
+  if (!isLand()) return _floatAtL(u, txt, col, big);
+  const bw = $("#bw"), tk = $("#t_" + u.uid); if (!bw || !tk || !CB) return;
+  const br = bw.getBoundingClientRect(), r = tk.getBoundingClientRect();
+  const d = document.createElement("div"); d.className = "fl" + (big ? " big" : ""); d.textContent = txt; d.style.color = col;
+  d.style.left = (r.left + r.width / 2 - br.left) + "px"; d.style.top = (r.top - br.top - r.height * .45 + (big ? -6 : 2)) + "px"; bw.appendChild(d); setTimeout(() => d.remove(), 1300);
+};
+const _fxInitL = fxInit;
+fxInit = function () { _fxInitL(); if (isLand()) FX.amb = null; };
+const _renderTitleL = renderTitle;
+renderTitle = function () { _renderTitleL(); applyLand(); if (isLand()) ambient($("#tcv"), "title_land"); };
+// Android: orientation preference (the app starts in landscape)
+function setOrientation(m) { PREF.orient = m; store(PREF_KEY, PREF); try { if (window.DDCAndroid && window.DDCAndroid.setOrientation) window.DDCAndroid.setOrientation(m); } catch (e) {} }
+try { if (typeof window !== "undefined" && window.DDCAndroid && window.DDCAndroid.setOrientation) window.DDCAndroid.setOrientation(PREF.orient || "land"); } catch (e) {}
+const _extraOptsL = extraOptsHTML;
+extraOptsHTML = function () {
+  const hasBridge = typeof window !== "undefined" && window.DDCAndroid;
+  const o = PREF.orient || "land";
+  return (hasBridge ? `<h3>${tr(["Orientamento", "Orientation", "Orientación"])}</h3><div class="seg">${[["land", ["Orizzontale", "Landscape", "Horizontal"]], ["port", ["Verticale", "Portrait", "Vertical"]], ["auto", ["Automatico", "Automatic", "Automática"]]].map(([k, n]) => `<button data-orient="${k}" aria-pressed="${o === k}">${tr(n)}</button>`).join("")}</div>` : "") + _extraOptsL();
+};
+const _openMenuL = openMenu;
+openMenu = function (tab) { _openMenuL(tab); document.querySelectorAll(".modal [data-orient]").forEach(b => b.onclick = () => { setOrientation(b.dataset.orient); openMenu("opts"); }); };
+
+/* ===== 80_meta.js ===== */
+/* =================== META: save slots, export/import, bestiary, achievements, options =================== */
+Object.assign(ICONS, {
+  book: '<path d="M4 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H4zM20 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H20z"/>',
+  trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 21h8M9 17h6"/>',
+  save: '<path d="M5 3h11l3 3v15H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/>',
+  copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>',
+});
+const SLOT_KEYS = ["ddc-slot-1", "ddc-slot-2", "ddc-slot-3"];
+
+/* ---------- saving ---------- */
+saveGame = function (silent) { if (!S) return; S.savedAt = Date.now(); const ok = store(SAVE_KEY, S); if (!silent) toast(ok ? T_("saved") : T_("noStore")); };
+function slotLine(s) {
+  if (!s || !s.party || !s.party[0]) return `<small>${tr(["Vuoto", "Empty", "Vacío"])}</small>`;
+  const c = s.party[0], sc = SC[s.scene], when = s.savedAt ? new Date(s.savedAt).toLocaleString(LANG_CODES[LG], {day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit"}) : "";
+  return `<small>${esc(c.name)} · ${tr(CLASSES[c.cls].n)} ${T_("lvl")} ${s.level} · ${esc(tr(sc && sc.loc || ""))}${when ? " · " + when : ""}</small>`;
+}
+function loadState(s) { if (!s || !s.party || !SC[s.scene]) return false; S = s; if (S.lang != null) setLang(S.lang); closeModal(); goScene(S.scene, true); return true; }
+const encodeSave = s => "DDC1:" + btoa(unescape(encodeURIComponent(JSON.stringify(s))));
+function decodeSave(code) { try { const t = String(code).trim().replace(/^DDC1:/, ""); return JSON.parse(decodeURIComponent(escape(atob(t)))); } catch (e) { return null; } }
+function openSaves(mode) {
+  const canSave = mode === "story" && S;
+  const auto = load(SAVE_KEY);
+  const rows = [[SAVE_KEY, tr(["Salvataggio automatico", "Autosave", "Guardado automático"]), auto, false],
+    ...SLOT_KEYS.map((k, i) => [k, `${tr(["Slot", "Slot", "Ranura"])} ${i + 1}`, load(k), true])];
+  const m = modal(`<h2>${tr(["Salvataggi", "Saved games", "Partidas guardadas"])}</h2>
+    ${rows.map(([k, n, s, manual]) => `<div class="row"><div class="t"><b>${n}</b>${slotLine(s)}</div>
+      ${canSave && manual ? `<button class="btn small" data-save="${k}">${tr(["Salva", "Save", "Guardar"])}</button>` : ""}
+      ${s && s.party ? `<button class="btn small" data-load="${k}">${tr(["Carica", "Load", "Cargar"])}</button>` : ""}</div>`).join("")}
+    <h3>${tr(["Codice di salvataggio", "Save code", "Código de guardado"])}</h3>
+    <p style="font-size:14px;color:var(--muted)">${tr(["Copia il codice per spostare la partita su un altro telefono o tenerne una copia. Incolla un codice per riprenderla.", "Copy the code to move your game to another phone or keep a backup. Paste a code to resume it.", "Copia el código para llevar la partida a otro teléfono o guardar una copia. Pega un código para retomarla."])}</p>
+    <textarea id="saveCode" class="codebox" rows="3" spellcheck="false" placeholder="DDC1:…"></textarea>
+    <div class="who" style="margin-top:8px">${canSave ? `<button id="exp">${tr(["Mostra il codice di questa partita", "Show this game's code", "Mostrar el código de esta partida"])}</button><button id="cpy">${icon("copy")}</button>` : ""}<button id="imp">${tr(["Carica dal codice", "Load from code", "Cargar desde el código"])}</button></div>
+    <p id="saveMsg" class="hint" style="font-size:13px;color:var(--brass);min-height:18px"></p>
+    <button class="btn small" id="svX" style="margin-top:6px">${T_("close")}</button>`);
+  const msg = t => { const e = m.querySelector("#saveMsg"); if (e) e.textContent = t; }, box = m.querySelector("#saveCode");
+  m.querySelectorAll("[data-save]").forEach(b => b.onclick = () => { S.savedAt = Date.now(); store(b.dataset.save, S); SFX.ui(); openSaves(mode); toast(T_("saved")); });
+  m.querySelectorAll("[data-load]").forEach(b => b.onclick = () => { const s = load(b.dataset.load); if (!loadState(s)) msg(tr(["Salvataggio non valido.", "Invalid save.", "Guardado no válido."])); });
+  const ex = m.querySelector("#exp"); if (ex) ex.onclick = () => { S.savedAt = Date.now(); box.value = encodeSave(S); box.focus(); box.select(); msg(tr(["Codice pronto: copialo e conservalo.", "Code ready: copy it and keep it safe.", "Código listo: cópialo y guárdalo."])); };
+  const cp = m.querySelector("#cpy"); if (cp) cp.onclick = () => { if (!box.value) box.value = encodeSave(S); box.select(); try { navigator.clipboard.writeText(box.value).then(() => msg(tr(["Copiato.", "Copied.", "Copiado."])), () => msg(tr(["Seleziona il testo e copialo a mano.", "Select the text and copy it manually.", "Selecciona el texto y cópialo a mano."]))); } catch (e) { msg(tr(["Seleziona il testo e copialo a mano.", "Select the text and copy it manually.", "Selecciona el texto y cópialo a mano."])); } };
+  m.querySelector("#imp").onclick = () => { const s = decodeSave(box.value); if (!s || !loadState(s)) msg(tr(["Il codice non è valido. Controlla di averlo incollato tutto.", "The code isn't valid. Check you pasted all of it.", "El código no es válido. Comprueba que lo pegaste entero."])); };
+  m.querySelector("#svX").onclick = () => { closeModal(); if (SCREEN === "story") renderStory(); };
+}
+
+/* ---------- bestiary ---------- */
+function bestiaryHTML() {
+  const B = (S && S.bestiary) || {}, keys = Object.keys(FOES), seen = keys.filter(k => B[k]);
+  return `<p style="font-size:14px;color:var(--muted);margin:0 0 8px">${seen.length}/${keys.length} ${tr(["creature incontrate", "creatures met", "criaturas encontradas"])}</p><div class="bestiary">${keys.map(k => { const d = FOES[k], b = B[k];
+    if (!b) return `<div class="beast unk"><div class="bimg">?</div><div class="bt"><b>???</b></div></div>`;
+    const traits = []; if (d.boss) traits.push(tr(["boss", "boss", "jefe"])); if (d.undead) traits.push(tr(["non morto", "undead", "muerto viviente"])); if (d.construct) traits.push(tr(["costrutto", "construct", "constructo"])); if (d.vuln) traits.push(`<span class="vu">${tr(["vuln.", "vuln.", "vuln."])} ${d.vuln}</span>`); if (d.res) traits.push(`<span class="re">${tr(["resiste", "resists", "resiste"])} ${d.res}</span>`); if (d.pack) traits.push(tr(["branco", "pack", "manada"]));
+    return `<div class="beast"><img class="bimg" alt="" src="${miniSrc({side: "e", foe: k, boss: !!d.boss})}"><div class="bt"><b>${tr(d.n)}</b><small>${T_("hp")} ${d.hp} · ${T_("ac")} ${d.ac} · ${T_("spd")} ${d.spd}</small><small>${[...d.atk, ...(d.spells || [])].map(a => `${tr(a.n)} ${a.d}`).join(" · ")}</small><small>${traits.join(" · ")}</small><small class="kills">${tr(["Sconfitti", "Defeated", "Derrotados"])}: ${b.kills || 0}</small></div></div>`; }).join("")}</div>`;
+}
+const _startCombatM = startCombat;
+startCombat = function (key, win, sur) { const r = _startCombatM(key, win, sur); if (S && CB) { S.bestiary = S.bestiary || {}; CB.units.filter(u => u.side === "e").forEach(u => { S.bestiary[u.foe] = S.bestiary[u.foe] || {kills: 0}; }); } return r; };
+const _fxDeathM = fxDeath;
+fxDeath = function (t, small) { if (!small && t.side === "e" && S && S.bestiary && S.bestiary[t.foe]) S.bestiary[t.foe].kills++; return _fxDeathM(t, small); };
+
+/* ---------- achievements (kept across playthroughs) ---------- */
+const ACH = [
+  ["first_win", "swords", ["Primo sangue", "First blood", "Primera sangre"], ["Vinci il tuo primo combattimento.", "Win your first battle.", "Gana tu primer combate."]],
+  ["flawless_boss", "shield", ["Senza un graffio", "Without a scratch", "Sin un rasguño"], ["Sconfiggi un boss senza che nessuno del gruppo cada.", "Defeat a boss with nobody in the party falling.", "Derrota a un jefe sin que nadie del grupo caiga."]],
+  ["speed", "bolt", ["Fulmine", "Lightning", "Relámpago"], ["Vinci 10 scontri entro il limite di round.", "Win 10 battles within the round limit.", "Gana 10 combates dentro del límite de rondas."]],
+  ["nat20", "d20", ["Favore degli dèi", "Favour of the gods", "Favor de los dioses"], ["Ottieni un 20 naturale in una prova.", "Roll a natural 20 on a check.", "Saca un 20 natural en una prueba."]],
+  ["collector", "star", ["Collezionista", "Collector", "Coleccionista"], ["Possiedi 6 accessori magici diversi.", "Own 6 different magic trinkets.", "Posee 6 accesorios mágicos distintos."]],
+  ["vault", "crown", ["Le Volte violate", "The Vaults breached", "Las Bóvedas profanadas"], ["Sconfiggi il Custode d'Ossidiana.", "Defeat the Obsidian Warden.", "Derrota al Guardián de Obsidiana."]],
+  ["brothers", "hand", ["Fratelli", "Brothers", "Hermanos"], ["Riconcilia Kael con suo fratello Doran.", "Reconcile Kael with his brother Doran.", "Reconcilia a Kael con su hermano Doran."]],
+  ["redeem", "heart", ["Redenzione", "Redemption", "Redención"], ["Ricorda a Seraphine chi era sua figlia.", "Remind Seraphine who her daughter was.", "Recuérdale a Seraphine quién era su hija."]],
+  ["end_dawn", "sun", ["L'Alba", "The Dawn", "El Alba"], ["Riporta il sole nel cielo.", "Return the sun to the sky.", "Devuelve el sol al cielo."]],
+  ["end_twilight", "moon", ["Il Crepuscolo libero", "The Free Twilight", "El Crepúsculo libre"], ["Spezza il legame tra il sole e gli dèi.", "Break the bond between sun and gods.", "Rompe el vínculo entre el sol y los dioses."]],
+  ["end_dark", "skull", ["Il Re di Cenere", "The Ash King", "El Rey de Ceniza"], ["Prendi il potere di Morrhan.", "Take Morrhan's power.", "Toma el poder de Morrhan."]],
+  ["merciless", "flame", ["Spietato", "Merciless", "Despiadado"], ["Completa la storia a difficoltà Spietata.", "Finish the story on Merciless difficulty.", "Completa la historia en dificultad Despiadada."]],
+];
+function unlock(id) {
+  PREF.ach = PREF.ach || {}; if (PREF.ach[id]) return; PREF.ach[id] = Date.now(); store(PREF_KEY, PREF);
+  const a = ACH.find(a => a[0] === id); if (!a) return; SFX.join(); toastQ(`${tr(["Impresa", "Achievement", "Logro"])}: ${tr(a[2])}`);
+}
+function checkAch() {
+  if (!S) return; const f = S.flags || {};
+  if (f.vault_done) unlock("vault"); if (f.doran_ally) unlock("brothers"); if (f.ser_redeemed) unlock("redeem");
+  ["end_dawn", "end_twilight", "end_dark"].forEach(e => { if (f[e]) unlock(e); });
+  if (f.game_done && S.diff === 2) unlock("merciless");
+  const tk = new Set(Object.keys(S.inv || {}).filter(k => ITEMS[k] && ITEMS[k].slot === "t")); S.party.forEach(c => { if (c.trinket) tk.add(c.trinket); }); if (tk.size >= 6) unlock("collector");
+}
+function achHTML() {
+  const A = PREF.ach || {}, n = ACH.filter(a => A[a[0]]).length;
+  return `<p style="font-size:14px;color:var(--muted);margin:0 0 8px">${n}/${ACH.length}</p><div class="achs">${ACH.map(([id, ic, nm, d]) => `<div class="ach${A[id] ? " got" : ""}">${medHTML(ic, "sm" + (A[id] ? " on" : ""))}<div><b>${tr(nm)}</b><small>${tr(d)}</small></div></div>`).join("")}</div>`;
+}
+function openAch() { const m = modal(`<h2>${tr(["Imprese", "Achievements", "Logros"])}</h2>${achHTML()}<button class="btn small" id="achX" style="margin-top:12px">${T_("close")}</button>`); m.querySelector("#achX").onclick = () => { closeModal(); if (SCREEN === "story") renderStory(); }; }
+const _goSceneM = goScene;
+goScene = function (id, noOnce) { const r = _goSceneM(id, noOnce); try { checkAch(); } catch (e) {} return r; };
+const _winCombatM = winCombat;
+winCombat = function () {
+  if (CB) { unlock("first_win"); if (!CB.anyDown && CB.units.some(u => u.side === "e" && u.boss)) unlock("flawless_boss");
+    if (CB.round <= 3 + Math.ceil(CB.nFoes / 2)) { PREF.achC = PREF.achC || {}; PREF.achC.speed = (PREF.achC.speed || 0) + 1; store(PREF_KEY, PREF); if (PREF.achC.speed >= 10) unlock("speed"); } }
+  return _winCombatM();
+};
+const _doCheckM = doCheck;
+doCheck = function (spec) { const p = _doCheckM(spec); setTimeout(() => { const r = $("#dres"); if (r && r.querySelector("small") && r.classList.contains("ok")) unlock("nat20"); }, 960); return p; };
+
+/* ---------- options: text size, reduced effects ---------- */
+function applyPrefs() { const a = $("#app"); if (!a) return; a.style.setProperty("--txt", [.9, 1, 1.15][PREF.txt ?? 1]); a.classList.toggle("lowfx", !!PREF.lowfx); }
+const _ambientM = ambient;
+ambient = function (cv, key) { if (PREF.lowfx) { const p = AMBS.get(cv); if (p) cancelAnimationFrame(p); paint(cv, key); return; } return _ambientM(cv, key); };
+const _fxInitM = fxInit;
+fxInit = function () { _fxInitM(); if (PREF.lowfx) FX.amb = null; };
+function extraOptsHTML() {
+  return `<h3>${tr(["Dimensione testo", "Text size", "Tamaño del texto"])}</h3><div class="seg">${[0, 1, 2].map(i => `<button data-txt="${i}" aria-pressed="${(PREF.txt ?? 1) === i}">${["A−", "A", "A+"][i]}</button>`).join("")}</div>
+  <h3>${tr(["Effetti visivi", "Visual effects", "Efectos visuales"])}</h3><div class="seg"><button data-lowfx="0" aria-pressed="${!PREF.lowfx}">${tr(["Completi", "Full", "Completos"])}</button><button data-lowfx="1" aria-pressed="${!!PREF.lowfx}">${tr(["Ridotti (batteria)", "Reduced (battery)", "Reducidos (batería)"])}</button></div>
+  <div style="display:grid;gap:8px;margin-top:14px"><button class="btn small" id="oSaves">${icon("save")} ${tr(["Salvataggi e codice", "Saves and code", "Partidas y código"])}</button><button class="btn small" id="oAch">${tr(["Imprese", "Achievements", "Logros"])}</button></div>`;
+}
+const _openMenuM = openMenu;
+openMenu = function (tab) {
+  if (tab === "best") {
+    const m = modal(`<div class="tabs">${[["party", T_("party")], ["inv", T_("inv")], ["journal", T_("journal")], ["best", tr(["Bestiario", "Bestiary", "Bestiario"])], ["opts", T_("settings")]].map(([k, n]) => `<button data-tab="${k}" aria-pressed="${k === tab}">${n}</button>`).join("")}</div>${bestiaryHTML()}<button class="btn small" id="mClose" style="margin-top:14px">${T_("close")}</button>`);
+    m.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => openMenu(b.dataset.tab));
+    m.querySelector("#mClose").onclick = () => { closeModal(); if (SCREEN === "story") renderStory(); };
+    return;
+  }
+  _openMenuM(tab);
+  const tabs = document.querySelector(".modal .tabs"); if (tabs && !tabs.querySelector('[data-tab="best"]')) { const j = tabs.querySelector('[data-tab="journal"]'); j.insertAdjacentHTML("afterend", `<button data-tab="best" aria-pressed="false">${tr(["Bestiario", "Bestiary", "Bestiario"])}</button>`); tabs.querySelector('[data-tab="best"]').onclick = () => openMenu("best"); }
+  if (tab === "opts") { const h = document.querySelector(".modal .sheet"), first = h.querySelector(".vol"); const anchor = h.querySelector("#oSave") ? h.querySelector("#oSave").parentElement : null;
+    if (anchor) anchor.insertAdjacentHTML("beforebegin", extraOptsHTML());
+    h.querySelectorAll("[data-txt]").forEach(b => b.onclick = () => { PREF.txt = +b.dataset.txt; store(PREF_KEY, PREF); applyPrefs(); openMenu("opts"); });
+    h.querySelectorAll("[data-lowfx]").forEach(b => b.onclick = () => { PREF.lowfx = b.dataset.lowfx === "1"; store(PREF_KEY, PREF); applyPrefs(); openMenu("opts"); });
+    const sv = h.querySelector("#oSaves"); if (sv) sv.onclick = () => openSaves("story");
+    const ac = h.querySelector("#oAch"); if (ac) ac.onclick = openAch; }
+};
+
+/* ---------- title additions ---------- */
+const _renderTitleM = renderTitle;
+renderTitle = function () {
+  _renderTitleM(); applyPrefs();
+  const foot = $("#title .foot"); if (!foot) return;
+  foot.insertAdjacentHTML("beforebegin", `<div class="trow"><button class="btn small" id="tLoad">${tr(["Carica partita", "Load game", "Cargar partida"])}</button><button class="btn small" id="tAch">${tr(["Imprese", "Achievements", "Logros"])} · ${Object.keys(PREF.ach || {}).length}/${ACH.length}</button></div>`);
+  foot.insertAdjacentHTML("beforeend", ` · v${GAME_VERSION}`);
+  $("#tLoad").onclick = () => openSaves("title"); $("#tAch").onclick = openAch;
+};
+
+/* ---------- update check (Android app only; reads the latest GitHub release) ---------- */
+const UPD = {repo: "kain986/darkdays-cronicles", api: "https://api.github.com/repos/kain986/darkdays-cronicles/releases/latest", page: "https://github.com/kain986/darkdays-cronicles/releases/latest"};
+function verNewer(a, b) { const pa = String(a).replace(/^v/i, "").split(/[.-]/).map(n => parseInt(n, 10) || 0), pb = String(b).replace(/^v/i, "").split(/[.-]/).map(n => parseInt(n, 10) || 0);
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) { const x = pa[i] || 0, y = pb[i] || 0; if (x !== y) return x > y; } return false; }
+async function fetchLatest() {
+  const ctl = typeof AbortController !== "undefined" ? new AbortController() : null; const tm = ctl ? setTimeout(() => ctl.abort(), 8000) : 0;
+  try { const r = await fetch(UPD.api, {headers: {Accept: "application/vnd.github+json"}, signal: ctl ? ctl.signal : undefined}); if (!r.ok) return null;
+    const j = await r.json(); const apk = (j.assets || []).find(a => /\.apk$/i.test(a.name));
+    return {tag: j.tag_name, name: j.name || j.tag_name, notes: j.body || "", url: apk ? apk.browser_download_url : UPD.page, page: j.html_url || UPD.page, at: Date.now()}; }
+  catch (e) { return null; } finally { if (tm) clearTimeout(tm); }
+}
+async function checkUpdates(manual) {
+  if (typeof IS_APP === "undefined" || !IS_APP) { if (manual) toast(tr(["Stai giocando la versione web, che è sempre aggiornata.", "You're playing the web version, which is always up to date.", "Estás jugando la versión web, que siempre está actualizada."])); return; }
+  if (!manual && PREF.upd && Date.now() - PREF.upd.at < 6 * 3600e3) { showUpdateBadge(PREF.upd); return; }
+  if (manual) toast(tr(["Controllo aggiornamenti…", "Checking for updates…", "Buscando actualizaciones…"]));
+  const L = await fetchLatest();
+  if (!L) { if (manual) toast(tr(["Impossibile controllare: sei offline?", "Couldn't check: are you offline?", "No se pudo comprobar: ¿sin conexión?"])); return; }
+  PREF.upd = L; store(PREF_KEY, PREF);
+  if (verNewer(L.tag, GAME_VERSION)) { showUpdateBadge(L); if (manual) openUpdate(L); }
+  else if (manual) toast(tr(["Hai già l'ultima versione", "You have the latest version", "Ya tienes la última versión"]) + ` (v${GAME_VERSION})`);
+}
+function showUpdateBadge(L) {
+  if (!L || !verNewer(L.tag, GAME_VERSION) || SCREEN !== "title" || $("#updB")) return;
+  const foot = $("#title .foot"); if (!foot) return;
+  foot.insertAdjacentHTML("beforebegin", `<button class="updb" id="updB">${icon("star")}<span><b>${tr(["Nuova versione disponibile", "New version available", "Nueva versión disponible"])}: ${esc(L.tag)}</b><small>${tr(["Tocca per vedere le novità", "Tap to see what's new", "Toca para ver las novedades"])}</small></span></button>`);
+  $("#updB").onclick = () => openUpdate(L);
+}
+function openUpdate(L) {
+  const notes = esc(L.notes).replace(/\r/g, "").split("\n").filter(l => l.trim()).slice(0, 14).map(l => l.replace(/^[-*]\s*/, "• ").replace(/^#+\s*/, "")).join("<br>");
+  const m = modal(`<h2>${tr(["Aggiornamento", "Update", "Actualización"])} ${esc(L.tag)}</h2>
+    <p style="color:var(--muted);font-size:14px">${tr(["Versione installata", "Installed version", "Versión instalada"])}: v${GAME_VERSION}</p>
+    ${notes ? `<div class="relnotes">${notes}</div>` : ""}
+    <p style="font-size:14px;color:var(--muted)">${tr(["Scarica il nuovo APK e aprilo: si installa sopra questa versione e i salvataggi restano. Per sicurezza puoi prima copiare il codice di salvataggio dalle Opzioni.", "Download the new APK and open it: it installs over this version and your saves stay. To be safe you can copy your save code from Options first.", "Descarga el nuevo APK y ábrelo: se instala sobre esta versión y las partidas se conservan. Por seguridad puedes copiar antes el código de guardado en Opciones."])}</p>
+    <a class="btn primary" id="updGo" href="${esc(L.url)}" target="_blank" rel="noopener">${tr(["Scarica l'aggiornamento", "Download the update", "Descargar la actualización"])}</a>
+    <a class="btn small" href="${esc(L.page)}" target="_blank" rel="noopener" style="margin-top:8px">${tr(["Pagina della versione", "Release page", "Página de la versión"])}</a>
+    <button class="btn small" id="updX" style="margin-top:8px">${tr(["Più tardi", "Later", "Más tarde"])}</button>`, {center: 1});
+  m.querySelector("#updX").onclick = closeModal;
+}
+const _renderTitleU = renderTitle;
+renderTitle = function () { _renderTitleU(); if (PREF.upd) showUpdateBadge(PREF.upd); setTimeout(() => checkUpdates(false), 600); };
+const _extraOptsU = extraOptsHTML;
+extraOptsHTML = function () { return _extraOptsU() + `<button class="btn small" id="oUpd" style="margin-top:8px">${tr(["Controlla aggiornamenti", "Check for updates", "Buscar actualizaciones"])} · v${GAME_VERSION}</button>`; };
+const _openMenuU = openMenu;
+openMenu = function (tab) { _openMenuU(tab); const b = document.querySelector("#oUpd"); if (b) b.onclick = () => checkUpdates(true); };
+
+/* ---------- chapters screen ---------- */
+function openChapters() {
+  const auto = load(SAVE_KEY);
+  const rows = CHAPTERS.map((c, i) => {
+    const endSave = load("ddc-chapter-" + c.id), prev = CHAPTERS[i - 1];
+    const doneEnding = [auto, endSave].map(s => s && s.chaptersDone && s.chaptersDone[c.id]).find(Boolean);
+    const playing = auto && (auto.chapter || "ch1") === c.id && auto.scene !== "ch_wait";
+    const prevEnd = prev && load("ddc-chapter-" + prev.id);
+    let status = doneEnding ? `✓ ${tr(["completato", "completed", "completado"])}${c.endings && c.endings[doneEnding] ? " · " + tr(c.endings[doneEnding]) : ""}` : playing ? tr(["in corso", "in progress", "en curso"]) : "";
+    const canStart = prev && prevEnd && !playing;
+    return `<div class="chap${doneEnding ? " done" : ""}"><div class="cnum">${esc(tr(c.num))}</div><b>${esc(tr(c.title))}</b><p>${esc(tr(c.blurb || ["", "", ""]))}</p>
+      ${status ? `<small>${status}</small>` : ""}${canStart ? `<button class="btn small" data-chstart="${prev.id}">${tr(["Inizia con il gruppo del capitolo precedente", "Start with the party from the previous chapter", "Empezar con el grupo del capítulo anterior"])}</button>` : ""}</div>`; }).join("");
+  const m = modal(`<h2>${tr(["Capitoli", "Chapters", "Capítulos"])}</h2>${rows}
+    <div class="chap next"><div class="cnum">${tr(["Prossimamente", "Coming soon", "Próximamente"])}</div><b>${tr(["Nuovi capitoli", "New chapters", "Nuevos capítulos"])}</b><p>${tr(["Nuovi archi narrativi arriveranno con gli aggiornamenti. La tua partita alla fine di ogni capitolo resta conservata, con personaggi, oggetti e scelte.", "New story arcs will arrive with updates. Your game at the end of each chapter is kept, with characters, items and choices.", "Nuevos arcos narrativos llegarán con las actualizaciones. Tu partida al final de cada capítulo se conserva, con personajes, objetos y decisiones."])}</p></div>
+    <button class="btn small" id="chX" style="margin-top:10px">${T_("close")}</button>`);
+  m.querySelectorAll("[data-chstart]").forEach(b => b.onclick = () => { const s = load("ddc-chapter-" + b.dataset.chstart); if (s) { closeModal(); loadState(s); } });
+  m.querySelector("#chX").onclick = closeModal;
+}
+const _renderTitleC = renderTitle;
+renderTitle = function () {
+  _renderTitleC();
+  const row = $("#title .trow"); if (row && !$("#tChap")) { row.insertAdjacentHTML("afterend", `<button class="btn small" id="tChap">${tr(["Capitoli", "Chapters", "Capítulos"])}</button>`); $("#tChap").onclick = openChapters; }
+  const cont = $("#tCont"), sv = load(SAVE_KEY); if (cont && sv) { const c = chapterOf(sv); cont.querySelector("small") ? cont.querySelector("small").textContent = `${T_("cont")} · ${tr(c.num)}` : null; }
+};
+const _slotLineC = slotLine;
+slotLine = function (s) { const r = _slotLineC(s); if (!s || !s.party) return r; return r.replace("<small>", `<small>${esc(tr(chapterOf(s).num))} · `); };
+const _journalHTMLC = journalHTML;
+journalHTML = function () { return (S ? `<div class="jch"><span>${esc(tr(chapterOf(S).num))}</span><b>${esc(tr(chapterOf(S).title))}</b></div>` : "") + _journalHTMLC(); };
+
+/* ===== 99_boot.js ===== */
 /* =================== BOOT =================== */
 let resizeT = null;
 window.addEventListener("resize", () => { clearTimeout(resizeT); resizeT = setTimeout(() => {
@@ -4053,6 +4493,8 @@ function boot(data) {
 }
 window.claude?.hot?.snapshot?.(() => ({S: CB ? (CBSNAP ? JSON.parse(CBSNAP) : S) : S, PREF}));
 window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
+
 </script>
 <script>window.ddcBack=function(){var m=document.querySelectorAll(".modal");if(m.length&&!m[m.length-1].querySelector("#dgo,#vOk,#lRetry,#lvOk,[data-asi]")){m.forEach(function(x){x.remove()});if(typeof SCREEN!=="undefined"&&SCREEN==="story"&&typeof renderStory==="function")renderStory();return true}return false};</script>
-</body></html>
+</body>
+</html>
