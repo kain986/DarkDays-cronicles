@@ -39,6 +39,7 @@ function startCombat(key, win, surprise) {
     while (CB.ob.size < mp.n && g++ < 200) { const x = Math.floor(Math.random() * COLS), y = 2 + Math.floor(Math.random() * (ROWS - 4)); CB.ob.add(K(x, y)); }
     if (connected()) break;
   }
+  genTerrain();
   const ps = [[3,8],[2,8],[4,8],[3,7],[1,8],[5,8]];
   S.party.forEach((c, i) => { if (c.hp <= 0) c.hp = 1; CB.units.push({uid: "p_" + c.id, side: "p", ref: c, name: c.name.split(" ")[0], hp: c.hp, maxhp: c.maxhp, ac: acOf(c), spd: speedOf(c), icon: CL(c).icon, x: ps[i][0], y: ps[i][1], cond: {}, down: false, react: 1}); });
   const hpMul = [.75, 1, 1.3][S.diff ?? 1], cnt = {};
@@ -52,6 +53,7 @@ function startCombat(key, win, surprise) {
     const hp = Math.max(1, Math.round(d.hp * hpMul));
     CB.units.push({uid: "e" + i, side: "e", foe: k, def: d, name: tr(d.n) + (cnt[k] > 1 ? " " + seen[k] : ""), hp, maxhp: hp, ac: d.ac, spd: d.spd || 6, icon: d.ic, boss: !!d.boss, x, y, cond: surprise ? {surp: 1} : {}, react: 1});
   });
+  if (enc.lead) { const L = CB.units.find(u => u.foe === enc.lead); if (L && CB.units.some(u => u.side === "e" && u !== L)) { CB.lead = L.uid; L.leader = 1; } }
   CB.units.forEach(u => u.init = rnd(20) + (u.side === "p" ? abm(u.ref, "dex") + (hasFeat(u.ref, "alert") ? 5 : 0) : (u.def.sv || 0)) + Math.random() * .1);
   CB.order = [...CB.units].sort((a, b) => b.init - a.init);
   showScreen("combat"); buildCombat();
@@ -70,31 +72,40 @@ function connected() {
 function logL(s) { CB.log.push(s); if (CB.log.length > 80) CB.log.shift(); renderLog(); }
 
 /* ---------- reach / BFS ---------- */
-function reachOf(u, limit) {
-  const res = new Map([[K(u.x, u.y), {d: 0, p: null}]]), q = [[u.x, u.y]];
-  while (q.length) {
-    const [x, y] = q.shift(), d0 = res.get(K(x, y)).d; if (d0 >= limit) continue;
+// movement cost: 1 per tile, +1 for difficult terrain, +1 to climb onto high ground.
+// Paths of equal cost prefer fewer burning tiles, then straight lines.
+function reachOf(u, limit, ai) {
+  const res = new Map([[K(u.x, u.y), {d: 0, w: 0, pen: 0, p: null}]]), open = [[0, u.x, u.y]];
+  while (open.length) {
+    let bi = 0; for (let i = 1; i < open.length; i++) if (open[i][0] < open[bi][0]) bi = i;
+    const [w0, x, y] = open.splice(bi, 1)[0], cur0 = res.get(K(x, y)); if (w0 > cur0.w) continue;
     for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) {
-      const nx = x + dx, ny = y + dy, k = K(nx, ny); if ((!dx && !dy) || !inGrid(nx, ny) || CB.ob.has(k) || res.has(k)) continue;
+      const nx = x + dx, ny = y + dy, k = K(nx, ny); if ((!dx && !dy) || !inGrid(nx, ny) || CB.ob.has(k)) continue;
       const o = unitAt(nx, ny); if (o && o.side !== u.side && alive(o)) continue;
-      res.set(k, {d: d0 + 1, p: K(x, y)}); q.push([nx, ny]);
+      const nd = cur0.d + stepCost(x, y, nx, ny); if (nd > limit) continue;
+      const pen = Math.min(999, cur0.pen + (CB.fire && CB.fire[k] ? (ai ? 60 : 20) : 0) + (dx && dy ? .01 : 0)), nw = nd * 1000 + pen;
+      const e = res.get(k); if (e && e.w <= nw) continue;
+      res.set(k, {d: nd, w: nw, pen, p: K(x, y)}); open.push([nw, nx, ny]);
     }
   }
   return res;
 }
 const freeTile = (x, y, self) => { const o = unitAt(x, y); return !CB.ob.has(K(x, y)) && (!o || o === self || (o.side === "e" && o.hp <= 0)); };
 function pathTo(R, k) { const out = []; while (k) { out.unshift(k); k = R.get(k).p; } return out; }
+// returns the movement spent (terrain-aware)
 async function walk(u, path) {
-  let steps = 0; u.mvStop = false;
+  let spent = 0; u.mvStop = false;
   for (let i = 1; i < path.length; i++) {
     const [x, y] = path[i].split(",").map(Number);
     const stop = await provoke(u, {x: u.x, y: u.y}, {x, y});
-    if (stop || !alive(u) || !CB || CB.ended) { if (stop) u.mvStop = true; return steps; }
-    u.x = x; u.y = y; steps++; placeTokens(); fxDust(u); await sleep(150);
+    if (stop || !alive(u) || !CB || CB.ended) { if (stop) u.mvStop = true; return spent; }
+    spent += stepCost(u.x, u.y, x, y); u.x = x; u.y = y; placeTokens(); fxDust(u); await sleep(150);
+    if (CB.fire && CB.fire[K(x, y)]) await burnUnit(u);
+    if (!alive(u) || !CB || CB.ended) return spent;
     await overwatchCheck(u);
-    if (!alive(u) || !CB || CB.ended) return steps;
+    if (!alive(u) || !CB || CB.ended) return spent;
   }
-  return steps;
+  return spent;
 }
 function meleeOf(o) {
   if (o.side === "p") { const c = o.ref, ws = weaponsOf(c), i = ws.findIndex(w => !WEAP[w].ranged); if (i < 0) return null; const p = weapProfile(c, ws[i]);
@@ -129,8 +140,8 @@ async function provoke(m, from, to) {
 async function overwatchCheck(m) {
   for (const o of CB.units.filter(o => o.side !== m.side && o.cond.ow && canReact(o))) {
     if (!alive(m) || CB.ended) return; const p = owProfile(o); if (!p) continue;
-    if (dist(o, m) > (p.r || 1)) continue;
-    if (p.r > 1 && coverOf(o, m) >= 5) continue;
+    if (dist(o, m) > effR(o, p.r || 1)) continue;
+    if (p.r > 1 && dist(o, m) > 1 && (!canSee(o, m) || coverOf(o, m) >= 5)) continue;
     o.react--; delete o.cond.ow; floatAt(o, tr(["Guardia!","Overwatch!","¡Vigilancia!"]), "#9fd0ff", 1);
     logL(`${o.name}: ${tr(["fuoco di guardia","overwatch shot","disparo de vigilancia"])}`);
     await attackRoll(o, m, p);
@@ -147,15 +158,17 @@ function checkEnd() {
 async function nextTurn() {
   if (!CB || checkEnd()) return;
   let guard = 0;
-  do { CB.ti++; if (CB.ti >= CB.order.length) { CB.ti = 0; CB.round++; CB.newRound = true; } } while (!alive(CB.order[CB.ti]) && guard++ < 50);
+  do { CB.ti++; if (CB.ti >= CB.order.length) { CB.ti = 0; CB.round++; CB.newRound = true; tickFire(); } } while (!alive(CB.order[CB.ti]) && guard++ < 50);
   const u = cur(); u.mv = u.spd; u.act = 1; u.bon = 1; u.atkLeft = 0; u.sneakUsed = 0; u.colUsed = 0; u.react = 1; delete u.cond.dodge; delete u.cond.dis; delete u.cond.ow; delete u.cond.power;
   if (u.cond.prone && !u.cond.asleep && !u.cond.stun) { delete u.cond.prone; u.mv = Math.floor(u.spd / 2); logL(`${u.name}: ${tr(["si rialza","stands up","se levanta"])}`); }
   if (u.side === "e" && u.def.gob) u.cond.dis = 1;
   if (u.side === "p" && u.ref.trinket === "periapt" && u.hp < u.maxhp / 2) heal(u, 2);
-  CB.sel = null; CB.pend = null; CB.inspect = null;
+  CB.sel = null; CB.pend = null; CB.inspect = null; CB.mvp = null; CB.tileInfo = null;
   const tok = CB.turnTok = (CB.turnTok || 0) + 1;
   CB.busy = true; renderCombat(); await turnBanner(u);
   if (!CB || CB.turnTok !== tok) return; CB.busy = false;
+  if (!CB.introDone) { CB.introDone = true; await leaderIntro(); if (!CB || CB.turnTok !== tok) return; }
+  if (await terrainTurnStart(u)) { if (!CB) return; if (!checkEnd()) setTimeout(nextTurn, 250); return; }
   if (u.side === "e") {
     // spirit guardians
     for (const p of allies()) if (!p.down && p.cond.sg && dist(p, u) <= 2 && u.hp > 0) { const ok = saveRoll(u, "wis", spellDC(p.ref)); const dmg = roll("3d8").total; logL(`${tr(SPELLS.spiritguardians.n)} → ${u.name}`); await applyDmg(u, ok ? Math.floor(dmg / 2) : dmg, "radiant", p); }
@@ -164,7 +177,7 @@ async function nextTurn() {
   if (u.cond.surp) { delete u.cond.surp; renderCombat(); await sleep(250); return endTurn(); }
   if (u.cond.asleep) { if (--u.cond.asleep <= 0) delete u.cond.asleep; logL(`${u.name}: Zz…`); renderCombat(); await sleep(350); return endTurn(); }
   if (u.cond.stun) { if (--u.cond.stun <= 0) delete u.cond.stun; logL(`${u.name} ${T_("stunned")}`); renderCombat(); await sleep(400); return endTurn(); }
-  if (u.side === "e") { CB.busy = true; renderCombat(); await sleep(380); await aiTurn(u); CB.busy = false; return endTurn(); }
+  if (u.side === "e") { CB.busy = true; renderCombat(); await sleep(380); await followerBark(u); if (!CB || CB.ended) return; await aiTurn(u); CB.busy = false; return endTurn(); }
   CB.sel = defaultSel(u); renderCombat();
 }
 function endTurn() { if (!CB || CB.ended) return; CB.busy = true; renderCombat(); setTimeout(() => { if (CB) { CB.busy = false; nextTurn(); } }, 160); }
@@ -173,10 +186,10 @@ function defaultSel(u) { const c = u.ref; if (c.cls === "wizard") return {k: "sp
 /* ---------- selection specs ---------- */
 function selSpec(u, s) {
   s = s || CB.sel; if (!s) return {tgt: "none"};
-  if (s.k === "w") { const p = weapProfile(u.ref, weaponsOf(u.ref)[s.i]); return {tgt: "enemy", r: p.r}; }
-  if (s.k === "sp") { const sp = SPELLS[s.key]; return {tgt: sp.tgt, r: sp.r || 0, rad: sp.rad || 0}; }
+  if (s.k === "w") { const p = weapProfile(u.ref, weaponsOf(u.ref)[s.i]); return {tgt: "enemy", r: effR(u, p.r), base: p.r}; }
+  if (s.k === "sp") { const sp = SPELLS[s.key]; return {tgt: sp.tgt, r: sp.tgt === "enemy" ? effR(u, sp.r || 0) : sp.r || 0, base: sp.r || 0, rad: sp.rad || 0}; }
   if (s.k === "ab") { const a = ABIL[s.key]; return {tgt: a.tgt || "none", r: a.r || 0}; }
-  if (s.k === "it") { const it = ITEMS[s.key]; if (it.tgt) return {tgt: it.tgt, r: it.r || 0, rad: it.rad || 0}; return it.use === "throw" ? {tgt: "enemy", r: 5} : {tgt: "ally", r: 1}; }
+  if (s.k === "it") { const it = ITEMS[s.key]; if (it.tgt) return {tgt: it.tgt, r: it.r || 0, rad: it.rad || 0}; return it.use === "throw" ? {tgt: "enemy", r: effR(u, 5), base: 5} : {tgt: "ally", r: 1}; }
   return {tgt: "none"};
 }
 function slotFor(c, lv) { for (let i = lv - 1; i < 4; i++) if (c.slots[i] > 0) return i; return -1; }
@@ -209,29 +222,51 @@ function anyLeft(u) {
 }
 
 /* ---------- input ---------- */
+// sight to a target (ranged effects need line of sight; adjacent creatures are always visible)
+const sees = (u, p, r) => r <= 1 || dist(u, p) <= 1 || canSee(u, p);
+const quickMove = () => !!PREF.quickMove;
+const dashOK = u => u.act > 0 || (hasF(u.ref, "cunning") && u.bon > 0);
 async function onCell(x, y) {
   if (!CB || CB.busy || CB.ended) return; const u = cur(); if (!u || u.side !== "p") return;
-  const t = unitAt(x, y), s = CB.sel, sp = selSpec(u);
+  const t = unitAt(x, y), s = CB.sel, sp = selSpec(u), k = K(x, y), pend = CB.mvp;
+  // tapping the highlighted destination again confirms the planned move
+  if (pend && ((pend.k === k && !pend.then) || (pend.then && t === pend.then))) return confirmMove();
+  CB.mvp = null; CB.tileInfo = null;
+  if (t === u && !(s && canUse(u, s) && sp.tgt === "ally")) { CB.inspect = null; return renderCombat(); }
   if (s && canUse(u, s)) {
-    if (sp.tgt === "area" && dist(u, {x, y}) <= sp.r) { if (CB.pend && CB.pend.x === x && CB.pend.y === y) return execute(u, {x, y}); CB.pend = {x, y}; return renderCombat(); }
-    if (sp.tgt === "tile" && dist(u, {x, y}) <= sp.r && freeTile(x, y) && !unitAt(x, y)) return execute(u, {x, y});
+    if (sp.tgt === "area" && dist(u, {x, y}) <= sp.r && sees(u, {x, y}, sp.r)) { if (CB.pend && CB.pend.x === x && CB.pend.y === y) return execute(u, {x, y}); CB.pend = {x, y}; return renderCombat(); }
+    if (sp.tgt === "tile" && dist(u, {x, y}) <= sp.r && sees(u, {x, y}, sp.r) && freeTile(x, y) && !unitAt(x, y)) return execute(u, {x, y});
     if (t && t.side === "e" && t.hp > 0 && sp.tgt === "enemy") {
-      if (dist(u, t) <= sp.r) return execute(u, t);
-      // approach then attack
+      if (dist(u, t) <= sp.r && sees(u, t, sp.r)) return execute(u, t);
+      // approach then attack: the closest tile from which the target is in range and in sight
       const R = reachOf(u, u.mv); let best = null;
-      R.forEach((v, k) => { const [ax, ay] = k.split(",").map(Number); if (!freeTile(ax, ay, u)) return; if (dist({x: ax, y: ay}, t) <= sp.r && (!best || v.d < best.d)) best = {k, d: v.d}; });
-      if (best) { CB.busy = true; const st = await walk(u, pathTo(R, best.k)); u.mv -= st; if (u.mvStop) u.mv = 0; CB.busy = false; if (!CB || CB.ended) return; if (alive(u) && t.hp > 0 && dist(u, t) <= sp.r && canUse(u, s)) return execute(u, t); renderCombat(); autoEnd(u); return; }
+      R.forEach((v, kk) => { const [ax, ay] = kk.split(",").map(Number), p = {x: ax, y: ay}; if (!freeTile(ax, ay, u)) return; const rr = effR(p, sp.base || sp.r);
+        if (dist(p, t) <= rr && sees(p, t, rr) && (!best || v.w < best.w)) best = {k: kk, d: v.d, w: v.w}; });
+      if (best) { const mv = {k: best.k, path: pathTo(R, best.k), cost: best.d, then: t}; if (quickMove() || best.k === K(u.x, u.y)) return doMove(u, mv); CB.mvp = mv; CB.inspect = t; return renderCombat(); }
     }
-    if (t && t.side === "p" && sp.tgt === "ally" && dist(u, t) <= sp.r) return execute(u, t);
+    if (t && t.side === "p" && sp.tgt === "ally" && dist(u, t) <= sp.r && sees(u, t, sp.r)) return execute(u, t);
   }
-  if (!t && u.mv > 0) {
-    const R = reachOf(u, u.mv), k = K(x, y);
-    if (R.has(k) && freeTile(x, y, u)) { CB.busy = true; CB.pend = null; const st = await walk(u, pathTo(R, k)); u.mv -= st; if (u.mvStop) u.mv = 0; CB.busy = false; if (!CB || CB.ended) return; renderCombat(); autoEnd(u); return; }
+  if (!t && !CB.ob.has(k) && (u.mv > 0 || dashOK(u))) {
+    const R = reachOf(u, u.mv); let RR = R, dash = false;
+    if (!R.has(k) && dashOK(u)) { const R2 = reachOf(u, u.mv + u.spd); if (R2.has(k)) { RR = R2; dash = true; } }
+    if (RR.has(k) && k !== K(u.x, u.y) && freeTile(x, y, u)) { const mv = {k, path: pathTo(RR, k), cost: RR.get(k).d, dash};
+      if (quickMove()) return doMove(u, mv); CB.mvp = mv; CB.inspect = null; return renderCombat(); }
   }
-  if (t) { CB.inspect = t; renderCombat(); }
+  if (t) { CB.inspect = t; return renderCombat(); }
+  CB.inspect = null; if (terInfoAt(k)) CB.tileInfo = k; renderCombat();
+}
+function confirmMove() { const u = cur(), mv = CB && CB.mvp; if (!mv || !u || CB.busy) return; return doMove(u, mv); }
+async function doMove(u, mv) {
+  CB.mvp = null; CB.busy = true; CB.pend = null;
+  if (mv.dash) { if (hasF(u.ref, "cunning") && u.bon > 0) u.bon--; else u.act--; u.mv += u.spd; logL(`${u.name}: ${tr(ABIL.dash.n)}`); floatAt(u, tr(ABIL.dash.n), "#ffd38a", 1); }
+  const st = await walk(u, mv.path); u.mv = Math.max(0, u.mv - st); if (u.mvStop) u.mv = 0; CB.busy = false;
+  if (!CB || CB.ended) return;
+  const t = mv.then, sp = selSpec(u);
+  if (t && alive(u) && t.hp > 0 && CB.sel && canUse(u, CB.sel) && dist(u, t) <= sp.r && sees(u, t, sp.r)) return execute(u, t);
+  renderCombat(); autoEnd(u);
 }
 async function execute(u, target) {
-  CB.busy = true; CB.inspect = null; const s = CB.sel;
+  CB.busy = true; CB.inspect = null; CB.mvp = null; const s = CB.sel;
   try {
     if (s.k === "w") await weaponAttack(u, target, s.i);
     else if (s.k === "sp") await castSpell(u, s.key, target);
@@ -276,13 +311,13 @@ async function attackRoll(a, t, o) {
   if (ai.why.includes("displace")) t.dispR = CB.round;
   const r1 = a.side === "p" ? d20For(a.ref) : rnd(20); let r = r1;
   if (adv !== dis) { const r2 = a.side === "p" ? d20For(a.ref) : rnd(20); r = adv ? Math.max(r1, r2) : Math.min(r1, r2); }
-  const pw = o.power ? -5 : 0;
-  let bl = a.cond.bless ? rnd(4) : 0, tot = r + o.hit + bl + pw;
+  const pw = o.power ? -5 : 0, hb = highBonus(a, t, o), ex = exposed(a, t, o);
+  let bl = a.cond.bless ? rnd(4) : 0, tot = r + o.hit + bl + pw + hb;
   const cov = coverFor(a, t, o), tac = t.ac + cov;
-  let crit = r >= (o.crit || 20); const hit = crit || (r !== 1 && tot >= tac);
+  let crit = r >= (o.crit || 20) - (ex ? 2 : 0); const hit = crit || (r !== 1 && tot >= tac);
   if (hit && t.cond.asleep && !o.ranged && dist(a, t) <= 1) crit = true;
   await fxAttackAnim(a, t, o);
-  logL(`${a.name} → ${t.name}: ${r}${sgn(o.hit + bl + pw)}=${tot} vs ${tac}${cov ? ` (${tr(COVER_T)} +${cov})` : ""}${adv !== dis ? (adv ? " ▲" : " ▼") : ""}${ai.why.includes("flank") ? " " + tr(["(fianco)","(flank)","(flanco)"]) : ""} — ${hit ? (crit ? T_("crit") : T_("hits")) : T_("misses")}`);
+  logL(`${a.name} → ${t.name}: ${r}${sgn(o.hit + bl + pw + hb)}=${tot} vs ${tac}${cov ? ` (${tr(COVER_T)} +${cov})` : ""}${hb ? " " + tr(["(altura)","(high ground)","(altura)"]) : ""}${adv !== dis ? (adv ? " ▲" : " ▼") : ""}${ai.why.includes("flank") ? " " + tr(["(fianco)","(flank)","(flanco)"]) : ""}${ex ? " " + tr(["(esposto)","(exposed)","(expuesto)"]) : ""} — ${hit ? (crit ? T_("crit") : T_("hits")) : T_("misses")}`);
   if (!hit && cov && tot >= t.ac && r !== 1) floatAt(t, tr(["Coperto!","Covered!","¡Cubierto!"]), "#e8d8a8", 1);
   if (!hit) { fxMiss(a, t); floatAt(t, T_("miss"), "#d8cdb8"); await sleep(380); return 0; }
   fxImpact(t, o.type, crit); if (crit) { floatAt(t, T_("crit"), "#ffd38a", 1); fxShake(); }
@@ -299,10 +334,12 @@ async function attackRoll(a, t, o) {
     if (c.trinket === "sun_talisman" && o.weapon && und) dmg += rnd(4);
   } else if (S.diff === 2) dmg += 1;
   await applyDmg(t, dmg, o.type, a);
+  if (o.type === "fire" && o.ranged) igniteArea(t, 0);
   if (o.onHit && (t.side === "p" ? !t.down : t.hp > 0)) o.onHit(t);
   return dmg;
 }
 async function applyDmg(t, amt, type, src) {
+  if (t.side === "e" && t.hp <= 0) return;
   if (t.side === "e") { if (t.def.vuln === type) amt *= 2; if (t.def.res === type) amt = Math.floor(amt / 2); }
   else { const c = t.ref; if ((type === "poison" && c.race === "dwarf") || (type === "fire" && c.race === "tiefling")) amt = Math.floor(amt / 2);
     if (hasF(c, "uncanny") && t.udRound !== CB.round && amt > 0) { t.udRound = CB.round; amt = Math.floor(amt / 2); } }
@@ -315,6 +352,7 @@ async function applyDmg(t, amt, type, src) {
     else { t.hp = 0; CB.xp += t.def.xp; logL(`${t.name} ${T_("dies")}`); fxDeath(t); }
   }
   placeTokens(); await sleep(280);
+  if (t.side === "e" && t.hp <= 0 && CB.lead === t.uid && !CB.routed) await leaderFalls(t);
 }
 function heal(t, amt) { if (t.side !== "p") return; amt = Math.max(1, amt); t.hp = Math.min(t.maxhp, t.hp + amt); if (t.down && t.hp > 0) t.down = false; floatAt(t, "+" + amt, "#9be0a6"); fxHeal(t); logL(`${t.name} ${T_("heals")} ${amt} ${T_("hp")}`); placeTokens(); }
 const inArea = (c, rad) => CB.units.filter(o => dist(o, c) <= rad && (o.side === "p" || o.hp > 0));
@@ -339,7 +377,8 @@ async function castSpell(u, key, target) {
     case "sleep": { await fxArea(target, 1, "sleep"); let pool = roll("5d8").total; const ts = inArea(target, 1).filter(t => t.side === "e" && !t.def.undead && !t.def.construct && !t.cond.asleep).sort((a, b) => a.hp - b.hp);
       for (const t of ts) { if (t.hp <= pool) { pool -= t.hp; t.cond.asleep = 10; logL(`${t.name} ${T_("sleeps")}`); floatAt(t, "Zz", "#86a4da"); } else break; } placeTokens(); await sleep(300); break; }
     case "burninghands": case "fireball": case "icestorm": { const dice = {burninghands: "3d6", fireball: "8d6", icestorm: "2d8+4d6"}[key]; const ty = key === "icestorm" ? "cold" : "fire"; if (key !== "burninghands") await fxProjectile(u, target, ty); await fxArea(target, sp.rad, ty); const dmg = roll(dice).total;
-      for (const t of inArea(target, sp.rad).filter(t => t !== u && alive(t))) { const ok = saveRoll(t, "dex", dc, coverOf(target, t)); await applyDmg(t, ok ? Math.floor(dmg / 2) : dmg, ty, u); } break; }
+      for (const t of inArea(target, sp.rad).filter(t => t !== u && alive(t))) { const ok = saveRoll(t, "dex", dc, coverOf(target, t)); await applyDmg(t, ok ? Math.floor(dmg / 2) : dmg, ty, u); }
+      if (ty === "fire") igniteArea(target, sp.rad); break; }
     case "curewounds": heal(target, roll("1d8").total + m); break;
     case "healingword": heal(target, roll("1d4").total + m); break;
     case "masshealingword": allies().forEach(a => heal(a, roll("1d4").total + m)); break;
@@ -381,7 +420,7 @@ async function useItemC(u, key, target) {
   const it = ITEMS[key]; u.act--; take(key); logL(`${u.name}: ${tr(it.n)}`);
   if (it.use === "heal") heal(target, roll(it.dice).total);
   else if (it.use === "scroll" && it.spell === "fireball") { await fxProjectile(u, target, "fire"); await fxArea(target, 2, "fire"); const dmg = roll("8d6").total;
-    for (const t of inArea(target, 2).filter(t => t !== u && alive(t))) { const ok = saveRoll(t, "dex", 15, coverOf(target, t)); await applyDmg(t, ok ? Math.floor(dmg / 2) : dmg, "fire", u); } }
+    for (const t of inArea(target, 2).filter(t => t !== u && alive(t))) { const ok = saveRoll(t, "dex", 15, coverOf(target, t)); await applyDmg(t, ok ? Math.floor(dmg / 2) : dmg, "fire", u); } igniteArea(target, 2); }
   else if (it.use === "scroll" && it.spell === "massheal") allies().forEach(a => heal(a, roll("2d8+2").total));
   else await attackRoll(u, target, {hit: prof(u.ref) + abm(u.ref, "dex"), dice: "2d6", type: "fire", ranged: 1});
 }
@@ -392,11 +431,12 @@ function hitP(bonus, ac, adv, dis) { let p = Math.max(.05, Math.min(.95, (21 - (
 const atkBonusAI = () => S.diff === 0 ? -1 : S.diff === 2 ? 1 : 0;
 function aiValue(u, t, opt) {
   // expected damage of using opt against t from u's current (possibly hypothetical) tile
+  if (dist(u, t) > 1 && !canSee(u, t)) return 0;
   if (opt.sp && opt.sp.save) { const dc = opt.sp.dc; let v = 0; for (const p of inArea(t, opt.sp.rad || 0).filter(p => p.side === "p" && !p.down)) { const sb = saveBonus(p.ref, opt.sp.save); const ps = Math.max(.05, Math.min(.95, (21 - (dc - sb)) / 20)); v += avgDice(opt.sp.d) * (1 - ps * .5); } return v; }
   const a = opt.sp || opt.a, o = {ranged: a.r > 1, reach: a.r};
   const ai = advInfo(u, t, o), cov = (a.r > 1 || dist(u, t) > 1) ? coverOf(u, t) : 0;
-  const p = hitP(a.b + atkBonusAI(), t.ac + cov, ai.adv, ai.dis), d = avgDice(a.d) * (opt.a ? (a.k || 1) : 1);
-  let v = p * d;
+  const p = hitP(a.b + atkBonusAI() + highBonus(u, t, o), t.ac + cov, ai.adv, ai.dis), d = avgDice(a.d) * (opt.a ? (a.k || 1) : 1);
+  let v = p * d; if (exposed(u, t, o)) v *= 1.1;
   if (t.hp <= d) v *= 1.35;
   if (["wizard", "cleric"].includes(t.ref.cls)) v *= 1.15;
   if (a.para && t.ref.race !== "elf") v *= 1.2;
@@ -404,21 +444,17 @@ function aiValue(u, t, opt) {
 }
 function pickTarget(u, r, opt) {
   const o = opt || {a: u.def.atk[0]}; let best = null, bv = -1;
-  for (const p of allies()) { if (p.down || dist(u, p) > r) continue; const v = aiValue(u, p, o) + Math.random() * .4; if (v > bv) { bv = v; best = p; } }
+  for (const p of allies()) { if (p.down || dist(u, p) > effR(u, r) || (dist(u, p) > 1 && !canSee(u, p))) continue; const v = aiValue(u, p, o) + Math.random() * .4; if (v > bv) { bv = v; best = p; } }
   return best;
 }
-function aiReach(u) {
-  const R = new Map([[K(u.x, u.y), {d: 0, p: null}]]), q = [[u.x, u.y]];
-  while (q.length) { const [x, y] = q.shift(), d0 = R.get(K(x, y)).d; if (d0 >= u.mvAI) continue;
-    for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) { const nx = x + dx, ny = y + dy, k = K(nx, ny); if ((!dx && !dy) || !inGrid(nx, ny) || CB.ob.has(k) || R.has(k)) continue; const o = unitAt(nx, ny); if (o && o.side === "p" && !o.down) continue; R.set(k, {d: d0 + 1, p: K(x, y)}); q.push([nx, ny]); } }
-  return R;
-}
+function aiReach(u) { return reachOf(u, u.mvAI, true); }
 function pathRisk(u, path) {
   // expected damage from opportunity attacks and overwatch along a path
   let risk = 0; const ox = u.x, oy = u.y;
   for (let i = 1; i < path.length; i++) { const [fx, fy] = path[i - 1].split(",").map(Number), [tx, ty] = path[i].split(",").map(Number);
     if (!u.cond.dis) for (const o of provokers(u, {x: fx, y: fy}, {x: tx, y: ty})) { const m = meleeOf(o); risk += hitP(m.hit, u.ac, false, false) * avgDice(m.dice) + (m.flat || 0) * .6; }
-    for (const o of allies().filter(o => o.cond.ow && canReact(o))) { const pr = owProfile(o); if (pr && Math.max(Math.abs(o.x - tx), Math.abs(o.y - ty)) <= pr.r) risk += 5; } }
+    for (const o of allies().filter(o => o.cond.ow && canReact(o))) { const pr = owProfile(o), p = {x: tx, y: ty}; if (pr && dist(o, p) <= effR(o, pr.r) && (pr.r <= 1 || canSee(o, p))) risk += 5; }
+    if (CB.fire && CB.fire[path[i]]) risk += 3.5; }
   u.x = ox; u.y = oy; return risk;
 }
 async function aiMoveToward(u) {
@@ -442,8 +478,8 @@ async function aiTurn(u) {
   R.forEach((v, k) => {
     const [x, y] = k.split(",").map(Number); if (!freeTile(x, y, u)) return;
     u.x = x; u.y = y;
-    let val = 0; for (const p of allies()) if (!p.down && dist(u, p) <= opt.r) val = Math.max(val, aiValue(u, p, opt));
-    let def = 0;
+    let val = 0; for (const p of allies()) if (!p.down && dist(u, p) <= effR(u, opt.r)) val = Math.max(val, aiValue(u, p, opt));
+    let def = terrainScore(u, k);
     if (ranged) { const adj = allies().filter(p => !p.down && dist(u, p) <= 1).length; def -= adj * 4; for (const p of allies()) if (!p.down) def += coverOf(p, u) * .35; }
     u.x = ox; u.y = oy;
     const risk = v.d ? pathRisk(u, pathTo(R, k)) : 0;
@@ -461,7 +497,7 @@ async function aiTurn(u) {
   const atkB = atkBonusAI();
   if (opt.sp) {
     const sp = opt.sp; logL(`${u.name}: ${tr(sp.n)}`);
-    if (sp.save) { await fxProjectile(u, t, sp.t); await fxArea(t, sp.rad || 0, sp.t); const dmg = roll(sp.d).total; for (const p of inArea(t, sp.rad || 0).filter(p => p.side === "p" && !p.down)) { const ok = saveRoll(p, sp.save, sp.dc + (S.diff === 2 ? 1 : S.diff === 0 ? -1 : 0), sp.save === "dex" ? coverOf(t, p) : 0); await applyDmg(p, ok ? Math.floor(dmg / 2) : dmg, sp.t, u); } }
+    if (sp.save) { await fxProjectile(u, t, sp.t); await fxArea(t, sp.rad || 0, sp.t); const dmg = roll(sp.d).total; for (const p of inArea(t, sp.rad || 0).filter(p => p.side === "p" && !p.down)) { const ok = saveRoll(p, sp.save, sp.dc + (S.diff === 2 ? 1 : S.diff === 0 ? -1 : 0), sp.save === "dex" ? coverOf(t, p) : 0); await applyDmg(p, ok ? Math.floor(dmg / 2) : dmg, sp.t, u); } if (sp.t === "fire") igniteArea(t, sp.rad || 0); }
     else { const dmg = await attackRoll(u, t, {hit: sp.b + atkB, dice: sp.d, type: sp.t, ranged: sp.r > 1}); if (sp.drain && dmg) { u.hp = Math.min(u.maxhp, u.hp + Math.floor(dmg / 2)); floatAt(u, "+" + Math.floor(dmg / 2), "#c9a7ff"); placeTokens(); } }
     return;
   }

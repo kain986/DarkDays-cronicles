@@ -29,12 +29,15 @@ Il gioco funziona offline. Nell'app controlla da solo se è uscita una versione 
 - **Creazione del personaggio in stile 5e:** 6 razze, 6 classi, background, acquisto a punti (27), abilità e competenze.
 - **Prove di abilità con il d20**, vantaggio e svantaggio, tiri salvezza e classi difficoltà visibili.
 - **Combattimento tattico a turni:**
-  - griglia con copertura mezza (+2 CA) e tre quarti (+5 CA) data da rocce, alberi e rovine;
-  - fiancheggiamento, attacchi di opportunità, Disimpegno, Guardia (overwatch), Spinta, Attacco poderoso;
-  - reazioni, condizioni e incantesimi con slot.
+  - griglia con copertura mezza (+2 CA) e tre quarti (+5 CA);
+  - terreni con effetti: alture, sterpaglia che dà copertura e prende fuoco, macerie e neve alta, cerchi sacri, ostacoli alti che bloccano la linea di vista;
+  - fiancheggiamento e bersagli esposti (critici con 18–20), attacchi di opportunità, Disimpegno, Guardia (overwatch), Atterrare, Colpo potente;
+  - reazioni, condizioni e incantesimi con slot;
+  - capi nemici: in alcuni scontri, se il capo cade, i seguaci fuggono.
+  - Le zone d'azione sono colorate: rosso per gli attacchi, arancione per gli incantesimi, giallo per la Guardia, scuro fuori vista. Il movimento mostra il percorso e il costo prima di confermare.
   - Toccando un nemico vedi la probabilità di colpirlo; le caselle rischiose sono segnalate prima di muoverti.
   - Prima dello scontro puoi schierare il gruppo; durante lo scontro ci sono sfide facoltative che danno ricompense.
-- **IA dei nemici "utility":** valuta ogni casella raggiungibile in base al danno atteso, alla copertura, al fiancheggiamento e al rischio di subire attacchi di opportunità o la Guardia.
+- **IA dei nemici "utility":** valuta ogni casella raggiungibile in base al danno atteso, alla copertura, alle alture, alla linea di vista, al fuoco e al rischio di subire attacchi di opportunità o la Guardia.
 - **Progressione alla Baldur's Gate:**
   - livelli fino al 7 nel Capitolo I, talenti, dadi vita, riposi brevi e lunghi;
   - oggetti magici, ninnoli, pergamene, negozi e bottino casuale.
@@ -62,6 +65,7 @@ src/                      sorgenti del gioco (HTML/CSS/JS), concatenati in ordin
   70_maps_minis_cover.js  mappe a inchiostro, miniature, copertura
   71_tactics.js           schieramento, rischio di movimento, sfide
   72_landscape.js         modalità orizzontale
+  73_terrain_leaders.js   terreni, linea di vista, fuoco, capi nemici, zone d'azione
   80_meta.js              salvataggi, bestiario, obiettivi, opzioni, aggiornamenti
   99_boot.js              avvio
   chapters/ch1_il_sole_nero/   Capitolo I (definizione + tre atti)

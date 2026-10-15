@@ -221,6 +221,7 @@ function fxLoop(now) {
     else if (a === "fireflies") part({x: Math.random() * FX.W, y: Math.random() * FX.H, vx: (Math.random() - .5) * .4, vy: (Math.random() - .5) * .4, max: 150, size: 1.8, col: "#d9f08a", drag: 1, tw: 1});
     else if (a === "drips") part({x: Math.random() * FX.W, y: Math.random() * FX.H, max: 40, size: 0, col: "rgba(160,230,215,.5)", shape: "ripple", drag: 1, add: false});
   }
+  if (CB.fire) fireFX();
   // spotlight on the acting unit
   const cu = CB.order[CB.ti];
   if (cu && !CB.ended) { const P = cpos(cu), fl = .85 + Math.sin(now / 260) * .08, r = C * 2.1; const g = x.createRadialGradient(P.x, P.y, C * .2, P.x, P.y, r);
@@ -344,7 +345,7 @@ function oddsVs(u, t, s) {
   if (auto) return 100;
   if (save) return Math.round(Math.max(.05, Math.min(.95, (save.dc - save.b - 1) / 20)) * 100);
   const ai = advInfo(u, t, o), cov = coverFor(u, t, o);
-  return Math.round(hitP(hit + (u.cond.bless ? 2.5 : 0), t.ac + cov, ai.adv, ai.dis) * 100);
+  return Math.round(hitP(hit + (u.cond.bless ? 2.5 : 0) + highBonus(u, t, o), t.ac + cov, ai.adv, ai.dis) * 100);
 }
 
 /* ---------- action catalogue for the hotbar ---------- */
@@ -374,10 +375,10 @@ function renderCombat() {
     if (mine) {
       if (R && R.has(K(x, y)) && !t && !CB.ob.has(K(x, y))) c = "reach";
       if (usable) {
-        if (sp.tgt === "enemy" && t && t.side === "e" && t.hp > 0 && dist(u, t) <= sp.r) { c = "tgt"; tgtIds.add(t.uid); }
-        if (sp.tgt === "ally" && t && t.side === "p" && dist(u, t) <= sp.r) c = "ally";
-        if (sp.tgt === "tile" && !t && dist(u, {x, y}) <= sp.r && !CB.ob.has(K(x, y))) c = "path";
-        if (sp.tgt === "area") { if (CB.pend && dist(CB.pend, {x, y}) <= sp.rad) c = "area"; else if (dist(u, {x, y}) <= sp.r && !CB.pend && !c) c = "range"; }
+        if (sp.tgt === "enemy" && t && t.side === "e" && t.hp > 0 && dist(u, t) <= sp.r && sees(u, t, sp.r)) { c = "tgt"; tgtIds.add(t.uid); }
+        if (sp.tgt === "ally" && t && t.side === "p" && dist(u, t) <= sp.r && sees(u, t, sp.r)) c = "ally";
+        if (sp.tgt === "tile" && !t && dist(u, {x, y}) <= sp.r && sees(u, {x, y}, sp.r) && !CB.ob.has(K(x, y))) c = "path";
+        if (sp.tgt === "area") { if (CB.pend && dist(CB.pend, {x, y}) <= sp.rad) c = "area"; else if (dist(u, {x, y}) <= sp.r && !CB.pend && !c && sees(u, {x, y}, sp.r)) c = "range"; }
       }
     }
     cel.className = "cell" + (c ? " " + c : "");
@@ -426,7 +427,7 @@ function onSlot(u, a) {
   if (!ok) { CB.sel = a.s; CB.pend = null; renderCombat(); CB.sel = canUse(u, defaultSel(u)) ? defaultSel(u) : a.s; return; }
   if (spc.tgt === "none" && sameSel(CB.sel, a.s)) { execute(u, null); return; }
   if (a.s.k === "it" && spc.tgt === "ally" && sameSel(CB.sel, a.s) && allies().filter(o => dist(o, u) <= 1).length === 1) { execute(u, u); return; }
-  CB.sel = a.s; CB.pend = null; CB.inspect = null; renderCombat();
+  CB.sel = a.s; CB.pend = null; CB.inspect = null; CB.mvp = null; CB.tileInfo = null; renderCombat();
 }
 function renderLog() { const l = $("#cblog"); if (!l || !CB) return; l.innerHTML = CB.log.slice(-2).map(x => `<span>${esc(x)}</span>`).join(""); }
 function openLog() { if (!CB) return; const m = modal(`<h2>${tr(["Registro di battaglia","Battle log","Registro de batalla"])}</h2><div class="loglist">${CB.log.slice().reverse().map(x => `<p>${esc(x)}</p>`).join("")}</div><button class="btn small" id="lgX" style="margin-top:12px">${T_("close")}</button>`); m.querySelector("#lgX").onclick = closeModal; }
@@ -439,7 +440,7 @@ function winCombat() {
   const gx = Math.round(CB.xp * (ch1 ? 1.2 : 1)), gg = CB.gold + (ch2 ? 15 : 0);
   const loot = rollLoot(CB.key);
   const chal = `<div class="chal"><span class="${ch1 ? "ok" : ""}">${ch1 ? "✓" : "✗"} ${tr(["Nessun caduto","Nobody fell","Nadie cayó"])} <small>+20% ${T_("xp")}</small></span><span class="${ch2 ? "ok" : ""}">${ch2 ? "✓" : "✗"} ${tr(["Entro","Within","En"])} ${fastR} ${tr(["round","rounds","rondas"])} <small>+15 ${T_("gp")}</small></span></div>`;
-  const m = modal(`<div class="endcard win"><div class="seal">${icon("sun")}</div><h2>${T_("victory")}</h2>${chal}<p class="lbl">${T_("rewards")}</p><div class="rew"><span><b>+${gx}</b>${T_("xp")}</span>${gg ? `<span><b>+${gg}</b>${T_("gp")}</span>` : ""}</div>${loot.length ? `<div class="loot">${loot.map(k => `<div class="li${ITEMS[k].slot === "t" ? " rare" : ""}">${medHTML(ITEMS[k].slot === "t" ? "star" : ITEMS[k].use === "scroll" ? "scroll" : ITEMS[k].use === "heal" ? "potion" : "flame", "sm")}<span>${tr(ITEMS[k].n)}</span></div>`).join("")}</div>` : ""}<button class="btn primary" id="vOk">${T_("goOn")}</button></div>`, {center: 1, locked: 1});
+  const m = modal(`<div class="endcard win"><div class="seal">${icon("sun")}</div><h2>${T_("victory")}</h2>${CB.routed ? `<p class="rout">${icon("crown")} ${tr(["Il capo è caduto: i seguaci sono fuggiti.","The leader fell: the followers fled.","El jefe cayó: sus seguidores huyeron."])}</p>` : ""}${chal}<p class="lbl">${T_("rewards")}</p><div class="rew"><span><b>+${gx}</b>${T_("xp")}</span>${gg ? `<span><b>+${gg}</b>${T_("gp")}</span>` : ""}</div>${loot.length ? `<div class="loot">${loot.map(k => `<div class="li${ITEMS[k].slot === "t" ? " rare" : ""}">${medHTML(ITEMS[k].slot === "t" ? "star" : ITEMS[k].use === "scroll" ? "scroll" : ITEMS[k].use === "heal" ? "potion" : "flame", "sm")}<span>${tr(ITEMS[k].n)}</span></div>`).join("")}</div>` : ""}<button class="btn primary" id="vOk">${T_("goOn")}</button></div>`, {center: 1, locked: 1});
   m.querySelector("#vOk").onclick = () => { closeModal(); CB = null; S.xp += gx; S.gold += gg; loot.forEach(k => S.inv[k] = (S.inv[k] || 0) + 1); checkLevel(); goScene(win); };
 }
 function rollLoot(key) {

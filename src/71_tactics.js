@@ -9,13 +9,13 @@ const TIPS = [
   ["star", ["Sfide e bottino", "Challenges and loot", "Desafíos y botín"], ["Vinci senza caduti o in pochi round per avere ricompense extra. I nemici più forti custodiscono oggetti magici unici.", "Win with nobody down or within a few rounds for extra rewards. The strongest foes carry unique magic items.", "Gana sin caídos o en pocas rondas para obtener recompensas extra. Los enemigos más fuertes guardan objetos mágicos únicos."]],
 ];
 function showTips(force) {
-  if (!force && PREF.tipsSeen) return; PREF.tipsSeen = 1; store(PREF_KEY, PREF);
+  if (!force && (PREF.tipsSeen || 0) >= 2) return; PREF.tipsSeen = 2; store(PREF_KEY, PREF);
   const m = modal(`<h2>${tr(["Tattica", "Tactics", "Táctica"])}</h2><p style="color:var(--muted);font-size:14px">${tr(["Prima di ogni scontro puoi schierare il gruppo: tocca un personaggio e poi una casella dorata.", "Before each fight you can deploy the party: tap a character, then a golden tile.", "Antes de cada combate puedes desplegar al grupo: toca un personaje y luego una casilla dorada."])}</p>
     <div class="tips">${TIPS.map(([ic, n, d]) => `<div class="tip">${medHTML(ic, "sm")}<div><b>${tr(n)}</b><p>${tr(d)}</p></div></div>`).join("")}</div>
     <button class="btn primary" id="tipX" style="margin-top:12px">${T_("goOn")}</button>`, {center: 1});
   m.querySelector("#tipX").onclick = closeModal;
 }
-function showTipsOnce() { if (!PREF.tipsSeen) setTimeout(() => showTips(), 350); }
+function showTipsOnce() { if ((PREF.tipsSeen || 0) < 2) setTimeout(() => showTips(), 350); }
 
 /* ---------- deployment ---------- */
 const depZone = (x, y) => y >= ROWS - 2 && !CB.ob.has(K(x, y));
@@ -33,7 +33,8 @@ function tileRisk(u, R, k) {
   const path = pathTo(R, k);
   for (let i = 1; i < path.length; i++) { const [fx, fy] = path[i - 1].split(",").map(Number), [tx, ty] = path[i].split(",").map(Number);
     if (provokers(u, {x: fx, y: fy}, {x: tx, y: ty}).length) return "oa";
-    for (const o of CB.units) if (o.side !== u.side && o.cond.ow && canReact(o)) { const p = owProfile(o); if (p && Math.max(Math.abs(o.x - tx), Math.abs(o.y - ty)) <= p.r) return "ow"; } }
+    if (CB.fire && CB.fire[path[i]]) return "fire";
+    for (const o of CB.units) if (o.side !== u.side && o.cond.ow && canReact(o)) { const p = owProfile(o), q = {x: tx, y: ty}; if (p && dist(o, q) <= effR(o, p.r) && sees(o, q, p.r)) return "ow"; } }
   return null;
 }
 

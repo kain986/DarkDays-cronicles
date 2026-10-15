@@ -578,6 +578,44 @@ a.btn{text-decoration:none}
 .jch{display:flex;flex-direction:column;margin:0 0 6px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .jch span{font-family:var(--f-ui);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brass)}
 .jch b{font-family:var(--f-display);font-weight:400;font-size:20px;color:#f3e2b4}
+/* ---------- terrain, action zones, move preview, leaders ---------- */
+.cell.z-atk{background:rgba(170,20,40,.1)}
+.cell.z-ab{background:rgba(214,110,20,.16)}
+.cell.z-ow{background:rgba(222,176,20,.22)}
+.cell.z-los{background:rgba(24,14,8,.32)}
+.cell.z-eow{box-shadow:inset 0 0 0 2px rgba(190,140,20,.5)}
+.cell.z-eow::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(200,150,20,.16) 0 3px,transparent 3px 8px);pointer-events:none}
+.cell.reach2::after{content:"";position:absolute;left:50%;top:50%;width:13%;height:13%;transform:translate(-50%,-50%);border-radius:50%;border:1.5px solid #8a5a08;opacity:.7}
+.cell.pdest{box-shadow:inset 0 0 0 2px rgba(30,58,120,.75)}
+#psvg{position:absolute;left:0;top:0;pointer-events:none;z-index:2;overflow:visible}
+#psvg .pl{fill:none;stroke:#1e3a78;stroke-width:2.4;stroke-dasharray:5 4;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+#psvg .pl.dash{stroke:#8a5a08}
+#psvg .pd{fill:#1e3a78;opacity:.85}#psvg .pd.dsh{fill:#a87a10}#psvg .pd.risk{fill:#d9622b}#psvg .pd.fire{fill:#c0301a}
+#psvg .pe{fill:rgba(244,230,192,.85);stroke:#1e3a78;stroke-width:2.2}#psvg .pe.dash{stroke:#8a5a08}
+#psvg .pt{fill:#1e3a78;font:700 12px var(--f-ui);text-anchor:middle}
+.mvbar{display:flex;align-items:center;gap:8px;height:100%}
+.mvbar .mvt{flex:1;min-width:0;line-height:1.25}
+.mvbar .mvt>b{font-size:16px}.mvbar .cost-t{white-space:nowrap}
+.mvbar .mvt p.hint{margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cost-t.m{color:#bcd2ff;box-shadow:0 0 0 1px #4a6aa8;margin-left:6px}
+.mvbar .cost-t.a{margin-left:4px}
+.mvgo{flex:none;display:flex;align-items:center;gap:6px;height:40px;padding:0 14px;border-radius:10px;border:0;font:600 14px var(--f-ui);color:#1a1208;background:linear-gradient(#f0d48a,#b8913c);box-shadow:0 2px 0 #6a4e1c,0 0 0 1px #6a4e1c}
+.mvgo svg{width:16px;height:16px}
+.mvno{flex:none;width:36px;height:36px;border-radius:50%;border:0;color:var(--bone);background:#2a2230;box-shadow:inset 0 0 0 1px #4a3e56;font-size:15px}
+.info .hint .rk{color:#ffb38a}.info .hint .hg{color:#f0d48a}.info .hint .nl{color:#bdb3a4}
+.info .hint svg{width:12px;height:12px;vertical-align:-2px}
+.info .lead{color:#f0d48a}.info .lead svg{width:13px;height:13px;vertical-align:-2px}
+.tok .chance .ex{font-style:normal;color:#ffb070;margin-left:3px}
+.tok .lcrown{position:absolute;left:50%;top:-14%;translate:-50% 0;width:30%;aspect-ratio:1;color:#f0d48a;z-index:6;filter:drop-shadow(0 1px 1px #000) drop-shadow(0 0 4px rgba(240,200,120,.7));display:none}
+.tok.lead .lcrown{display:block}
+.tok .lcrown svg{width:100%;height:100%;fill:rgba(202,166,80,.55)}
+.tok.fled .in{opacity:0;scale:.6;transition:opacity .7s,scale .7s}
+.bark{position:absolute;z-index:40;translate:-50% -100%;max-width:210px;padding:7px 10px;border-radius:12px;font:italic 14px/1.25 var(--f-body);color:#2a1b0f;background:#f4e6c0;border:1.5px solid #2a1b0f;box-shadow:0 4px 14px rgba(0,0,0,.45);pointer-events:none;animation:barkin .25s ease-out;transition:opacity .4s}
+.bark::after{content:"";position:absolute;left:50%;bottom:-7px;width:12px;height:12px;translate:-50% 0;rotate:45deg;background:#f4e6c0;border-right:1.5px solid #2a1b0f;border-bottom:1.5px solid #2a1b0f}
+.bark.out{opacity:0}
+@keyframes barkin{from{opacity:0;translate:-50% -80%}to{opacity:1;translate:-50% -100%}}
+.endcard .rout{font-family:var(--f-ui);font-size:14px;color:#f0d48a}
+.endcard .rout svg{width:15px;height:15px;vertical-align:-2px}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 
@@ -592,7 +630,7 @@ a.btn{text-decoration:none}
 /* ===== 10_data.js ===== */
 "use strict";
 /* =================== LANGUAGE =================== */
-var GAME_VERSION = "2.1"; // replaced by tools/build.mjs
+var GAME_VERSION = "2.2"; // replaced by tools/build.mjs
 var IS_APP = true;      // true only in the Android build (enables the update check)
 let LG = 0; // 0 it, 1 en, 2 es
 const LANG_CODES = ["it","en","es"];
@@ -952,16 +990,16 @@ const MAPS = {
 const ENC = {
   cart:{map:"road", foes:["famished","famished","famished"], gold:5},
   wolves:{map:"forest", foes:["wolf","wolf","wolf"]},
-  mill:{map:"mill", foes:["goblin","goblin","gobarcher","snik"], gold:20},
+  mill:{lead:"snik", map:"mill", foes:["goblin","goblin","gobarcher","snik"], gold:20},
   cem:{map:"grave", foes:["skeleton","skeleton","skelarcher","zombie"]},
   camp:{map:"forest", foes:["cultist","cultist","cultist","cultist","acolyte","acolyte"], gold:15},
   camp_easy:{map:"forest", foes:["cultist","cultist","acolyte"], gold:15},
-  varga:{map:"stones", foes:["varga","cultist","cultist","ghoul"], gold:30},
-  varga_small:{map:"stones", foes:["varga","ghoul"], gold:30},
-  bandits:{map:"bridge", foes:["bandit","bandit","xbow","xbow","mira"], gold:20},
+  varga:{lead:"varga", map:"stones", foes:["varga","cultist","cultist","ghoul"], gold:30},
+  varga_small:{lead:"varga", map:"stones", foes:["varga","ghoul"], gold:30},
+  bandits:{lead:"mira", map:"bridge", foes:["bandit","bandit","xbow","xbow","mira"], gold:20},
   shadows:{map:"road", foes:["shadow","shadow","shadow"]},
   tower:{map:"tower", foes:["warden","acolyte","acolyte","shadow","shadow"], gold:30},
-  doran:{map:"roof", foes:["doran","cultist","cultist","acolyte"], gold:20},
+  doran:{lead:"doran", map:"roof", foes:["doran","cultist","cultist","acolyte"], gold:20},
   duke:{map:"palace", foes:["dukeguard","dukeguard","dukeguard","acolyte"], gold:40},
   sewer:{map:"sewer", foes:["rat","rat","rat","rat","drowned"]},
   drowned:{map:"water", foes:["drowned","drowned","drowned","drowned"]},
@@ -2509,6 +2547,7 @@ function startCombat(key, win, surprise) {
     while (CB.ob.size < mp.n && g++ < 200) { const x = Math.floor(Math.random() * COLS), y = 2 + Math.floor(Math.random() * (ROWS - 4)); CB.ob.add(K(x, y)); }
     if (connected()) break;
   }
+  genTerrain();
   const ps = [[3,8],[2,8],[4,8],[3,7],[1,8],[5,8]];
   S.party.forEach((c, i) => { if (c.hp <= 0) c.hp = 1; CB.units.push({uid: "p_" + c.id, side: "p", ref: c, name: c.name.split(" ")[0], hp: c.hp, maxhp: c.maxhp, ac: acOf(c), spd: speedOf(c), icon: CL(c).icon, x: ps[i][0], y: ps[i][1], cond: {}, down: false, react: 1}); });
   const hpMul = [.75, 1, 1.3][S.diff ?? 1], cnt = {};
@@ -2522,6 +2561,7 @@ function startCombat(key, win, surprise) {
     const hp = Math.max(1, Math.round(d.hp * hpMul));
     CB.units.push({uid: "e" + i, side: "e", foe: k, def: d, name: tr(d.n) + (cnt[k] > 1 ? " " + seen[k] : ""), hp, maxhp: hp, ac: d.ac, spd: d.spd || 6, icon: d.ic, boss: !!d.boss, x, y, cond: surprise ? {surp: 1} : {}, react: 1});
   });
+  if (enc.lead) { const L = CB.units.find(u => u.foe === enc.lead); if (L && CB.units.some(u => u.side === "e" && u !== L)) { CB.lead = L.uid; L.leader = 1; } }
   CB.units.forEach(u => u.init = rnd(20) + (u.side === "p" ? abm(u.ref, "dex") + (hasFeat(u.ref, "alert") ? 5 : 0) : (u.def.sv || 0)) + Math.random() * .1);
   CB.order = [...CB.units].sort((a, b) => b.init - a.init);
   showScreen("combat"); buildCombat();
@@ -2540,31 +2580,40 @@ function connected() {
 function logL(s) { CB.log.push(s); if (CB.log.length > 80) CB.log.shift(); renderLog(); }
 
 /* ---------- reach / BFS ---------- */
-function reachOf(u, limit) {
-  const res = new Map([[K(u.x, u.y), {d: 0, p: null}]]), q = [[u.x, u.y]];
-  while (q.length) {
-    const [x, y] = q.shift(), d0 = res.get(K(x, y)).d; if (d0 >= limit) continue;
+// movement cost: 1 per tile, +1 for difficult terrain, +1 to climb onto high ground.
+// Paths of equal cost prefer fewer burning tiles, then straight lines.
+function reachOf(u, limit, ai) {
+  const res = new Map([[K(u.x, u.y), {d: 0, w: 0, pen: 0, p: null}]]), open = [[0, u.x, u.y]];
+  while (open.length) {
+    let bi = 0; for (let i = 1; i < open.length; i++) if (open[i][0] < open[bi][0]) bi = i;
+    const [w0, x, y] = open.splice(bi, 1)[0], cur0 = res.get(K(x, y)); if (w0 > cur0.w) continue;
     for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) {
-      const nx = x + dx, ny = y + dy, k = K(nx, ny); if ((!dx && !dy) || !inGrid(nx, ny) || CB.ob.has(k) || res.has(k)) continue;
+      const nx = x + dx, ny = y + dy, k = K(nx, ny); if ((!dx && !dy) || !inGrid(nx, ny) || CB.ob.has(k)) continue;
       const o = unitAt(nx, ny); if (o && o.side !== u.side && alive(o)) continue;
-      res.set(k, {d: d0 + 1, p: K(x, y)}); q.push([nx, ny]);
+      const nd = cur0.d + stepCost(x, y, nx, ny); if (nd > limit) continue;
+      const pen = Math.min(999, cur0.pen + (CB.fire && CB.fire[k] ? (ai ? 60 : 20) : 0) + (dx && dy ? .01 : 0)), nw = nd * 1000 + pen;
+      const e = res.get(k); if (e && e.w <= nw) continue;
+      res.set(k, {d: nd, w: nw, pen, p: K(x, y)}); open.push([nw, nx, ny]);
     }
   }
   return res;
 }
 const freeTile = (x, y, self) => { const o = unitAt(x, y); return !CB.ob.has(K(x, y)) && (!o || o === self || (o.side === "e" && o.hp <= 0)); };
 function pathTo(R, k) { const out = []; while (k) { out.unshift(k); k = R.get(k).p; } return out; }
+// returns the movement spent (terrain-aware)
 async function walk(u, path) {
-  let steps = 0; u.mvStop = false;
+  let spent = 0; u.mvStop = false;
   for (let i = 1; i < path.length; i++) {
     const [x, y] = path[i].split(",").map(Number);
     const stop = await provoke(u, {x: u.x, y: u.y}, {x, y});
-    if (stop || !alive(u) || !CB || CB.ended) { if (stop) u.mvStop = true; return steps; }
-    u.x = x; u.y = y; steps++; placeTokens(); fxDust(u); await sleep(150);
+    if (stop || !alive(u) || !CB || CB.ended) { if (stop) u.mvStop = true; return spent; }
+    spent += stepCost(u.x, u.y, x, y); u.x = x; u.y = y; placeTokens(); fxDust(u); await sleep(150);
+    if (CB.fire && CB.fire[K(x, y)]) await burnUnit(u);
+    if (!alive(u) || !CB || CB.ended) return spent;
     await overwatchCheck(u);
-    if (!alive(u) || !CB || CB.ended) return steps;
+    if (!alive(u) || !CB || CB.ended) return spent;
   }
-  return steps;
+  return spent;
 }
 function meleeOf(o) {
   if (o.side === "p") { const c = o.ref, ws = weaponsOf(c), i = ws.findIndex(w => !WEAP[w].ranged); if (i < 0) return null; const p = weapProfile(c, ws[i]);
@@ -2599,8 +2648,8 @@ async function provoke(m, from, to) {
 async function overwatchCheck(m) {
   for (const o of CB.units.filter(o => o.side !== m.side && o.cond.ow && canReact(o))) {
     if (!alive(m) || CB.ended) return; const p = owProfile(o); if (!p) continue;
-    if (dist(o, m) > (p.r || 1)) continue;
-    if (p.r > 1 && coverOf(o, m) >= 5) continue;
+    if (dist(o, m) > effR(o, p.r || 1)) continue;
+    if (p.r > 1 && dist(o, m) > 1 && (!canSee(o, m) || coverOf(o, m) >= 5)) continue;
     o.react--; delete o.cond.ow; floatAt(o, tr(["Guardia!","Overwatch!","¡Vigilancia!"]), "#9fd0ff", 1);
     logL(`${o.name}: ${tr(["fuoco di guardia","overwatch shot","disparo de vigilancia"])}`);
     await attackRoll(o, m, p);
@@ -2617,15 +2666,17 @@ function checkEnd() {
 async function nextTurn() {
   if (!CB || checkEnd()) return;
   let guard = 0;
-  do { CB.ti++; if (CB.ti >= CB.order.length) { CB.ti = 0; CB.round++; CB.newRound = true; } } while (!alive(CB.order[CB.ti]) && guard++ < 50);
+  do { CB.ti++; if (CB.ti >= CB.order.length) { CB.ti = 0; CB.round++; CB.newRound = true; tickFire(); } } while (!alive(CB.order[CB.ti]) && guard++ < 50);
   const u = cur(); u.mv = u.spd; u.act = 1; u.bon = 1; u.atkLeft = 0; u.sneakUsed = 0; u.colUsed = 0; u.react = 1; delete u.cond.dodge; delete u.cond.dis; delete u.cond.ow; delete u.cond.power;
   if (u.cond.prone && !u.cond.asleep && !u.cond.stun) { delete u.cond.prone; u.mv = Math.floor(u.spd / 2); logL(`${u.name}: ${tr(["si rialza","stands up","se levanta"])}`); }
   if (u.side === "e" && u.def.gob) u.cond.dis = 1;
   if (u.side === "p" && u.ref.trinket === "periapt" && u.hp < u.maxhp / 2) heal(u, 2);
-  CB.sel = null; CB.pend = null; CB.inspect = null;
+  CB.sel = null; CB.pend = null; CB.inspect = null; CB.mvp = null; CB.tileInfo = null;
   const tok = CB.turnTok = (CB.turnTok || 0) + 1;
   CB.busy = true; renderCombat(); await turnBanner(u);
   if (!CB || CB.turnTok !== tok) return; CB.busy = false;
+  if (!CB.introDone) { CB.introDone = true; await leaderIntro(); if (!CB || CB.turnTok !== tok) return; }
+  if (await terrainTurnStart(u)) { if (!CB) return; if (!checkEnd()) setTimeout(nextTurn, 250); return; }
   if (u.side === "e") {
     // spirit guardians
     for (const p of allies()) if (!p.down && p.cond.sg && dist(p, u) <= 2 && u.hp > 0) { const ok = saveRoll(u, "wis", spellDC(p.ref)); const dmg = roll("3d8").total; logL(`${tr(SPELLS.spiritguardians.n)} → ${u.name}`); await applyDmg(u, ok ? Math.floor(dmg / 2) : dmg, "radiant", p); }
@@ -2634,7 +2685,7 @@ async function nextTurn() {
   if (u.cond.surp) { delete u.cond.surp; renderCombat(); await sleep(250); return endTurn(); }
   if (u.cond.asleep) { if (--u.cond.asleep <= 0) delete u.cond.asleep; logL(`${u.name}: Zz…`); renderCombat(); await sleep(350); return endTurn(); }
   if (u.cond.stun) { if (--u.cond.stun <= 0) delete u.cond.stun; logL(`${u.name} ${T_("stunned")}`); renderCombat(); await sleep(400); return endTurn(); }
-  if (u.side === "e") { CB.busy = true; renderCombat(); await sleep(380); await aiTurn(u); CB.busy = false; return endTurn(); }
+  if (u.side === "e") { CB.busy = true; renderCombat(); await sleep(380); await followerBark(u); if (!CB || CB.ended) return; await aiTurn(u); CB.busy = false; return endTurn(); }
   CB.sel = defaultSel(u); renderCombat();
 }
 function endTurn() { if (!CB || CB.ended) return; CB.busy = true; renderCombat(); setTimeout(() => { if (CB) { CB.busy = false; nextTurn(); } }, 160); }
@@ -2643,10 +2694,10 @@ function defaultSel(u) { const c = u.ref; if (c.cls === "wizard") return {k: "sp
 /* ---------- selection specs ---------- */
 function selSpec(u, s) {
   s = s || CB.sel; if (!s) return {tgt: "none"};
-  if (s.k === "w") { const p = weapProfile(u.ref, weaponsOf(u.ref)[s.i]); return {tgt: "enemy", r: p.r}; }
-  if (s.k === "sp") { const sp = SPELLS[s.key]; return {tgt: sp.tgt, r: sp.r || 0, rad: sp.rad || 0}; }
+  if (s.k === "w") { const p = weapProfile(u.ref, weaponsOf(u.ref)[s.i]); return {tgt: "enemy", r: effR(u, p.r), base: p.r}; }
+  if (s.k === "sp") { const sp = SPELLS[s.key]; return {tgt: sp.tgt, r: sp.tgt === "enemy" ? effR(u, sp.r || 0) : sp.r || 0, base: sp.r || 0, rad: sp.rad || 0}; }
   if (s.k === "ab") { const a = ABIL[s.key]; return {tgt: a.tgt || "none", r: a.r || 0}; }
-  if (s.k === "it") { const it = ITEMS[s.key]; if (it.tgt) return {tgt: it.tgt, r: it.r || 0, rad: it.rad || 0}; return it.use === "throw" ? {tgt: "enemy", r: 5} : {tgt: "ally", r: 1}; }
+  if (s.k === "it") { const it = ITEMS[s.key]; if (it.tgt) return {tgt: it.tgt, r: it.r || 0, rad: it.rad || 0}; return it.use === "throw" ? {tgt: "enemy", r: effR(u, 5), base: 5} : {tgt: "ally", r: 1}; }
   return {tgt: "none"};
 }
 function slotFor(c, lv) { for (let i = lv - 1; i < 4; i++) if (c.slots[i] > 0) return i; return -1; }
@@ -2679,29 +2730,51 @@ function anyLeft(u) {
 }
 
 /* ---------- input ---------- */
+// sight to a target (ranged effects need line of sight; adjacent creatures are always visible)
+const sees = (u, p, r) => r <= 1 || dist(u, p) <= 1 || canSee(u, p);
+const quickMove = () => !!PREF.quickMove;
+const dashOK = u => u.act > 0 || (hasF(u.ref, "cunning") && u.bon > 0);
 async function onCell(x, y) {
   if (!CB || CB.busy || CB.ended) return; const u = cur(); if (!u || u.side !== "p") return;
-  const t = unitAt(x, y), s = CB.sel, sp = selSpec(u);
+  const t = unitAt(x, y), s = CB.sel, sp = selSpec(u), k = K(x, y), pend = CB.mvp;
+  // tapping the highlighted destination again confirms the planned move
+  if (pend && ((pend.k === k && !pend.then) || (pend.then && t === pend.then))) return confirmMove();
+  CB.mvp = null; CB.tileInfo = null;
+  if (t === u && !(s && canUse(u, s) && sp.tgt === "ally")) { CB.inspect = null; return renderCombat(); }
   if (s && canUse(u, s)) {
-    if (sp.tgt === "area" && dist(u, {x, y}) <= sp.r) { if (CB.pend && CB.pend.x === x && CB.pend.y === y) return execute(u, {x, y}); CB.pend = {x, y}; return renderCombat(); }
-    if (sp.tgt === "tile" && dist(u, {x, y}) <= sp.r && freeTile(x, y) && !unitAt(x, y)) return execute(u, {x, y});
+    if (sp.tgt === "area" && dist(u, {x, y}) <= sp.r && sees(u, {x, y}, sp.r)) { if (CB.pend && CB.pend.x === x && CB.pend.y === y) return execute(u, {x, y}); CB.pend = {x, y}; return renderCombat(); }
+    if (sp.tgt === "tile" && dist(u, {x, y}) <= sp.r && sees(u, {x, y}, sp.r) && freeTile(x, y) && !unitAt(x, y)) return execute(u, {x, y});
     if (t && t.side === "e" && t.hp > 0 && sp.tgt === "enemy") {
-      if (dist(u, t) <= sp.r) return execute(u, t);
-      // approach then attack
+      if (dist(u, t) <= sp.r && sees(u, t, sp.r)) return execute(u, t);
+      // approach then attack: the closest tile from which the target is in range and in sight
       const R = reachOf(u, u.mv); let best = null;
-      R.forEach((v, k) => { const [ax, ay] = k.split(",").map(Number); if (!freeTile(ax, ay, u)) return; if (dist({x: ax, y: ay}, t) <= sp.r && (!best || v.d < best.d)) best = {k, d: v.d}; });
-      if (best) { CB.busy = true; const st = await walk(u, pathTo(R, best.k)); u.mv -= st; if (u.mvStop) u.mv = 0; CB.busy = false; if (!CB || CB.ended) return; if (alive(u) && t.hp > 0 && dist(u, t) <= sp.r && canUse(u, s)) return execute(u, t); renderCombat(); autoEnd(u); return; }
+      R.forEach((v, kk) => { const [ax, ay] = kk.split(",").map(Number), p = {x: ax, y: ay}; if (!freeTile(ax, ay, u)) return; const rr = effR(p, sp.base || sp.r);
+        if (dist(p, t) <= rr && sees(p, t, rr) && (!best || v.w < best.w)) best = {k: kk, d: v.d, w: v.w}; });
+      if (best) { const mv = {k: best.k, path: pathTo(R, best.k), cost: best.d, then: t}; if (quickMove() || best.k === K(u.x, u.y)) return doMove(u, mv); CB.mvp = mv; CB.inspect = t; return renderCombat(); }
     }
-    if (t && t.side === "p" && sp.tgt === "ally" && dist(u, t) <= sp.r) return execute(u, t);
+    if (t && t.side === "p" && sp.tgt === "ally" && dist(u, t) <= sp.r && sees(u, t, sp.r)) return execute(u, t);
   }
-  if (!t && u.mv > 0) {
-    const R = reachOf(u, u.mv), k = K(x, y);
-    if (R.has(k) && freeTile(x, y, u)) { CB.busy = true; CB.pend = null; const st = await walk(u, pathTo(R, k)); u.mv -= st; if (u.mvStop) u.mv = 0; CB.busy = false; if (!CB || CB.ended) return; renderCombat(); autoEnd(u); return; }
+  if (!t && !CB.ob.has(k) && (u.mv > 0 || dashOK(u))) {
+    const R = reachOf(u, u.mv); let RR = R, dash = false;
+    if (!R.has(k) && dashOK(u)) { const R2 = reachOf(u, u.mv + u.spd); if (R2.has(k)) { RR = R2; dash = true; } }
+    if (RR.has(k) && k !== K(u.x, u.y) && freeTile(x, y, u)) { const mv = {k, path: pathTo(RR, k), cost: RR.get(k).d, dash};
+      if (quickMove()) return doMove(u, mv); CB.mvp = mv; CB.inspect = null; return renderCombat(); }
   }
-  if (t) { CB.inspect = t; renderCombat(); }
+  if (t) { CB.inspect = t; return renderCombat(); }
+  CB.inspect = null; if (terInfoAt(k)) CB.tileInfo = k; renderCombat();
+}
+function confirmMove() { const u = cur(), mv = CB && CB.mvp; if (!mv || !u || CB.busy) return; return doMove(u, mv); }
+async function doMove(u, mv) {
+  CB.mvp = null; CB.busy = true; CB.pend = null;
+  if (mv.dash) { if (hasF(u.ref, "cunning") && u.bon > 0) u.bon--; else u.act--; u.mv += u.spd; logL(`${u.name}: ${tr(ABIL.dash.n)}`); floatAt(u, tr(ABIL.dash.n), "#ffd38a", 1); }
+  const st = await walk(u, mv.path); u.mv = Math.max(0, u.mv - st); if (u.mvStop) u.mv = 0; CB.busy = false;
+  if (!CB || CB.ended) return;
+  const t = mv.then, sp = selSpec(u);
+  if (t && alive(u) && t.hp > 0 && CB.sel && canUse(u, CB.sel) && dist(u, t) <= sp.r && sees(u, t, sp.r)) return execute(u, t);
+  renderCombat(); autoEnd(u);
 }
 async function execute(u, target) {
-  CB.busy = true; CB.inspect = null; const s = CB.sel;
+  CB.busy = true; CB.inspect = null; CB.mvp = null; const s = CB.sel;
   try {
     if (s.k === "w") await weaponAttack(u, target, s.i);
     else if (s.k === "sp") await castSpell(u, s.key, target);
@@ -2746,13 +2819,13 @@ async function attackRoll(a, t, o) {
   if (ai.why.includes("displace")) t.dispR = CB.round;
   const r1 = a.side === "p" ? d20For(a.ref) : rnd(20); let r = r1;
   if (adv !== dis) { const r2 = a.side === "p" ? d20For(a.ref) : rnd(20); r = adv ? Math.max(r1, r2) : Math.min(r1, r2); }
-  const pw = o.power ? -5 : 0;
-  let bl = a.cond.bless ? rnd(4) : 0, tot = r + o.hit + bl + pw;
+  const pw = o.power ? -5 : 0, hb = highBonus(a, t, o), ex = exposed(a, t, o);
+  let bl = a.cond.bless ? rnd(4) : 0, tot = r + o.hit + bl + pw + hb;
   const cov = coverFor(a, t, o), tac = t.ac + cov;
-  let crit = r >= (o.crit || 20); const hit = crit || (r !== 1 && tot >= tac);
+  let crit = r >= (o.crit || 20) - (ex ? 2 : 0); const hit = crit || (r !== 1 && tot >= tac);
   if (hit && t.cond.asleep && !o.ranged && dist(a, t) <= 1) crit = true;
   await fxAttackAnim(a, t, o);
-  logL(`${a.name} → ${t.name}: ${r}${sgn(o.hit + bl + pw)}=${tot} vs ${tac}${cov ? ` (${tr(COVER_T)} +${cov})` : ""}${adv !== dis ? (adv ? " ▲" : " ▼") : ""}${ai.why.includes("flank") ? " " + tr(["(fianco)","(flank)","(flanco)"]) : ""} — ${hit ? (crit ? T_("crit") : T_("hits")) : T_("misses")}`);
+  logL(`${a.name} → ${t.name}: ${r}${sgn(o.hit + bl + pw + hb)}=${tot} vs ${tac}${cov ? ` (${tr(COVER_T)} +${cov})` : ""}${hb ? " " + tr(["(altura)","(high ground)","(altura)"]) : ""}${adv !== dis ? (adv ? " ▲" : " ▼") : ""}${ai.why.includes("flank") ? " " + tr(["(fianco)","(flank)","(flanco)"]) : ""}${ex ? " " + tr(["(esposto)","(exposed)","(expuesto)"]) : ""} — ${hit ? (crit ? T_("crit") : T_("hits")) : T_("misses")}`);
   if (!hit && cov && tot >= t.ac && r !== 1) floatAt(t, tr(["Coperto!","Covered!","¡Cubierto!"]), "#e8d8a8", 1);
   if (!hit) { fxMiss(a, t); floatAt(t, T_("miss"), "#d8cdb8"); await sleep(380); return 0; }
   fxImpact(t, o.type, crit); if (crit) { floatAt(t, T_("crit"), "#ffd38a", 1); fxShake(); }
@@ -2769,10 +2842,12 @@ async function attackRoll(a, t, o) {
     if (c.trinket === "sun_talisman" && o.weapon && und) dmg += rnd(4);
   } else if (S.diff === 2) dmg += 1;
   await applyDmg(t, dmg, o.type, a);
+  if (o.type === "fire" && o.ranged) igniteArea(t, 0);
   if (o.onHit && (t.side === "p" ? !t.down : t.hp > 0)) o.onHit(t);
   return dmg;
 }
 async function applyDmg(t, amt, type, src) {
+  if (t.side === "e" && t.hp <= 0) return;
   if (t.side === "e") { if (t.def.vuln === type) amt *= 2; if (t.def.res === type) amt = Math.floor(amt / 2); }
   else { const c = t.ref; if ((type === "poison" && c.race === "dwarf") || (type === "fire" && c.race === "tiefling")) amt = Math.floor(amt / 2);
     if (hasF(c, "uncanny") && t.udRound !== CB.round && amt > 0) { t.udRound = CB.round; amt = Math.floor(amt / 2); } }
@@ -2785,6 +2860,7 @@ async function applyDmg(t, amt, type, src) {
     else { t.hp = 0; CB.xp += t.def.xp; logL(`${t.name} ${T_("dies")}`); fxDeath(t); }
   }
   placeTokens(); await sleep(280);
+  if (t.side === "e" && t.hp <= 0 && CB.lead === t.uid && !CB.routed) await leaderFalls(t);
 }
 function heal(t, amt) { if (t.side !== "p") return; amt = Math.max(1, amt); t.hp = Math.min(t.maxhp, t.hp + amt); if (t.down && t.hp > 0) t.down = false; floatAt(t, "+" + amt, "#9be0a6"); fxHeal(t); logL(`${t.name} ${T_("heals")} ${amt} ${T_("hp")}`); placeTokens(); }
 const inArea = (c, rad) => CB.units.filter(o => dist(o, c) <= rad && (o.side === "p" || o.hp > 0));
@@ -2809,7 +2885,8 @@ async function castSpell(u, key, target) {
     case "sleep": { await fxArea(target, 1, "sleep"); let pool = roll("5d8").total; const ts = inArea(target, 1).filter(t => t.side === "e" && !t.def.undead && !t.def.construct && !t.cond.asleep).sort((a, b) => a.hp - b.hp);
       for (const t of ts) { if (t.hp <= pool) { pool -= t.hp; t.cond.asleep = 10; logL(`${t.name} ${T_("sleeps")}`); floatAt(t, "Zz", "#86a4da"); } else break; } placeTokens(); await sleep(300); break; }
     case "burninghands": case "fireball": case "icestorm": { const dice = {burninghands: "3d6", fireball: "8d6", icestorm: "2d8+4d6"}[key]; const ty = key === "icestorm" ? "cold" : "fire"; if (key !== "burninghands") await fxProjectile(u, target, ty); await fxArea(target, sp.rad, ty); const dmg = roll(dice).total;
-      for (const t of inArea(target, sp.rad).filter(t => t !== u && alive(t))) { const ok = saveRoll(t, "dex", dc, coverOf(target, t)); await applyDmg(t, ok ? Math.floor(dmg / 2) : dmg, ty, u); } break; }
+      for (const t of inArea(target, sp.rad).filter(t => t !== u && alive(t))) { const ok = saveRoll(t, "dex", dc, coverOf(target, t)); await applyDmg(t, ok ? Math.floor(dmg / 2) : dmg, ty, u); }
+      if (ty === "fire") igniteArea(target, sp.rad); break; }
     case "curewounds": heal(target, roll("1d8").total + m); break;
     case "healingword": heal(target, roll("1d4").total + m); break;
     case "masshealingword": allies().forEach(a => heal(a, roll("1d4").total + m)); break;
@@ -2851,7 +2928,7 @@ async function useItemC(u, key, target) {
   const it = ITEMS[key]; u.act--; take(key); logL(`${u.name}: ${tr(it.n)}`);
   if (it.use === "heal") heal(target, roll(it.dice).total);
   else if (it.use === "scroll" && it.spell === "fireball") { await fxProjectile(u, target, "fire"); await fxArea(target, 2, "fire"); const dmg = roll("8d6").total;
-    for (const t of inArea(target, 2).filter(t => t !== u && alive(t))) { const ok = saveRoll(t, "dex", 15, coverOf(target, t)); await applyDmg(t, ok ? Math.floor(dmg / 2) : dmg, "fire", u); } }
+    for (const t of inArea(target, 2).filter(t => t !== u && alive(t))) { const ok = saveRoll(t, "dex", 15, coverOf(target, t)); await applyDmg(t, ok ? Math.floor(dmg / 2) : dmg, "fire", u); } igniteArea(target, 2); }
   else if (it.use === "scroll" && it.spell === "massheal") allies().forEach(a => heal(a, roll("2d8+2").total));
   else await attackRoll(u, target, {hit: prof(u.ref) + abm(u.ref, "dex"), dice: "2d6", type: "fire", ranged: 1});
 }
@@ -2862,11 +2939,12 @@ function hitP(bonus, ac, adv, dis) { let p = Math.max(.05, Math.min(.95, (21 - (
 const atkBonusAI = () => S.diff === 0 ? -1 : S.diff === 2 ? 1 : 0;
 function aiValue(u, t, opt) {
   // expected damage of using opt against t from u's current (possibly hypothetical) tile
+  if (dist(u, t) > 1 && !canSee(u, t)) return 0;
   if (opt.sp && opt.sp.save) { const dc = opt.sp.dc; let v = 0; for (const p of inArea(t, opt.sp.rad || 0).filter(p => p.side === "p" && !p.down)) { const sb = saveBonus(p.ref, opt.sp.save); const ps = Math.max(.05, Math.min(.95, (21 - (dc - sb)) / 20)); v += avgDice(opt.sp.d) * (1 - ps * .5); } return v; }
   const a = opt.sp || opt.a, o = {ranged: a.r > 1, reach: a.r};
   const ai = advInfo(u, t, o), cov = (a.r > 1 || dist(u, t) > 1) ? coverOf(u, t) : 0;
-  const p = hitP(a.b + atkBonusAI(), t.ac + cov, ai.adv, ai.dis), d = avgDice(a.d) * (opt.a ? (a.k || 1) : 1);
-  let v = p * d;
+  const p = hitP(a.b + atkBonusAI() + highBonus(u, t, o), t.ac + cov, ai.adv, ai.dis), d = avgDice(a.d) * (opt.a ? (a.k || 1) : 1);
+  let v = p * d; if (exposed(u, t, o)) v *= 1.1;
   if (t.hp <= d) v *= 1.35;
   if (["wizard", "cleric"].includes(t.ref.cls)) v *= 1.15;
   if (a.para && t.ref.race !== "elf") v *= 1.2;
@@ -2874,21 +2952,17 @@ function aiValue(u, t, opt) {
 }
 function pickTarget(u, r, opt) {
   const o = opt || {a: u.def.atk[0]}; let best = null, bv = -1;
-  for (const p of allies()) { if (p.down || dist(u, p) > r) continue; const v = aiValue(u, p, o) + Math.random() * .4; if (v > bv) { bv = v; best = p; } }
+  for (const p of allies()) { if (p.down || dist(u, p) > effR(u, r) || (dist(u, p) > 1 && !canSee(u, p))) continue; const v = aiValue(u, p, o) + Math.random() * .4; if (v > bv) { bv = v; best = p; } }
   return best;
 }
-function aiReach(u) {
-  const R = new Map([[K(u.x, u.y), {d: 0, p: null}]]), q = [[u.x, u.y]];
-  while (q.length) { const [x, y] = q.shift(), d0 = R.get(K(x, y)).d; if (d0 >= u.mvAI) continue;
-    for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) { const nx = x + dx, ny = y + dy, k = K(nx, ny); if ((!dx && !dy) || !inGrid(nx, ny) || CB.ob.has(k) || R.has(k)) continue; const o = unitAt(nx, ny); if (o && o.side === "p" && !o.down) continue; R.set(k, {d: d0 + 1, p: K(x, y)}); q.push([nx, ny]); } }
-  return R;
-}
+function aiReach(u) { return reachOf(u, u.mvAI, true); }
 function pathRisk(u, path) {
   // expected damage from opportunity attacks and overwatch along a path
   let risk = 0; const ox = u.x, oy = u.y;
   for (let i = 1; i < path.length; i++) { const [fx, fy] = path[i - 1].split(",").map(Number), [tx, ty] = path[i].split(",").map(Number);
     if (!u.cond.dis) for (const o of provokers(u, {x: fx, y: fy}, {x: tx, y: ty})) { const m = meleeOf(o); risk += hitP(m.hit, u.ac, false, false) * avgDice(m.dice) + (m.flat || 0) * .6; }
-    for (const o of allies().filter(o => o.cond.ow && canReact(o))) { const pr = owProfile(o); if (pr && Math.max(Math.abs(o.x - tx), Math.abs(o.y - ty)) <= pr.r) risk += 5; } }
+    for (const o of allies().filter(o => o.cond.ow && canReact(o))) { const pr = owProfile(o), p = {x: tx, y: ty}; if (pr && dist(o, p) <= effR(o, pr.r) && (pr.r <= 1 || canSee(o, p))) risk += 5; }
+    if (CB.fire && CB.fire[path[i]]) risk += 3.5; }
   u.x = ox; u.y = oy; return risk;
 }
 async function aiMoveToward(u) {
@@ -2912,8 +2986,8 @@ async function aiTurn(u) {
   R.forEach((v, k) => {
     const [x, y] = k.split(",").map(Number); if (!freeTile(x, y, u)) return;
     u.x = x; u.y = y;
-    let val = 0; for (const p of allies()) if (!p.down && dist(u, p) <= opt.r) val = Math.max(val, aiValue(u, p, opt));
-    let def = 0;
+    let val = 0; for (const p of allies()) if (!p.down && dist(u, p) <= effR(u, opt.r)) val = Math.max(val, aiValue(u, p, opt));
+    let def = terrainScore(u, k);
     if (ranged) { const adj = allies().filter(p => !p.down && dist(u, p) <= 1).length; def -= adj * 4; for (const p of allies()) if (!p.down) def += coverOf(p, u) * .35; }
     u.x = ox; u.y = oy;
     const risk = v.d ? pathRisk(u, pathTo(R, k)) : 0;
@@ -2931,7 +3005,7 @@ async function aiTurn(u) {
   const atkB = atkBonusAI();
   if (opt.sp) {
     const sp = opt.sp; logL(`${u.name}: ${tr(sp.n)}`);
-    if (sp.save) { await fxProjectile(u, t, sp.t); await fxArea(t, sp.rad || 0, sp.t); const dmg = roll(sp.d).total; for (const p of inArea(t, sp.rad || 0).filter(p => p.side === "p" && !p.down)) { const ok = saveRoll(p, sp.save, sp.dc + (S.diff === 2 ? 1 : S.diff === 0 ? -1 : 0), sp.save === "dex" ? coverOf(t, p) : 0); await applyDmg(p, ok ? Math.floor(dmg / 2) : dmg, sp.t, u); } }
+    if (sp.save) { await fxProjectile(u, t, sp.t); await fxArea(t, sp.rad || 0, sp.t); const dmg = roll(sp.d).total; for (const p of inArea(t, sp.rad || 0).filter(p => p.side === "p" && !p.down)) { const ok = saveRoll(p, sp.save, sp.dc + (S.diff === 2 ? 1 : S.diff === 0 ? -1 : 0), sp.save === "dex" ? coverOf(t, p) : 0); await applyDmg(p, ok ? Math.floor(dmg / 2) : dmg, sp.t, u); } if (sp.t === "fire") igniteArea(t, sp.rad || 0); }
     else { const dmg = await attackRoll(u, t, {hit: sp.b + atkB, dice: sp.d, type: sp.t, ranged: sp.r > 1}); if (sp.drain && dmg) { u.hp = Math.min(u.maxhp, u.hp + Math.floor(dmg / 2)); floatAt(u, "+" + Math.floor(dmg / 2), "#c9a7ff"); placeTokens(); } }
     return;
   }
@@ -3171,6 +3245,7 @@ function fxLoop(now) {
     else if (a === "fireflies") part({x: Math.random() * FX.W, y: Math.random() * FX.H, vx: (Math.random() - .5) * .4, vy: (Math.random() - .5) * .4, max: 150, size: 1.8, col: "#d9f08a", drag: 1, tw: 1});
     else if (a === "drips") part({x: Math.random() * FX.W, y: Math.random() * FX.H, max: 40, size: 0, col: "rgba(160,230,215,.5)", shape: "ripple", drag: 1, add: false});
   }
+  if (CB.fire) fireFX();
   // spotlight on the acting unit
   const cu = CB.order[CB.ti];
   if (cu && !CB.ended) { const P = cpos(cu), fl = .85 + Math.sin(now / 260) * .08, r = C * 2.1; const g = x.createRadialGradient(P.x, P.y, C * .2, P.x, P.y, r);
@@ -3294,7 +3369,7 @@ function oddsVs(u, t, s) {
   if (auto) return 100;
   if (save) return Math.round(Math.max(.05, Math.min(.95, (save.dc - save.b - 1) / 20)) * 100);
   const ai = advInfo(u, t, o), cov = coverFor(u, t, o);
-  return Math.round(hitP(hit + (u.cond.bless ? 2.5 : 0), t.ac + cov, ai.adv, ai.dis) * 100);
+  return Math.round(hitP(hit + (u.cond.bless ? 2.5 : 0) + highBonus(u, t, o), t.ac + cov, ai.adv, ai.dis) * 100);
 }
 
 /* ---------- action catalogue for the hotbar ---------- */
@@ -3324,10 +3399,10 @@ function renderCombat() {
     if (mine) {
       if (R && R.has(K(x, y)) && !t && !CB.ob.has(K(x, y))) c = "reach";
       if (usable) {
-        if (sp.tgt === "enemy" && t && t.side === "e" && t.hp > 0 && dist(u, t) <= sp.r) { c = "tgt"; tgtIds.add(t.uid); }
-        if (sp.tgt === "ally" && t && t.side === "p" && dist(u, t) <= sp.r) c = "ally";
-        if (sp.tgt === "tile" && !t && dist(u, {x, y}) <= sp.r && !CB.ob.has(K(x, y))) c = "path";
-        if (sp.tgt === "area") { if (CB.pend && dist(CB.pend, {x, y}) <= sp.rad) c = "area"; else if (dist(u, {x, y}) <= sp.r && !CB.pend && !c) c = "range"; }
+        if (sp.tgt === "enemy" && t && t.side === "e" && t.hp > 0 && dist(u, t) <= sp.r && sees(u, t, sp.r)) { c = "tgt"; tgtIds.add(t.uid); }
+        if (sp.tgt === "ally" && t && t.side === "p" && dist(u, t) <= sp.r && sees(u, t, sp.r)) c = "ally";
+        if (sp.tgt === "tile" && !t && dist(u, {x, y}) <= sp.r && sees(u, {x, y}, sp.r) && !CB.ob.has(K(x, y))) c = "path";
+        if (sp.tgt === "area") { if (CB.pend && dist(CB.pend, {x, y}) <= sp.rad) c = "area"; else if (dist(u, {x, y}) <= sp.r && !CB.pend && !c && sees(u, {x, y}, sp.r)) c = "range"; }
       }
     }
     cel.className = "cell" + (c ? " " + c : "");
@@ -3376,7 +3451,7 @@ function onSlot(u, a) {
   if (!ok) { CB.sel = a.s; CB.pend = null; renderCombat(); CB.sel = canUse(u, defaultSel(u)) ? defaultSel(u) : a.s; return; }
   if (spc.tgt === "none" && sameSel(CB.sel, a.s)) { execute(u, null); return; }
   if (a.s.k === "it" && spc.tgt === "ally" && sameSel(CB.sel, a.s) && allies().filter(o => dist(o, u) <= 1).length === 1) { execute(u, u); return; }
-  CB.sel = a.s; CB.pend = null; CB.inspect = null; renderCombat();
+  CB.sel = a.s; CB.pend = null; CB.inspect = null; CB.mvp = null; CB.tileInfo = null; renderCombat();
 }
 function renderLog() { const l = $("#cblog"); if (!l || !CB) return; l.innerHTML = CB.log.slice(-2).map(x => `<span>${esc(x)}</span>`).join(""); }
 function openLog() { if (!CB) return; const m = modal(`<h2>${tr(["Registro di battaglia","Battle log","Registro de batalla"])}</h2><div class="loglist">${CB.log.slice().reverse().map(x => `<p>${esc(x)}</p>`).join("")}</div><button class="btn small" id="lgX" style="margin-top:12px">${T_("close")}</button>`); m.querySelector("#lgX").onclick = closeModal; }
@@ -3389,7 +3464,7 @@ function winCombat() {
   const gx = Math.round(CB.xp * (ch1 ? 1.2 : 1)), gg = CB.gold + (ch2 ? 15 : 0);
   const loot = rollLoot(CB.key);
   const chal = `<div class="chal"><span class="${ch1 ? "ok" : ""}">${ch1 ? "✓" : "✗"} ${tr(["Nessun caduto","Nobody fell","Nadie cayó"])} <small>+20% ${T_("xp")}</small></span><span class="${ch2 ? "ok" : ""}">${ch2 ? "✓" : "✗"} ${tr(["Entro","Within","En"])} ${fastR} ${tr(["round","rounds","rondas"])} <small>+15 ${T_("gp")}</small></span></div>`;
-  const m = modal(`<div class="endcard win"><div class="seal">${icon("sun")}</div><h2>${T_("victory")}</h2>${chal}<p class="lbl">${T_("rewards")}</p><div class="rew"><span><b>+${gx}</b>${T_("xp")}</span>${gg ? `<span><b>+${gg}</b>${T_("gp")}</span>` : ""}</div>${loot.length ? `<div class="loot">${loot.map(k => `<div class="li${ITEMS[k].slot === "t" ? " rare" : ""}">${medHTML(ITEMS[k].slot === "t" ? "star" : ITEMS[k].use === "scroll" ? "scroll" : ITEMS[k].use === "heal" ? "potion" : "flame", "sm")}<span>${tr(ITEMS[k].n)}</span></div>`).join("")}</div>` : ""}<button class="btn primary" id="vOk">${T_("goOn")}</button></div>`, {center: 1, locked: 1});
+  const m = modal(`<div class="endcard win"><div class="seal">${icon("sun")}</div><h2>${T_("victory")}</h2>${CB.routed ? `<p class="rout">${icon("crown")} ${tr(["Il capo è caduto: i seguaci sono fuggiti.","The leader fell: the followers fled.","El jefe cayó: sus seguidores huyeron."])}</p>` : ""}${chal}<p class="lbl">${T_("rewards")}</p><div class="rew"><span><b>+${gx}</b>${T_("xp")}</span>${gg ? `<span><b>+${gg}</b>${T_("gp")}</span>` : ""}</div>${loot.length ? `<div class="loot">${loot.map(k => `<div class="li${ITEMS[k].slot === "t" ? " rare" : ""}">${medHTML(ITEMS[k].slot === "t" ? "star" : ITEMS[k].use === "scroll" ? "scroll" : ITEMS[k].use === "heal" ? "potion" : "flame", "sm")}<span>${tr(ITEMS[k].n)}</span></div>`).join("")}</div>` : ""}<button class="btn primary" id="vOk">${T_("goOn")}</button></div>`, {center: 1, locked: 1});
   m.querySelector("#vOk").onclick = () => { closeModal(); CB = null; S.xp += gx; S.gold += gg; loot.forEach(k => S.inv[k] = (S.inv[k] || 0) + 1); checkLevel(); goScene(win); };
 }
 function rollLoot(key) {
@@ -3846,8 +3921,12 @@ paintTerrain = function () {
   // grid
   for (let i = 1; i < COLS; i++) iseg(x, i * C, 2, i * C, H - 2, .7, .22);
   for (let j = 1; j < ROWS; j++) iseg(x, 2, j * C, W - 2, j * C, .7, .22);
-  // obstacles back to front
-  [...CB.ob].map(k => k.split(",").map(Number)).sort((a, b) => a[1] - b[1]).forEach(([ox, oy]) => (INKO[st.ob] || INKO.rock)(x, (ox + .5) * C, (oy + .5) * C, C, st));
+  paintTerrainLayer(x, C);
+  // obstacles back to front: tall ones (they block line of sight) get a long cast shadow
+  const tc = TCFG[mapKey()] || {};
+  [...CB.ob].map(k => k.split(",").map(Number)).sort((a, b) => a[1] - b[1]).forEach(([ox, oy]) => { const cx = (ox + .5) * C, cy = (oy + .5) * C, tall = CB.tall && CB.tall.has(K(ox, oy));
+    if (tall) tallShadow(x, cx, cy, C);
+    (INKO[tall ? tc.tall || st.ob : tc.low || st.ob] || INKO.rock)(x, cx, cy, C, st); });
   // burnt edges
   const v = x.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .36, W / 2, H / 2, Math.max(W, H) * .74); v.addColorStop(0, "rgba(90,55,20,0)"); v.addColorStop(.75, "rgba(110,70,30,.25)"); v.addColorStop(1, "rgba(60,32,10,.75)"); x.fillStyle = v; x.fillRect(0, 0, W, H);
   x.strokeStyle = INK(.6); x.lineWidth = 2; x.strokeRect(3, 3, W - 6, H - 6); x.lineWidth = .7; x.strokeRect(6.5, 6.5, W - 13, H - 13);
@@ -3926,12 +4005,13 @@ const INKO = {
 /* ---------- cover (5e: half +2, three-quarters +5) ---------- */
 function coverOf(a, t) {
   if (!CB || dist(a, t) <= 1) return 0;
-  const solid = (MSTYLE[mapKey()] || {}).ob !== "water";
+  const sol = (MSTYLE[mapKey()] || {}).ob !== "water", solid = k => sol || (CB.tall && CB.tall.has(k));
   const ax = a.x + .5, ay = a.y + .5, bx = t.x + .5, by = t.y + .5, n = Math.ceil(Math.hypot(bx - ax, by - ay) * 8), seen = new Set(); let obs = 0, cre = 0;
   for (let i = 1; i < n; i++) { const px = ax + (bx - ax) * i / n, py = ay + (by - ay) * i / n, cx = Math.floor(px), cy = Math.floor(py);
     if (Math.abs(px - cx - .5) > .42 || Math.abs(py - cy - .5) > .42) continue;
     const k = K(cx, cy); if (seen.has(k) || (cx === a.x && cy === a.y) || (cx === t.x && cy === t.y)) continue; seen.add(k);
-    if (solid && CB.ob.has(k)) obs++; else { const o = unitAt(cx, cy); if (o && o !== a && o !== t && alive(o)) cre++; } }
+    if (CB.ob.has(k)) { if (solid(k)) obs++; } else { const o = unitAt(cx, cy); if (o && o !== a && o !== t && alive(o)) cre++; } }
+  if (inBrush(t)) obs++;
   return obs >= 2 ? 5 : (obs || cre) ? 2 : 0;
 }
 const COVER_T = ["copertura", "cover", "cobertura"];
@@ -4126,14 +4206,7 @@ placeTokens = function () {
     t.style.zIndex = 3 + u.y * 2 + (CB.order[CB.ti] === u ? 1 : 0);
     const opp = CB.units.filter(o => o.side !== u.side && alive(o)); if (opp.length) { const n = opp.reduce((a, b) => dist(u, a) <= dist(u, b) ? a : b); if (n.x !== u.x) t.classList.toggle("flip", n.x < u.x); } });
 };
-/* cover in odds & targeting info */
-const _oddsVs0 = oddsVs;
-oddsVs = function (u, t, s) {
-  const cov = coverOf(u, t); if (!cov) return _oddsVs0(u, t, s);
-  const ac0 = t.ac; t.ac = ac0 + cov; const sv0 = t.def ? t.def.sv : 0; let r;
-  try { if (s.k === "sp" && s.key === "sacredflame" && t.def) { t.def.sv = (sv0 || 0) + cov; } r = _oddsVs0(u, t, s); } finally { t.ac = ac0; if (t.def) t.def.sv = sv0; }
-  return r;
-};
+/* cover is already part of oddsVs (the old wrapper here counted it twice) */
 const _renderCombat0 = renderCombat;
 renderCombat = function () {
   _renderCombat0(); if (!CB) return; const u = cur(); const mine = u && u.side === "p" && !CB.busy && !CB.ended;
@@ -4154,13 +4227,13 @@ const TIPS = [
   ["star", ["Sfide e bottino", "Challenges and loot", "Desafíos y botín"], ["Vinci senza caduti o in pochi round per avere ricompense extra. I nemici più forti custodiscono oggetti magici unici.", "Win with nobody down or within a few rounds for extra rewards. The strongest foes carry unique magic items.", "Gana sin caídos o en pocas rondas para obtener recompensas extra. Los enemigos más fuertes guardan objetos mágicos únicos."]],
 ];
 function showTips(force) {
-  if (!force && PREF.tipsSeen) return; PREF.tipsSeen = 1; store(PREF_KEY, PREF);
+  if (!force && (PREF.tipsSeen || 0) >= 2) return; PREF.tipsSeen = 2; store(PREF_KEY, PREF);
   const m = modal(`<h2>${tr(["Tattica", "Tactics", "Táctica"])}</h2><p style="color:var(--muted);font-size:14px">${tr(["Prima di ogni scontro puoi schierare il gruppo: tocca un personaggio e poi una casella dorata.", "Before each fight you can deploy the party: tap a character, then a golden tile.", "Antes de cada combate puedes desplegar al grupo: toca un personaje y luego una casilla dorada."])}</p>
     <div class="tips">${TIPS.map(([ic, n, d]) => `<div class="tip">${medHTML(ic, "sm")}<div><b>${tr(n)}</b><p>${tr(d)}</p></div></div>`).join("")}</div>
     <button class="btn primary" id="tipX" style="margin-top:12px">${T_("goOn")}</button>`, {center: 1});
   m.querySelector("#tipX").onclick = closeModal;
 }
-function showTipsOnce() { if (!PREF.tipsSeen) setTimeout(() => showTips(), 350); }
+function showTipsOnce() { if ((PREF.tipsSeen || 0) < 2) setTimeout(() => showTips(), 350); }
 
 /* ---------- deployment ---------- */
 const depZone = (x, y) => y >= ROWS - 2 && !CB.ob.has(K(x, y));
@@ -4178,7 +4251,8 @@ function tileRisk(u, R, k) {
   const path = pathTo(R, k);
   for (let i = 1; i < path.length; i++) { const [fx, fy] = path[i - 1].split(",").map(Number), [tx, ty] = path[i].split(",").map(Number);
     if (provokers(u, {x: fx, y: fy}, {x: tx, y: ty}).length) return "oa";
-    for (const o of CB.units) if (o.side !== u.side && o.cond.ow && canReact(o)) { const p = owProfile(o); if (p && Math.max(Math.abs(o.x - tx), Math.abs(o.y - ty)) <= p.r) return "ow"; } }
+    if (CB.fire && CB.fire[path[i]]) return "fire";
+    for (const o of CB.units) if (o.side !== u.side && o.cond.ow && canReact(o)) { const p = owProfile(o), q = {x: tx, y: ty}; if (p && dist(o, q) <= effR(o, p.r) && sees(o, q, p.r)) return "ow"; } }
   return null;
 }
 
@@ -4265,6 +4339,388 @@ extraOptsHTML = function () {
 };
 const _openMenuL = openMenu;
 openMenu = function (tab) { _openMenuL(tab); document.querySelectorAll(".modal [data-orient]").forEach(b => b.onclick = () => { setOrientation(b.dataset.orient); openMenu("opts"); }); };
+
+/* ===== 73_terrain_leaders.js ===== */
+/* =================== TERRAIN, LINE OF SIGHT, FIRE, LEADERS, ACTION ZONES =================== */
+// Terrain types, per map:
+//   high   altura: ranged attacks from it get +2 to hit and +2 range against lower targets; climbing costs +1 movement
+//   brush  sterpaglia/paglia: difficult terrain, half cover against ranged attacks, burns
+//   rubble / drift   macerie / neve alta: difficult terrain only
+//   holy   cerchio sacro: heals the living at the start of their turn, burns the undead
+//   ash    burnt brush: normal ground
+// Tall obstacles (CB.tall) block line of sight; the others only give cover.
+Object.assign(ICONS, {
+  hill: '<path d="M2 20 9 8l4 6 3-4 6 10z"/><path d="M8.5 13.5l1.5 1.5M13 17l1.5-1.5"/>',
+  brush: '<path d="M5 21c0-6 1-10 4-13M9 21c0-5 2-9 6-11M14 21c0-4 1-7 5-9M3 21h18"/>',
+});
+const TCFG = {
+  road:    {tall: "boulder", nt: 2, hill: 2, rough: "brush", nr: 5},
+  forest:  {tall: "deadtree", low: "stump", nt: 3, hill: 1, rough: "brush", nr: 7},
+  mill:    {tall: "cratestack", nt: 2, hill: 1, rough: "brush", hay: 1, nr: 4},
+  grave:   {tall: "pillar", nt: 2, hill: 1, rough: "brush", nr: 4, holy: 1},
+  stones:  {tall: "menhir", low: "rock", nt: 3, hill: 1, rough: "brush", nr: 4, holy: 1},
+  bridge:  {tall: "cratestack", nt: 2, hill: 1, rough: "rubble", nr: 3},
+  tower:   {tall: "pillar", low: "crate", nt: 2, hill: 1, rough: "rubble", nr: 3},
+  roof:    {tall: "chimney", low: "crate", nt: 2, hill: 1, rough: "rubble", nr: 3},
+  palace:  {tall: "pillar", low: "crate", nt: 2, hill: 1, rough: "rubble", nr: 2},
+  sewer:   {tall: "pillar", nt: 2, rough: "rubble", nr: 3},
+  water:   {tall: "pillar", nt: 2, hill: 1, rough: "rubble", nr: 3},
+  archive: {tall: "shelf", low: "crate", nt: 3, hill: 1, rough: "rubble", nr: 2},
+  snow:    {tall: "boulder", nt: 2, hill: 2, rough: "drift", nr: 5},
+  fort:    {tall: "pillar", low: "barrel", nt: 2, hill: 2, rough: "rubble", nr: 3},
+  mirror:  {tall: "mirror", low: "rock", nt: 3},
+  dungeon: {tall: "pillar", low: "barrel", nt: 2, rough: "rubble", nr: 3, holy: 1},
+  throne:  {tall: "pillar", low: "rock", nt: 2, hill: 1, rough: "rubble", nr: 2},
+};
+const TER_INFO = {
+  high:   [["Altura", "High ground", "Altura"], ["Da qui i tiri a distanza hanno +2 a colpire e +2 di gittata contro chi sta più in basso. Salirci costa 1 movimento in più.", "Ranged attacks from here get +2 to hit and +2 range against lower targets. Climbing up costs 1 extra movement.", "Desde aquí los ataques a distancia tienen +2 al ataque y +2 de alcance contra objetivos más bajos. Subir cuesta 1 movimiento más."]],
+  brush:  [["Sterpaglia", "Brush", "Maleza"], ["Terreno difficile: entrare costa 2 movimento. Chi ci sta dentro ha mezza copertura (+2 CA) dai tiri a distanza. Il fuoco la incendia.", "Difficult terrain: entering costs 2 movement. Whoever stands in it has half cover (+2 AC) against ranged attacks. Fire sets it ablaze.", "Terreno difícil: entrar cuesta 2 de movimiento. Quien está dentro tiene media cobertura (+2 CA) contra ataques a distancia. El fuego la incendia."]],
+  hay:    [["Paglia", "Straw", "Paja"], ["Terreno difficile: entrare costa 2 movimento. Chi ci sta dentro ha mezza copertura (+2 CA) dai tiri a distanza. Brucia facilmente.", "Difficult terrain: entering costs 2 movement. Whoever stands in it has half cover (+2 AC) against ranged attacks. It burns easily.", "Terreno difícil: entrar cuesta 2 de movimiento. Quien está dentro tiene media cobertura (+2 CA) contra ataques a distancia. Arde con facilidad."]],
+  rubble: [["Macerie", "Rubble", "Escombros"], ["Terreno difficile: entrare costa 2 movimento.", "Difficult terrain: entering costs 2 movement.", "Terreno difícil: entrar cuesta 2 de movimiento."]],
+  drift:  [["Neve alta", "Deep snow", "Nieve profunda"], ["Terreno difficile: entrare costa 2 movimento.", "Difficult terrain: entering costs 2 movement.", "Terreno difícil: entrar cuesta 2 de movimiento."]],
+  holy:   [["Cerchio sacro", "Holy circle", "Círculo sagrado"], ["All'inizio del turno cura 1d4+1 PF a chi ci sta sopra. I non morti invece subiscono 1d6 danni radiosi.", "At the start of a turn it heals 1d4+1 HP to whoever stands on it. The undead take 1d6 radiant damage instead.", "Al inicio del turno cura 1d4+1 PG a quien esté encima. Los muertos vivientes reciben 1d6 de daño radiante."]],
+  fire:   [["Fuoco", "Fire", "Fuego"], ["Chi entra o inizia il turno tra le fiamme subisce 1d6 danni da fuoco. Si spegne in pochi round e può propagarsi alla sterpaglia vicina.", "Entering or starting a turn in the flames deals 1d6 fire damage. It dies out in a few rounds and can spread to nearby brush.", "Entrar o empezar el turno entre las llamas causa 1d6 de daño de fuego. Se apaga en pocas rondas y puede propagarse a la maleza cercana."]],
+  ash:    [["Cenere", "Ash", "Ceniza"], ["Sterpaglia bruciata: terreno normale, nessuna copertura.", "Burnt brush: normal ground, no cover.", "Maleza quemada: terreno normal, sin cobertura."]],
+  tall:   [["Ostacolo alto", "Tall obstacle", "Obstáculo alto"], ["Blocca la linea di vista: non si può tirare né lanciare incantesimi attraverso. Chi ci sta dietro è al sicuro dai tiri.", "Blocks line of sight: nothing can be shot or cast through it. Whoever hides behind it is safe from shots.", "Bloquea la línea de visión: no se puede disparar ni lanzar conjuros a través. Quien se esconde detrás está a salvo de disparos."]],
+};
+
+/* ---------- rules helpers ---------- */
+const terAt = (x, y) => CB && CB.ter ? CB.ter[K(x, y)] : undefined;
+const onHigh = p => terAt(p.x, p.y) === "high";
+const inBrush = p => !!(CB && CB.ter && CB.ter[K(p.x, p.y)] === "brush" && !(CB.fire && CB.fire[K(p.x, p.y)]));
+const isRough = k => { const t = CB.ter && CB.ter[k]; return t === "brush" || t === "rubble" || t === "drift"; };
+function stepCost(fx, fy, tx, ty) {
+  if (!CB || !CB.ter) return 1; const k = K(tx, ty); let c = 1;
+  if (isRough(k)) c++;
+  if (CB.ter[k] === "high" && CB.ter[K(fx, fy)] !== "high") c++;
+  return c;
+}
+const effR = (p, r) => r > 1 && p && onHigh(p) ? r + 2 : r;
+const highBonus = (a, t, o) => (o.ranged || dist(a, t) > 1) && onHigh(a) && !onHigh(t) ? 2 : 0;
+// line of sight: blocked when the line between the two centres crosses the core of a tall obstacle
+function losClear(a, t) {
+  if (!CB || !CB.tall || !CB.tall.size || dist(a, t) <= 1) return true;
+  const ax = a.x + .5, ay = a.y + .5, bx = t.x + .5, by = t.y + .5, n = Math.ceil(Math.hypot(bx - ax, by - ay) * 10);
+  for (let i = 1; i < n; i++) { const px = ax + (bx - ax) * i / n, py = ay + (by - ay) * i / n, cx = Math.floor(px), cy = Math.floor(py);
+    if ((cx === a.x && cy === a.y) || (cx === t.x && cy === t.y)) continue;
+    if (CB.tall.has(K(cx, cy)) && Math.abs(px - cx - .5) < .36 && Math.abs(py - cy - .5) < .36) return false; }
+  return true;
+}
+const canSee = (a, t) => losClear(a, t);
+// exposed: flanked in melee, or (at range) with no cover while already engaged by one of the attacker's allies
+function exposed(a, t, o) {
+  if (!CB) return false;
+  const melee = !o.ranged && dist(a, t) <= (o.reach || 1);
+  if (melee) return flanked(a, t);
+  if (coverFor(a, t, o) > 0) return false;
+  return CB.units.some(x => x !== a && x.side === a.side && alive(x) && dist(x, t) <= 1 && !x.cond.asleep && !x.cond.stun);
+}
+function terInfoAt(k) {
+  if (!CB || !CB.ter) return null;
+  if (CB.fire && CB.fire[k]) return "fire";
+  if (CB.tall && CB.tall.has(k)) return "tall";
+  const t = CB.ter[k]; if (!t) return null;
+  if (t === "brush" && (TCFG[mapKey()] || {}).hay) return "hay";
+  return t;
+}
+
+/* ---------- generation ---------- */
+function genTerrain() {
+  const cfg = TCFG[ENC[CB.key].map] || {};
+  CB.ter = {}; CB.fire = {}; CB.tall = new Set();
+  const free = (x, y) => inGrid(x, y) && !CB.ob.has(K(x, y)) && !CB.ter[K(x, y)];
+  const pick = (y0, y1) => { for (let g = 0; g < 60; g++) { const x = Math.floor(Math.random() * COLS), y = y0 + Math.floor(Math.random() * (y1 - y0 + 1)); if (free(x, y)) return [x, y]; } return null; };
+  const N4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  // tall obstacles: a few of the existing obstacles, preferring the middle of the board
+  const obs = [...CB.ob].sort(() => Math.random() - .5).sort((a, b) => Math.abs(+a.split(",")[1] - 4) - Math.abs(+b.split(",")[1] - 4));
+  obs.slice(0, Math.min(cfg.nt || 0, Math.ceil(obs.length / 2))).forEach(k => CB.tall.add(k));
+  // hills of 2-3 tiles
+  for (let h = 0; h < (cfg.hill || 0); h++) { const s = pick(2, 6); if (!s) continue; CB.ter[K(...s)] = "high"; let [x, y] = s;
+    for (let e = 0; e < 1 + (Math.random() < .5 ? 1 : 0); e++) { const n = N4.map(([dx, dy]) => [x + dx, y + dy]).filter(([a, b]) => free(a, b) && b >= 1 && b <= ROWS - 2); if (!n.length) break; [x, y] = n[Math.floor(Math.random() * n.length)]; CB.ter[K(x, y)] = "high"; } }
+  // patches of difficult terrain
+  let left = cfg.nr || 0;
+  for (let g = 0; left > 0 && g < 40; g++) { const s = pick(1, ROWS - 2); if (!s) break; let [x, y] = s; const size = Math.min(left, 2 + Math.floor(Math.random() * 2));
+    for (let i = 0; i < size; i++) { if (free(x, y)) { CB.ter[K(x, y)] = cfg.rough; left--; } const n = N4.map(([dx, dy]) => [x + dx, y + dy]).filter(([a, b]) => free(a, b)); if (!n.length) break; [x, y] = n[Math.floor(Math.random() * n.length)]; } }
+  if (cfg.holy) { const s = pick(3, 5); if (s) CB.ter[K(...s)] = "holy"; }
+}
+
+/* ---------- fire ---------- */
+function igniteArea(c, rad) {
+  if (!CB || !CB.ter) return; let n = 0;
+  for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) { const k = K(x, y); if (dist(c, {x, y}) <= rad && CB.ter[k] === "brush" && !CB.fire[k]) { CB.fire[k] = 3; n++; } }
+  if (n) { logL(tr(["La sterpaglia prende fuoco!", "The brush catches fire!", "¡La maleza se incendia!"])); paintTerrain(); if (typeof SFX !== "undefined" && SFX.fire) SFX.fire(); }
+}
+function tickFire() {
+  if (!CB || !CB.fire) return; const ks = Object.keys(CB.fire); if (!ks.length) return; const nf = [];
+  ks.forEach(k => { const [x, y] = k.split(",").map(Number);
+    [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { const n = K(x + dx, y + dy); if (CB.ter[n] === "brush" && !CB.fire[n] && Math.random() < .4) nf.push(n); });
+    if (--CB.fire[k] <= 0) { delete CB.fire[k]; CB.ter[k] = "ash"; } });
+  nf.forEach(n => { if (!CB.fire[n]) CB.fire[n] = 2; });
+  if (nf.length) logL(tr(["Il fuoco si propaga.", "The fire spreads.", "El fuego se propaga."]));
+  paintTerrain();
+}
+async function burnUnit(u) { logL(`${u.name}: ${tr(["tra le fiamme", "in the flames", "entre las llamas"])}`); fxImpact(u, "fire", false); await applyDmg(u, roll("1d6").total, "fire", null); }
+function fireFX() {
+  const ks = Object.keys(CB.fire); if (!ks.length) return; const C = CB.cell, low = PREF.lowfx;
+  ks.forEach(k => { if (Math.random() > (low ? .12 : .5)) return; const [tx, ty] = k.split(",").map(Number), px = (tx + .2 + Math.random() * .6) * C, py = (ty + .4 + Math.random() * .45) * C;
+    part({x: px, y: py, vx: (Math.random() - .5) * .3, vy: -.5 - Math.random() * .7, col: ["#fff1b0", "#ffc04a", "#ff7a2a", "#ff4a1a"][Math.floor(Math.random() * 4)], size: 1.8 + Math.random() * 2.6, max: 18 + Math.random() * 16, g: -.015, drag: .96});
+    if (Math.random() < .1) part({x: px, y: py - C * .2, vx: (Math.random() - .5) * .3, vy: -.35, col: "rgba(60,50,50,.4)", size: C * .16, shape: "smoke", max: 50, add: false}); });
+}
+
+/* ---------- start-of-turn terrain effects; returns true if the unit fell ---------- */
+async function terrainTurnStart(u) {
+  if (!CB || !CB.ter || !alive(u)) return false; const k = K(u.x, u.y);
+  if (CB.fire[k]) await burnUnit(u);
+  else if (CB.ter[k] === "holy") {
+    if (u.side === "e" && u.def.undead) { logL(`${u.name}: ${tr(TER_INFO.holy[0])}`); await fxColumn(u, "radiant"); await applyDmg(u, roll("1d6").total, "radiant", null); }
+    else if (u.hp < u.maxhp && !(u.side === "p" && u.down)) { const n = rnd(4) + 1;
+      if (u.side === "p") heal(u, n); else { u.hp = Math.min(u.maxhp, u.hp + n); floatAt(u, "+" + n, "#9be0a6"); fxHeal(u); logL(`${u.name} ${T_("heals")} ${n} ${T_("hp")}`); placeTokens(); } }
+  }
+  return !alive(u);
+}
+// extra value of a tile for the enemy AI
+function terrainScore(u, k) {
+  let s = 0; const t = CB.ter && CB.ter[k];
+  if (CB.fire && CB.fire[k]) s -= 8;
+  if (t === "holy") s += u.def.undead ? -7 : u.hp < u.maxhp ? 1.5 : .3;
+  return s;
+}
+
+/* ---------- leaders: when the leader falls, the followers flee ---------- */
+const LEADS = {
+  mill: {
+    start: ["Snik comanda! Chi scappa, Snik se lo mangia!", "Snik is boss! Who runs, Snik eats!", "¡Snik manda! ¡Quien huya, Snik se lo come!"],
+    rally: [["Snik guarda! Combattere, combattere!", "Snik is watching! Fight, fight!", "¡Snik mira! ¡Luchar, luchar!"],
+            ["Se Snik vince, più oro per tutti!", "If Snik wins, more gold for all!", "¡Si Snik gana, más oro para todos!"],
+            ["Nessuno scappa finché c'è Snik…", "Nobody runs while Snik stands…", "Nadie huye mientras Snik siga en pie…"]],
+    hurt: ["Snik sanguina… Snik sanguina!", "Snik bleeds… Snik bleeds!", "Snik sangra… ¡Snik sangra!"],
+    fall: ["Snik è morto! Via, via, via!", "Snik is dead! Run, run, run!", "¡Snik ha muerto! ¡Corred, corred!"],
+  },
+  bandits: {
+    start: ["Ai vostri posti, ragazzi. Nessuno si muove senza il mio ordine.", "Take your places, lads. Nobody moves without my word.", "A vuestros puestos, muchachos. Nadie se mueve sin mi orden."],
+    rally: [["Tenete la linea, il capo ci guarda!", "Hold the line, the boss is watching!", "¡Mantened la línea, la jefa nos mira!"],
+            ["Finché Mira è in piedi, il ponte è nostro.", "While Mira stands, the bridge is ours.", "Mientras Mira siga en pie, el puente es nuestro."],
+            ["Mira ci paga doppio per questi!", "Mira pays double for these!", "¡Mira nos paga el doble por estos!"]],
+    hurt: ["Il capo è ferita… non mi pagano abbastanza per questo.", "The boss is hurt… they don't pay me enough for this.", "La jefa está herida… no me pagan lo suficiente para esto."],
+    fall: ["Mira è a terra! Ognuno per sé!", "Mira's down! Every man for himself!", "¡Mira ha caído! ¡Sálvese quien pueda!"],
+  },
+  varga: {
+    start: ["Figli pallidi, la mia voce è la vostra volontà.", "Pale children, my voice is your will.", "Hijos pálidos, mi voz es vuestra voluntad."],
+    rally: [["Varga parla e noi obbediamo…", "Varga speaks and we obey…", "Varga habla y nosotros obedecemos…"],
+            ["La sua voce ci tiene in piedi…", "His voice keeps us standing…", "Su voz nos mantiene en pie…"],
+            ["Senza il Pallido siamo solo ossa e fame…", "Without the Pale One we are only bones and hunger…", "Sin el Pálido solo somos huesos y hambre…"]],
+    hurt: ["La voce del Pallido trema…", "The Pale One's voice trembles…", "La voz del Pálido tiembla…"],
+    fall: ["Il Pallido tace… la sua voce è sparita… fuggite!", "The Pale One is silent… his voice is gone… flee!", "El Pálido calla… su voz se ha ido… ¡huid!"],
+  },
+  doran: {
+    start: ["Restate dove vi ho messi. Siete pagati per questo.", "Stay where I put you. That's what you're paid for.", "Quedaos donde os puse. Para eso se os paga."],
+    rally: [["Doran ha detto di tenerli qui!", "Doran said to hold them here!", "¡Doran dijo que los retuviéramos aquí!"],
+            ["Paga lui, combattiamo noi…", "He pays, we fight…", "Él paga, nosotros luchamos…"],
+            ["Se cade Doran, chi ci paga?", "If Doran falls, who pays us?", "Si cae Doran, ¿quién nos paga?"]],
+    hurt: ["Doran sta perdendo… e la nostra paga con lui.", "Doran is losing… and our pay with him.", "Doran está perdiendo… y nuestra paga con él."],
+    fall: ["Doran è caduto! Il contratto è finito!", "Doran is down! The contract is over!", "¡Doran ha caído! ¡Se acabó el contrato!"],
+  },
+};
+LEADS.varga_small = LEADS.varga;
+const leaderU = () => CB && CB.lead ? CB.units.find(u => u.uid === CB.lead) : null;
+function bark(u, txt, ms = 2600) {
+  logL(`${u.name}: «${txt}»`);
+  try { const bw = $("#bw"), tk = $("#t_" + u.uid); if (!bw || !tk || !tk.getBoundingClientRect) return;
+    const r = tk.getBoundingClientRect(), R = bw.getBoundingClientRect(), d = document.createElement("div");
+    d.className = "bark " + u.side; d.textContent = txt;
+    d.style.left = Math.max(100, Math.min(R.width - 100, r.left + r.width / 2 - R.left)) + "px"; d.style.top = Math.max(44, r.top - R.top + 6) + "px";
+    bw.appendChild(d); setTimeout(() => d.classList.add("out"), ms); setTimeout(() => d.remove(), ms + 450);
+  } catch (e) {}
+}
+async function leaderIntro() {
+  const L = leaderU(), d = LEADS[CB.key]; if (!L || !d) return;
+  placeTokens(); await sleep(250); bark(L, tr(d.start), 3000); await sleep(1500);
+}
+async function followerBark(u) {
+  const L = leaderU(), d = LEADS[CB.key]; if (!L || !d || CB.routed || u === L || L.hp <= 0) return;
+  if (L.hp < L.maxhp / 2 && !CB.hurtBark) { CB.hurtBark = 1; bark(u, tr(d.hurt)); await sleep(1200); return; }
+  if (CB.barkRound === CB.round || Math.random() > (CB.round <= 2 ? .6 : .35)) return;
+  CB.barkRound = CB.round; const lines = d.rally.filter(l => l !== CB.lastBark), l = lines[Math.floor(Math.random() * lines.length)]; CB.lastBark = l;
+  bark(u, tr(l)); await sleep(1100);
+}
+async function leaderFalls(L) {
+  CB.routed = 1; const d = LEADS[CB.key] || {}, fol = foes(); if (!fol.length) return;
+  if (d.fall) { bark(fol[0], tr(d.fall)); await sleep(1300); }
+  fol.forEach(f => { f.fled = 1; f.hp = 0; CB.xp += Math.round(f.def.xp / 2);
+    logL(`${f.name} ${tr(f.def.undead ? ["si dissolve", "dissolves", "se disuelve"] : ["fugge", "flees", "huye"])}`);
+    const tk = $("#t_" + f.uid); if (tk) tk.classList.add("fled"); fxPoof(f); });
+  placeTokens(); await sleep(600);
+}
+
+/* ---------- ink painters ---------- */
+function tallShadow(x, cx, cy, C) {
+  const clip = () => { x.beginPath(); x.moveTo(cx - C * .3, cy + C * .06); x.lineTo(cx + C * .08, cy - C * .28); x.lineTo(cx + C * .66, cy + C * .3); x.lineTo(cx + C * .28, cy + C * .66); x.closePath(); };
+  x.save(); x.globalAlpha = .9; hatch(x, clip, cx + C * .2, cy + C * .2, C * .9, -Math.PI / 4, 2.2, .38, .6); x.restore();
+}
+function paintTerrainLayer(x, C) {
+  if (!CB || !CB.ter) return; const cfg = TCFG[mapKey()] || {}, ks = Object.keys(CB.ter);
+  ks.filter(k => CB.ter[k] === "high").forEach(k => inkHigh(x, k, C));
+  // the board is turned 90° in landscape: draw each tile's details turned back, so tufts still grow upwards
+  const land = isLand();
+  ks.forEach(k => { const t = CB.ter[k], [tx, ty] = k.split(",").map(Number), l = tx * C, tp = ty * C;
+    x.save(); if (land) { x.translate(l + C / 2, tp + C / 2); x.rotate(-Math.PI / 2); x.translate(-l - C / 2, -tp - C / 2); }
+    if (t === "brush") (cfg.hay ? inkHay : inkBrush)(x, l, tp, C);
+    else if (t === "rubble") inkRubble(x, l, tp, C); else if (t === "drift") inkDrift(x, l, tp, C);
+    else if (t === "holy") inkHoly(x, l, tp, C); else if (t === "ash") inkAsh(x, l, tp, C);
+    x.restore(); });
+  Object.keys(CB.fire || {}).forEach(k => { const [tx, ty] = k.split(",").map(Number); inkBurning(x, tx * C, ty * C, C); });
+}
+function inkHigh(x, k, C) {
+  // a hillock drawn like an old map: contour rings, hachures down the slope, shaded side
+  const [tx, ty] = k.split(",").map(Number), cx = (tx + .5) * C, cy = (ty + .5) * C;
+  wash(x, cx, cy, C * .75, "#fff6dc", .6); wash(x, cx, cy, C * .5, "#c9a868", .2);
+  const ring = (r, rough) => ipoly(cx, cy, r, 18, rough);
+  const r1 = ring(C * .45, .08), r2 = ring(C * .3, .1), r3 = ring(C * .15, .12);
+  hatch(x, () => { jpath(x, r1, true); x.moveTo(cx + C * .5, cy); x.arc(cx - C * .12, cy - C * .12, C * .42, 0, 7, true); }, cx + C * .2, cy + C * .2, C * .6, Math.PI / 4, 2.3, .35, .5);
+  istroke(x, r1, 1.3, .85); istroke(x, r2, .9, .7); istroke(x, r3, .8, .6);
+  for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2 + IR() * .15, r0 = C * .45, l = C * (.06 + IR() * .04); iseg(x, cx + Math.cos(a) * r0, cy + Math.sin(a) * r0, cx + Math.cos(a) * (r0 + l), cy + Math.sin(a) * (r0 + l), .8, .6); }
+  for (let i = 0; i < 9; i++) { const a = i / 9 * Math.PI * 2, r0 = C * .3, l = C * .1; iseg(x, cx + Math.cos(a) * r0, cy + Math.sin(a) * r0, cx + Math.cos(a) * (r0 + l), cy + Math.sin(a) * (r0 + l), .6, .45); }
+}
+function inkBrush(x, l, t, C) {
+  wash(x, l + C / 2, t + C / 2, C * .6, "#5f7a35", .3);
+  for (let i = 0; i < 6; i++) { const bx = l + C * (.15 + IR() * .7), by = t + C * (.3 + IR() * .6), n = 4 + Math.floor(IR() * 3);
+    for (let k = 0; k < n; k++) { const a = -Math.PI / 2 + (k / (n - 1) - .5) * 1.4 + (IR() - .5) * .2, len = C * (.1 + IR() * .1); iseg(x, bx, by, bx + Math.cos(a) * len, by + Math.sin(a) * len, .7, .75); } }
+  for (let i = 0; i < 2; i++) { let px = l + C * (.2 + IR() * .5), py = t + C * (.2 + IR() * .5); const pts = [[px, py]]; for (let k = 0; k < 5; k++) { px += C * .06; py += (k % 2 ? -1 : 1) * C * .05; pts.push([px, py]); } istroke(x, pts, .6, .6, false); }
+}
+function inkHay(x, l, t, C) {
+  wash(x, l + C / 2, t + C / 2, C * .62, "#e0b030", .5); wash(x, l + C / 2, t + C / 2, C * .4, "#f0c850", .3);
+  for (let i = 0; i < 26; i++) { const px = l + C * (.12 + IR() * .76), py = t + C * (.12 + IR() * .76), a = IR() * Math.PI, len = C * (.1 + IR() * .12); iseg(x, px, py, px + Math.cos(a) * len, py + Math.sin(a) * len, .6, .6); }
+}
+function inkRubble(x, l, t, C) {
+  wash(x, l + C / 2, t + C / 2, C * .55, "#8a8070", .22);
+  for (let i = 0; i < 8; i++) { const px = l + C * (.15 + IR() * .7), py = t + C * (.15 + IR() * .7), r = C * (.04 + IR() * .06), pts = ipoly(px, py, r, 5 + Math.floor(IR() * 3), .4);
+    x.fillStyle = "rgba(150,140,120,.35)"; jpath(x, pts, true); x.fill(); if (IR() > .5) hatch(x, () => jpath(x, pts, true), px, py, r * 1.4, Math.PI / 4, 1.8, .45, .5); istroke(x, pts, .8, .8); }
+}
+function inkDrift(x, l, t, C) {
+  wash(x, l + C / 2, t + C / 2, C * .6, "#ffffff", .5);
+  for (let i = 0; i < 3; i++) { const px = l + C * (.2 + IR() * .6), py = t + C * (.3 + i * .22), w = C * (.18 + IR() * .1); x.strokeStyle = INK(.5); x.lineWidth = .8; x.beginPath(); x.moveTo(px - w, py); x.quadraticCurveTo(px, py - C * .12, px + w, py); x.stroke(); }
+  stip(x, l + C / 2, t + C / 2, 10, C * .4, .3);
+}
+function inkHoly(x, l, t, C) {
+  const cx = l + C / 2, cy = t + C / 2;
+  wash(x, cx, cy, C * .55, "#e8b830", .4);
+  istroke(x, ipoly(cx, cy, C * .38, 22, .03), 1.2, .8); istroke(x, ipoly(cx, cy, C * .29, 20, .03), .8, .7);
+  for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4 + .2, r = C * .335, px = cx + Math.cos(a) * r, py = cy + Math.sin(a) * r; iseg(x, px - 2, py - 2, px + 2, py + 2, .8, .8); if (i % 2) iseg(x, px - 2, py + 2, px + 2, py - 2, .8, .8); }
+  for (let i = 0; i < 4; i++) { const a = i * Math.PI / 2; iseg(x, cx, cy, cx + Math.cos(a) * C * .15, cy + Math.sin(a) * C * .15, 1, .75); }
+}
+function inkAsh(x, l, t, C) {
+  wash(x, l + C / 2, t + C / 2, C * .6, "#2a1a10", .35); stip(x, l + C / 2, t + C / 2, 40, C * .42, .55);
+  for (let i = 0; i < 4; i++) { const bx = l + C * (.2 + IR() * .6), by = t + C * (.4 + IR() * .45); iseg(x, bx, by, bx + (IR() - .5) * 4, by - C * (.08 + IR() * .08), .9, .8); }
+}
+function inkBurning(x, l, t, C) { wash(x, l + C / 2, t + C / 2, C * .62, "#d0401a", .38); wash(x, l + C / 2, t + C / 2, C * .35, "#ffb040", .25); }
+Object.assign(INKO, {
+  boulder(x, cx, cy, C) {
+    inkShadow(x, cx + C * .12, cy + C * .24, C * .5, C * .2);
+    [[cx + C * .14, cy + C * .08, C * .22], [cx - C * .04, cy - C * .06, C * .38]].forEach(([px, py, r]) => { const pts = ipoly(px, py, r, 10, .3);
+      x.fillStyle = "rgba(150,140,120,.45)"; jpath(x, pts, true); x.fill(); hatch(x, () => jpath(x, pts, true), px + r * .35, py + r * .3, r, Math.PI / 4, 2, .55, .6); istroke(x, pts, 1.7, .95); });
+    iseg(x, cx - C * .2, cy - C * .2, cx - C * .02, cy - C * .02, .9, .65); iseg(x, cx - C * .02, cy - C * .02, cx + C * .06, cy - C * .16, .9, .65); },
+  stump(x, cx, cy, C) {
+    inkShadow(x, cx + C * .08, cy + C * .14, C * .32, C * .13);
+    for (let i = 0; i < 4; i++) { const a = i * Math.PI / 2 + .6 + IR() * .4; iseg(x, cx + Math.cos(a) * C * .17, cy + Math.sin(a) * C * .17, cx + Math.cos(a) * C * .3, cy + Math.sin(a) * C * .3, 1.2, .8); }
+    x.fillStyle = "rgba(190,150,100,.5)"; x.beginPath(); x.arc(cx, cy, C * .2, 0, 7); x.fill(); istroke(x, ipoly(cx, cy, C * .2, 14, .1), 1.4, .9);
+    [.14, .09, .045].forEach(r => { x.strokeStyle = INK(.5); x.lineWidth = .6; x.beginPath(); x.arc(cx + 1, cy, C * r, 0, 7); x.stroke(); }); iseg(x, cx, cy, cx + C * .17, cy - C * .06, .7, .6); },
+  cratestack(x, cx, cy, C) { INKO.crate(x, cx - C * .08, cy + C * .08, C * .95); INKO.crate(x, cx + C * .06, cy - C * .12, C * .78); },
+});
+
+/* ---------- board: path overlay, leader crown, action zones, move confirmation ---------- */
+const _buildCombatT = buildCombat;
+buildCombat = function () {
+  _buildCombatT(); if (!CB) return;
+  $("#board").insertAdjacentHTML("beforeend", `<svg id="psvg" aria-hidden="true"></svg>`);
+  const L = leaderU(); if (L) { const inr = $("#t_" + L.uid + " .in"); if (inr) inr.insertAdjacentHTML("beforeend", `<i class="lcrown" title="♛">${icon("crown")}</i>`); }
+};
+const _placeTokensL = placeTokens;
+placeTokens = function () { _placeTokensL(); if (!CB) return; CB.units.forEach(u => { const t = $("#t_" + u.uid); if (t) { t.classList.toggle("lead", !!u.leader && !CB.routed); t.classList.toggle("fled", !!u.fled); } }); };
+
+function zoneOf(u, s) {
+  if (!s || !canUse(u, s)) return null; const sp = selSpec(u, s);
+  if (s.k === "ab" && s.key === "overwatch") { const p = owProfile(u); return p ? {kind: "ow", r: effR(u, p.r), los: p.r > 1} : null; }
+  if (s.k === "ab" && s.key === "turn") return {kind: "ab", r: 6, los: false};
+  if (sp.tgt === "enemy") return {kind: "atk", r: sp.r, los: sp.r > 1};
+  if (sp.tgt === "area" || sp.tgt === "tile" || sp.tgt === "ally") return {kind: "ab", r: sp.r, los: sp.r > 1};
+  if (s.k === "sp" && SPELLS[s.key].rad) return {kind: "ab", r: SPELLS[s.key].rad, los: false};
+  return null;
+}
+function movePreviewSVG() {
+  const sv = $("#psvg"); if (!sv) return; const C = CB.cell; sv.setAttribute("width", COLS * C); sv.setAttribute("height", ROWS * C); sv.setAttribute("viewBox", `0 0 ${COLS * C} ${ROWS * C}`);
+  const mv = CB.mvp, u = cur(); if (!mv || !u) { sv.innerHTML = ""; return; }
+  const P = mv.path.map(k => k.split(",").map(Number)), pt = ([a, b]) => `${(a + .5) * C},${(b + .5) * C}`;
+  let h = `<polyline points="${P.map(pt).join(" ")}" class="pl${mv.dash ? " dash" : ""}"/>`;
+  let spent = 0;
+  for (let i = 1; i < P.length; i++) { spent += stepCost(P[i - 1][0], P[i - 1][1], P[i][0], P[i][1]); const [a, b] = P[i], k = K(a, b);
+    const hot = CB.fire[k] ? "fire" : provokers(u, {x: P[i - 1][0], y: P[i - 1][1]}, {x: a, y: b}).length ? "risk" : spent > u.mv ? "dsh" : "";
+    if (i < P.length - 1) h += `<circle cx="${(a + .5) * C}" cy="${(b + .5) * C}" r="${C * .07}" class="pd ${hot}"/>`; }
+  const [ex, ey] = P[P.length - 1], cx = (ex + .5) * C, cy = (ey + .5) * C;
+  h += `<circle cx="${cx}" cy="${cy}" r="${C * .3}" class="pe${mv.dash ? " dash" : ""}"/>`;
+  h += `<text x="${cx}" y="${cy}" class="pt" ${isLand() ? `transform="rotate(-90 ${cx} ${cy})"` : ""} dy=".35em" style="font-size:${Math.round(C * .3)}px">${mv.cost}</text>`;
+  sv.innerHTML = h;
+}
+function moveInfoHTML(u, mv) {
+  const dest = mv.k, ti = terInfoAt(dest), path = mv.path; let risk = "";
+  for (let i = 1; i < path.length; i++) { if (CB.fire[path[i]]) { risk = tr(["attraversa le fiamme", "crosses the flames", "atraviesa las llamas"]); break; } const [fx, fy] = path[i - 1].split(",").map(Number), [tx, ty] = path[i].split(",").map(Number); if (provokers(u, {x: fx, y: fy}, {x: tx, y: ty}).length) { risk = tr(["provoca attacchi d'opportunità", "provokes opportunity attacks", "provoca ataques de oportunidad"]); break; } }
+  if (!risk && tileRisk(u, new Map(path.map((k, i) => [k, {p: i ? path[i - 1] : null}])), dest) === "ow") risk = tr(["passa nel raggio di una guardia", "crosses an overwatch zone", "cruza una zona de vigilancia"]);
+  const left = u.mv + (mv.dash ? u.spd : 0) - mv.cost;
+  const title = mv.then ? tr(["Avvicinati e attacca", "Approach and attack", "Acércate y ataca"]) : tr(["Movimento", "Move", "Movimiento"]);
+  const tags = [`<span class="cost-t m" title="${tr(["movimento usato / disponibile", "movement used / available", "movimiento usado / disponible"])}">${mv.cost}/${mv.cost + left} ▸</span>`]; if (mv.dash) tags.push(`<span class="cost-t a">${tr(ABIL.dash.n)} · ${hasF(u.ref, "cunning") && u.bon > 0 ? T_("bonus") : T_("action")}</span>`);
+  const notes = []; if (ti) notes.push(`<b>${tr(TER_INFO[ti][0])}</b>: ${tr(TER_INFO[ti][1])}`); if (risk) notes.push(`<span class="rk">● ${risk}</span>`);
+  return `<div class="mvbar"><div class="mvt"><b>${title}</b>${tags.join("")}${notes.length ? `<p class="hint">${notes.join(" · ")}</p>` : `<p class="hint">${tr(["Tocca di nuovo la casella o premi Vai.", "Tap the tile again or press Go.", "Toca de nuevo la casilla o pulsa Ir."])}</p>`}</div>
+    <button class="mvgo" id="mvGo">${icon("end")}<span>${mv.then ? tr(["Vai e attacca", "Go & attack", "Ir y atacar"]) : tr(["Vai", "Go", "Ir"])}</span></button><button class="mvno" id="mvNo" aria-label="${T_("close")}">✕</button></div>`;
+}
+const _renderCombatZ = renderCombat;
+renderCombat = function () {
+  _renderCombatZ(); if (!CB || !$("#board")) return;
+  const u = cur(), mine = u && u.side === "p" && !CB.busy && !CB.ended;
+  if (CB.deploy) { const L = leaderU(); if (L) { const p = $("#info"); if (p && !p.querySelector(".lead")) (p.querySelector("p") || p).insertAdjacentHTML(p.querySelector("p") ? "beforebegin" : "beforeend", `<p class="hint lead">${icon("crown")} ${esc(L.name)} ${tr(["guida questo gruppo.", "leads this group.", "dirige este grupo."])}</p>`); } movePreviewSVG(); return; }
+  const cells = document.querySelectorAll("#board .cell");
+  // enemy overwatch zones are always visible
+  // an enemy's overwatch zone is shown when you inspect it
+  const ows = CB.units.filter(o => o === CB.inspect && o.side === "e" && o.hp > 0 && o.cond.ow && canReact(o)).map(o => ({o, p: owProfile(o)})).filter(z => z.p);
+  const zone = mine && !CB.mvp ? zoneOf(u, CB.sel) : null;
+  const R2 = mine && !CB.mvp && dashOK(u) ? reachOf(u, u.mv + u.spd) : null, R1 = R2 ? reachOf(u, u.mv) : null;
+  cells.forEach(cel => {
+    const x = +cel.dataset.x, y = +cel.dataset.y, k = K(x, y), p = {x, y}; if (CB.ob.has(k)) return;
+    if (ows.some(z => dist(z.o, p) <= effR(z.o, z.p.r) && dist(z.o, p) > 0 && sees(z.o, p, z.p.r))) cel.classList.add("z-eow");
+    if (zone) { const d = dist(u, p); if (d > 0 && d <= zone.r) cel.classList.add(!zone.los || sees(u, p, zone.r) ? "z-" + zone.kind : "z-los"); }
+    if (R2 && R2.has(k) && !R1.has(k) && !unitAt(x, y)) cel.classList.add("reach2");
+    if (CB.mvp && CB.mvp.k === k) cel.classList.add("pdest");
+  });
+  movePreviewSVG();
+  // exposed targets: wider critical range
+  if (mine && CB.sel) { const sp = selSpec(u);
+    if (sp.tgt === "enemy") CB.units.forEach(o => { const tk = $("#t_" + o.uid); if (!tk || !tk.classList.contains("tg")) return; if (exposed(u, o, {ranged: sp.r > 1, reach: sp.r > 1 ? sp.r : 1})) tk.querySelector(".chance").insertAdjacentHTML("beforeend", `<i class="ex" title="${tr(["esposto: critico con 18–20", "exposed: critical on 18–20", "expuesto: crítico con 18–20"])}">✸</i>`); }); }
+  const info = $("#info"); if (!info) return;
+  if (mine && CB.mvp) { info.innerHTML = moveInfoHTML(u, CB.mvp); $("#mvGo").onclick = () => confirmMove(); $("#mvNo").onclick = () => { CB.mvp = null; renderCombat(); }; return; }
+  if (CB.tileInfo && !CB.inspect) { const ti = terInfoAt(CB.tileInfo); if (ti) info.innerHTML = `<b>${tr(TER_INFO[ti][0])}</b><p>${tr(TER_INFO[ti][1])}</p>`; return; }
+  if (CB.inspect && CB.inspect.leader && !CB.routed && CB.inspect.hp > 0) info.insertAdjacentHTML("beforeend", `<p class="hint lead">${icon("crown")} ${tr(["Capo del gruppo: i suoi seguaci combattono finché resta in piedi.", "Leader of the group: the followers fight as long as it stands.", "Jefe del grupo: sus seguidores luchan mientras siga en pie."])}</p>`);
+  if (mine && CB.sel && !CB.inspect) { const sp = selSpec(u); const h = info.querySelector("p.hint");
+    if (h && sp.tgt === "enemy" && sp.r > 1 && onHigh(u)) h.insertAdjacentHTML("beforeend", ` · <span class="hg">${icon("hill")} ${tr(["altura: +2 a colpire, +2 gittata", "high ground: +2 to hit, +2 range", "altura: +2 al ataque, +2 alcance"])}</span>`);
+    if (h && sp.tgt === "enemy" && foes().some(f => dist(u, f) <= sp.r && sp.r > 1 && !sees(u, f, sp.r))) h.insertAdjacentHTML("beforeend", ` · <span class="nl">${tr(["◼ fuori vista", "◼ out of sight", "◼ fuera de vista"])}</span>`); }
+};
+
+/* ---------- tips and options ---------- */
+TIPS.push(
+  ["hill", TER_INFO.high[0], TER_INFO.high[1]],
+  ["brush", ["Terreno difficile e sterpaglia", "Difficult terrain and brush", "Terreno difícil y maleza"], ["Sterpaglia, macerie e neve alta costano 2 movimento. La sterpaglia dà mezza copertura a chi ci sta dentro, ma prende fuoco: un incantesimo di fuoco la trasforma in una trappola.", "Brush, rubble and deep snow cost 2 movement. Brush gives half cover to whoever stands in it, but it burns: a fire spell turns it into a trap.", "Maleza, escombros y nieve profunda cuestan 2 de movimiento. La maleza da media cobertura a quien está dentro, pero arde: un conjuro de fuego la convierte en una trampa."]],
+  ["eye", ["Linea di vista", "Line of sight", "Línea de visión"], ["Gli ostacoli alti, con l'ombra tratteggiata lunga, bloccano la vista: niente tiri né incantesimi attraverso. Le caselle scure nella zona d'azione sono fuori vista.", "Tall obstacles, with the long hatched shadow, block sight: no shots or spells through them. Dark tiles in the action zone are out of sight.", "Los obstáculos altos, con la sombra rayada larga, bloquean la vista: ni disparos ni conjuros a través. Las casillas oscuras de la zona de acción están fuera de vista."]],
+  ["sun", TER_INFO.holy[0], TER_INFO.holy[1]],
+  ["burst", ["Bersagli esposti", "Exposed targets", "Objetivos expuestos"], ["Un nemico fiancheggiato in mischia, o senza copertura e già impegnato da un tuo alleato, è esposto (✸): i colpi critici arrivano con 18, 19 e 20. Vale anche contro di te.", "An enemy flanked in melee, or without cover and already engaged by one of your allies, is exposed (✸): critical hits land on 18, 19 and 20. It works against you too.", "Un enemigo flanqueado cuerpo a cuerpo, o sin cobertura y ya trabado por un aliado tuyo, está expuesto (✸): los críticos llegan con 18, 19 y 20. También vale contra ti."]],
+  ["wind", ["Movimento e zone d'azione", "Movement and action zones", "Movimiento y zonas de acción"], ["Tocca una casella per vedere il percorso, poi tocca di nuovo o premi Vai. Punti blu: movimento; punti dorati: serve lo Scatto. Zone: rosso attacco, arancione incantesimi e abilità, giallo guardia.", "Tap a tile to see the path, then tap again or press Go. Blue dots: movement; golden dots: needs a Dash. Zones: red attack, orange spells and abilities, yellow overwatch.", "Toca una casilla para ver el recorrido y vuelve a tocar o pulsa Ir. Puntos azules: movimiento; dorados: requiere Correr. Zonas: rojo ataque, naranja conjuros y habilidades, amarillo vigilancia."]],
+  ["crown", ["Capi", "Leaders", "Jefes"], ["Alcuni gruppi seguono un capo, segnato dalla corona. Ascolta cosa dicono i nemici: se il capo cade, i seguaci potrebbero darsi alla fuga e lo scontro finisce.", "Some groups follow a leader, marked by a crown. Listen to what the enemies say: if the leader falls, the followers may flee and the fight ends.", "Algunos grupos siguen a un jefe, marcado con una corona. Escucha lo que dicen los enemigos: si el jefe cae, los seguidores pueden huir y el combate termina."]],
+);
+const _extraOptsT = extraOptsHTML;
+extraOptsHTML = function () {
+  return `<h3>${tr(["Movimento in combattimento", "Combat movement", "Movimiento en combate"])}</h3><div class="seg"><button data-qm="0" aria-pressed="${!PREF.quickMove}">${tr(["Con conferma", "With confirmation", "Con confirmación"])}</button><button data-qm="1" aria-pressed="${!!PREF.quickMove}">${tr(["Immediato", "Immediate", "Inmediato"])}</button></div>` + _extraOptsT();
+};
+const _openMenuT = openMenu;
+openMenu = function (tab) {
+  _openMenuT(tab);
+  if (tab === "opts") document.querySelectorAll(".modal [data-qm]").forEach(b => b.onclick = () => { PREF.quickMove = b.dataset.qm === "1"; store(PREF_KEY, PREF); openMenu("opts"); });
+};
 
 /* ===== 80_meta.js ===== */
 /* =================== META: save slots, export/import, bestiary, achievements, options =================== */

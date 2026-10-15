@@ -1,5 +1,25 @@
 # Cronologia delle versioni
 
+## 2.2 — 2026-10-15
+
+**Terreni con effetti**
+- **Alture:** da un'altura i tiri a distanza hanno +2 a colpire e +2 di gittata contro chi sta più in basso; salirci costa 1 movimento in più.
+- **Sterpaglia e paglia:** sono terreno difficile, danno mezza copertura a chi ci sta dentro e prendono fuoco con gli incantesimi e gli oggetti di fuoco. Le fiamme bruciano chi le attraversa, si propagano e lasciano cenere.
+- **Macerie e neve alta:** terreno difficile (costa 2 movimento).
+- **Cerchi sacri:** curano i vivi all'inizio del turno e bruciano i non morti.
+- **Ostacoli alti** (colonne, menhir, massi, cataste, scaffali, alberi): bloccano la linea di vista. Si riconoscono dall'ombra tratteggiata lunga.
+
+**Zone d'azione e movimento**
+- **Zone d'azione colorate:** rosso per gli attacchi, arancione per incantesimi e abilità, giallo per la Guardia, scuro per le caselle fuori vista. Toccando un nemico in guardia si vede la sua zona.
+- **Movimento in due tempi:** tocchi una casella e vedi il percorso con il costo; poi confermi con **Vai** o toccando di nuovo. I cerchi dorati indicano le caselle raggiungibili con uno Scatto. Dalle Opzioni si può tornare al movimento immediato.
+
+**Combattimento**
+- **Bersagli esposti** (✸): un nemico fiancheggiato in mischia, oppure senza copertura e già impegnato da un tuo alleato, subisce critici con 18–20. Vale in entrambe le direzioni.
+- **Capi nemici** in alcuni scontri (Snik, Mira Benda, Varga il Pallido, Doran Varn), segnati da una corona. I nemici parlano durante lo scontro e lasciano intuire che, se il capo cade, gli altri fuggono; i fuggitivi danno metà dell'esperienza.
+
+**Correzioni**
+- Le percentuali mostrate per i tiri a distanza contavano la copertura due volte: ora corrispondono al tiro reale.
+
 ## 2.1 — 2026-10-15
 
 **Capitoli e aggiornamenti**

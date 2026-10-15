@@ -27,7 +27,7 @@ let RESULT=null;
 winCombat=function(){ syncBack(); RESULT={win:true, rounds:CB.round, hp:allies().map(a=>a.down?0:a.hp/a.maxhp)}; };
 loseCombat=function(){ RESULT={win:false, rounds:CB.round}; };
 renderCombat=function(){}; buildCombat=function(){}; turnBanner=async function(){}; fxAttackAnim=async function(){}; fxArea=async function(){}; fxProjectile=async function(){}; fxColumn=async function(){}; paintTerrain=function(){}; miniSrc=function(){return ""}; placeTokens=function(){}; floatAt=function(){}; shakeTok=function(){}; showScreen=function(){};
-logL=function(s){ CB.log.push(s); };
+logL=function(s){ CB.log.push(s); }; PREF.quickMove=1; bark=function(){}; PREF.tipsSeen=2;
 function bestArea(u,r,rad){ let best=null; for(let x=0;x<7;x++)for(let y=0;y<9;y++){ if(dist(u,{x,y})>r) continue; const inA=inArea({x,y},rad); const e=inA.filter(o=>o.side==='e'&&o.hp>0).length, p=inA.filter(o=>o.side==='p'&&o!==u).length; const sc=e-2*p; if(!best||sc>best.sc) best={x,y,sc,e}; } return best; }
 async function botTurn(u){
   const c=u.ref; let guard=0;

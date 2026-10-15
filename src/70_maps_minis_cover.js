@@ -45,8 +45,12 @@ paintTerrain = function () {
   // grid
   for (let i = 1; i < COLS; i++) iseg(x, i * C, 2, i * C, H - 2, .7, .22);
   for (let j = 1; j < ROWS; j++) iseg(x, 2, j * C, W - 2, j * C, .7, .22);
-  // obstacles back to front
-  [...CB.ob].map(k => k.split(",").map(Number)).sort((a, b) => a[1] - b[1]).forEach(([ox, oy]) => (INKO[st.ob] || INKO.rock)(x, (ox + .5) * C, (oy + .5) * C, C, st));
+  paintTerrainLayer(x, C);
+  // obstacles back to front: tall ones (they block line of sight) get a long cast shadow
+  const tc = TCFG[mapKey()] || {};
+  [...CB.ob].map(k => k.split(",").map(Number)).sort((a, b) => a[1] - b[1]).forEach(([ox, oy]) => { const cx = (ox + .5) * C, cy = (oy + .5) * C, tall = CB.tall && CB.tall.has(K(ox, oy));
+    if (tall) tallShadow(x, cx, cy, C);
+    (INKO[tall ? tc.tall || st.ob : tc.low || st.ob] || INKO.rock)(x, cx, cy, C, st); });
   // burnt edges
   const v = x.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .36, W / 2, H / 2, Math.max(W, H) * .74); v.addColorStop(0, "rgba(90,55,20,0)"); v.addColorStop(.75, "rgba(110,70,30,.25)"); v.addColorStop(1, "rgba(60,32,10,.75)"); x.fillStyle = v; x.fillRect(0, 0, W, H);
   x.strokeStyle = INK(.6); x.lineWidth = 2; x.strokeRect(3, 3, W - 6, H - 6); x.lineWidth = .7; x.strokeRect(6.5, 6.5, W - 13, H - 13);
@@ -125,12 +129,13 @@ const INKO = {
 /* ---------- cover (5e: half +2, three-quarters +5) ---------- */
 function coverOf(a, t) {
   if (!CB || dist(a, t) <= 1) return 0;
-  const solid = (MSTYLE[mapKey()] || {}).ob !== "water";
+  const sol = (MSTYLE[mapKey()] || {}).ob !== "water", solid = k => sol || (CB.tall && CB.tall.has(k));
   const ax = a.x + .5, ay = a.y + .5, bx = t.x + .5, by = t.y + .5, n = Math.ceil(Math.hypot(bx - ax, by - ay) * 8), seen = new Set(); let obs = 0, cre = 0;
   for (let i = 1; i < n; i++) { const px = ax + (bx - ax) * i / n, py = ay + (by - ay) * i / n, cx = Math.floor(px), cy = Math.floor(py);
     if (Math.abs(px - cx - .5) > .42 || Math.abs(py - cy - .5) > .42) continue;
     const k = K(cx, cy); if (seen.has(k) || (cx === a.x && cy === a.y) || (cx === t.x && cy === t.y)) continue; seen.add(k);
-    if (solid && CB.ob.has(k)) obs++; else { const o = unitAt(cx, cy); if (o && o !== a && o !== t && alive(o)) cre++; } }
+    if (CB.ob.has(k)) { if (solid(k)) obs++; } else { const o = unitAt(cx, cy); if (o && o !== a && o !== t && alive(o)) cre++; } }
+  if (inBrush(t)) obs++;
   return obs >= 2 ? 5 : (obs || cre) ? 2 : 0;
 }
 const COVER_T = ["copertura", "cover", "cobertura"];
@@ -325,14 +330,7 @@ placeTokens = function () {
     t.style.zIndex = 3 + u.y * 2 + (CB.order[CB.ti] === u ? 1 : 0);
     const opp = CB.units.filter(o => o.side !== u.side && alive(o)); if (opp.length) { const n = opp.reduce((a, b) => dist(u, a) <= dist(u, b) ? a : b); if (n.x !== u.x) t.classList.toggle("flip", n.x < u.x); } });
 };
-/* cover in odds & targeting info */
-const _oddsVs0 = oddsVs;
-oddsVs = function (u, t, s) {
-  const cov = coverOf(u, t); if (!cov) return _oddsVs0(u, t, s);
-  const ac0 = t.ac; t.ac = ac0 + cov; const sv0 = t.def ? t.def.sv : 0; let r;
-  try { if (s.k === "sp" && s.key === "sacredflame" && t.def) { t.def.sv = (sv0 || 0) + cov; } r = _oddsVs0(u, t, s); } finally { t.ac = ac0; if (t.def) t.def.sv = sv0; }
-  return r;
-};
+/* cover is already part of oddsVs (the old wrapper here counted it twice) */
 const _renderCombat0 = renderCombat;
 renderCombat = function () {
   _renderCombat0(); if (!CB) return; const u = cur(); const mine = u && u.side === "p" && !CB.busy && !CB.ended;

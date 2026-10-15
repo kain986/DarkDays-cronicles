@@ -65,8 +65,19 @@ Background, oggetti e scelte precedenti possono dare vantaggio o rendere la prov
 - Le caselle accanto a rocce, alberi o rovine danno mezza copertura (+2 CA) o tre quarti (+5 CA) contro gli attacchi che arrivano da quella parte.
 - Il talento Tiratore scelto ignora la copertura.
 
+**Terreno**
+- Ogni mappa ha una disposizione casuale di terreni, scelti in base al luogo (tabella `TCFG`).
+- **Alture:** i tiri a distanza da un'altura contro chi sta più in basso hanno +2 a colpire e +2 di gittata. Salirci costa 1 movimento in più.
+- **Terreno difficile:** sterpaglia, paglia, macerie e neve alta costano 2 movimento.
+- **Sterpaglia e paglia** danno mezza copertura a chi ci sta dentro. Gli attacchi a distanza di fuoco e le aree di fuoco le incendiano:
+  - il fuoco dura 2–3 round e a ogni round può propagarsi (40%) alla sterpaglia vicina, poi lascia cenere;
+  - chi entra o inizia il turno tra le fiamme subisce 1d6 danni da fuoco.
+- **Cerchio sacro:** all'inizio del turno cura 1d4+1 PF ai vivi e infligge 1d6 danni radiosi ai non morti.
+- **Ostacoli alti:** bloccano la linea di vista. Quelli bassi danno solo copertura. Senza linea di vista non si può tirare, lanciare incantesimi a distanza o fare fuoco di Guardia.
+
 **Posizione**
 - **Fiancheggiamento:** se un alleato sta dalla parte opposta del bersaglio, gli attacchi in mischia hanno vantaggio.
+- **Bersaglio esposto (✸):** il critico arriva con 18–20 invece che solo con 20. È esposto un bersaglio fiancheggiato in mischia, oppure, per i tiri a distanza, senza copertura e adiacente a un alleato di chi attacca. Vale per entrambe le parti.
 - **Attacchi di opportunità:** uscire dalla portata di un nemico provoca un attacco gratuito. Il Disimpegno, il talento Mobile e l'Azione scaltra del ladro lo evitano.
 - Prima di muoverti, le caselle rischiose sono evidenziate.
 
@@ -75,7 +86,14 @@ Background, oggetti e scelte precedenti possono dare vantaggio o rendere la prov
 - **Spinta:** butta a terra il bersaglio, e chi è a terra subisce attacchi in mischia con vantaggio. **Schivata**, **Scatto** e **Attacco poderoso** (−5 a colpire, +10 danni) completano le opzioni.
 - Incantesimi e pergamene usano gli slot o le cariche. Alcuni effetti colpiscono un'area.
 
+**Capi nemici**
+- In alcuni scontri (il mulino di Snik, il ponte di Mira, le pietre di Varga, il tetto di Doran) il gruppo nemico ha un capo, segnato da una corona.
+- Il capo apre lo scontro con una frase. I seguaci, durante i loro turni, fanno capire che combattono per lui, e quando è ferito vacillano.
+- Se il capo cade, i seguaci fuggono (o si dissolvono, se non morti) e lo scontro è vinto; ogni fuggitivo vale metà dell'esperienza.
+
 **Informazione**
+- **Zone d'azione colorate:** rosso per gli attacchi, arancione per incantesimi e abilità, giallo per la Guardia, scuro per le caselle in gittata ma fuori vista. Toccando un nemico in guardia si vede la sua zona.
+- **Movimento in due tempi:** il primo tocco mostra il percorso, il costo, il terreno di arrivo e i rischi; si conferma con **Vai** o con un secondo tocco. I cerchi dorati sono raggiungibili solo con uno Scatto. Si può scegliere il movimento immediato dalle Opzioni.
 - Toccando un nemico vedi il tiro necessario e la probabilità di colpirlo, con vantaggio o svantaggio e copertura già calcolati.
 - Il registro mostra tutti i tiri.
 

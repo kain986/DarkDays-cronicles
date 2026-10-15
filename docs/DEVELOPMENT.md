@@ -108,8 +108,13 @@ Regole:
 ## Combattimento
 
 - **Nemici** (`FOES`): `hp`, `ac`, `spd` (caselle), `xp`, `atk` (una lista con `b` per il bonus, `d` per i dadi, `r` per la gittata, `t` per il tipo di danno e `ranged`), più tratti come `undead`, `pack` (vantaggio se un alleato è adiacente al bersaglio), `boss` e `sv` (bonus ai tiri salvezza).
-- **Scontri** (`ENC`): `map`, `foes` e `gold`. Il bottino garantito è in `LOOT[chiave]`; quello casuale viene da `rollLoot`.
+- **Scontri** (`ENC`): `map`, `foes`, `gold` e, facoltativo, `lead: "chiaveNemico"` per un gruppo con un capo. Le frasi del capo e dei seguaci (`start`, `rally`, `hurt`, `fall`, ognuna trilingue) vanno in `LEADS[chiaveScontro]` in `73_terrain_leaders.js`. Il bottino garantito è in `LOOT[chiave]`; quello casuale viene da `rollLoot`.
 - **Mappe** (`MAPS`): colori e numero di ostacoli. Il disegno a inchiostro e la copertura stanno in `70_maps_minis_cover.js`.
+- **Terreni** (`TCFG` in `73_terrain_leaders.js`), per mappa:
+  - `tall` e `nt`: tipo e numero degli ostacoli alti che bloccano la vista; `low`: tipo degli ostacoli bassi;
+  - `hill`: numero di alture;
+  - `rough` e `nr`: tipo (`brush`, `rubble`, `drift`) e numero di caselle di terreno difficile; `hay` disegna la sterpaglia come paglia;
+  - `holy`: aggiunge un cerchio sacro.
 - **Regole** in `40_combat_rules.js`: tiri per colpire, copertura (`coverFor`), fiancheggiamento (`flanked`), reazioni (`provoke`, `overwatchCheck`) e IA (`aiValue`, `aiTurn`).
 
 ## Oggetti
