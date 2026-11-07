@@ -57,7 +57,7 @@ function buildCombat() {
   <div class="hotrow"><div class="hot" id="hot"></div><button class="endbtn" id="aEnd">${icon("end")}<span>${T_("endTurn")}</span></button></div>
   <button class="cblog" id="cblog" aria-label="Log"></button>`;
   const b = $("#board");
-  let h = ""; for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) h += `<div class="cell" data-x="${x}" data-y="${y}"></div>`;
+  let h = ""; for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) h += `<div class="cell" data-x="${x}" data-y="${y}" style="left:calc(var(--cell) * ${hcx(x, y) - .5});top:calc(var(--cell) * ${(hcy(x, y) - HR).toFixed(4)})"></div>`;
   b.insertAdjacentHTML("beforeend", h);
   CB.units.forEach(u => {
     const t = document.createElement("div"); t.className = "tok " + u.side + (u.boss ? " boss" : ""); t.id = "t_" + u.uid;
@@ -75,11 +75,11 @@ function sizeBoard() {
   const bw = $("#bw"); if (!bw || !CB) return;
   const land = isLand();
   const W = (land ? bw.clientWidth : Math.min(bw.clientWidth, 560)) - (land ? 20 : 32), H = bw.clientHeight - (land ? 30 : 36);
-  const cell = Math.max(24, Math.floor(land ? Math.min(W / ROWS, H / COLS) : Math.min(W / COLS, H / ROWS)));
+  const cell = Math.max(24, Math.floor(land ? Math.min(W / BH, H / BW) : Math.min(W / BW, H / BH)));
   if (cell === CB.cell && $("#terrain").width && CB.landAt === land) return;
   CB.landAt = land;
   CB.cell = cell;
-  const b = $("#board"); b.style.setProperty("--cell", CB.cell + "px");
+  const b = $("#board"); b.style.setProperty("--cell", CB.cell + "px"); b.style.width = BW * cell + "px"; b.style.height = Math.ceil(BH * cell) + "px";
   paintTerrain(); fxInit(); placeTokens();
 }
 
@@ -181,7 +181,7 @@ const OBST = {
 function placeTokens() {
   if (!CB) return; const c = CB.cell, curU = CB.order[CB.ti];
   CB.units.forEach(u => { const t = $("#t_" + u.uid); if (!t) return;
-    t.style.transform = `translate(${u.x * c}px,${u.y * c}px)`;
+    t.style.transform = `translate(${(hcx(u.x, u.y) - .5) * c}px,${(hcy(u.x, u.y) - .5) * c}px)`;
     t.classList.toggle("dead", u.side === "e" && u.hp <= 0); t.classList.toggle("down", u.side === "p" && u.down);
     t.classList.toggle("cur", curU === u && !CB.ended); t.classList.toggle("sg", !!u.cond.sg);
     const f = Math.max(0, u.hp / u.maxhp); const hp = t.querySelector(".ring .hp"); hp.style.strokeDashoffset = 289 * (1 - f); t.classList.toggle("low", f < .35);
@@ -191,7 +191,7 @@ function placeTokens() {
 }
 function floatAt(u, txt, col, big) {
   const b = $("#board"); if (!b || !CB) return; const d = document.createElement("div"); d.className = "fl" + (big ? " big" : ""); d.textContent = txt; d.style.color = col;
-  d.style.left = (u.x + .5) * CB.cell + "px"; d.style.top = (u.y * CB.cell + (big ? -6 : 2)) + "px"; b.appendChild(d); setTimeout(() => d.remove(), 1300);
+  d.style.left = hcx(u.x, u.y) * CB.cell + "px"; d.style.top = ((hcy(u.x, u.y) - .5) * CB.cell + (big ? -6 : 2)) + "px"; b.appendChild(d); setTimeout(() => d.remove(), 1300);
 }
 function shakeTok(u) { const t = $("#t_" + u.uid); if (!t) return; t.classList.remove("hit"); void t.offsetWidth; t.classList.add("hit"); }
 
@@ -199,11 +199,11 @@ function shakeTok(u) { const t = $("#t_" + u.uid); if (!t) return; t.classList.r
 const FX = {parts: [], anims: [], run: false};
 function fxInit() {
   const cv = $("#fx"); if (!cv) return; const dpr = Math.min(2, window.devicePixelRatio || 1);
-  FX.W = COLS * CB.cell; FX.H = ROWS * CB.cell; cv.width = FX.W * dpr; cv.height = FX.H * dpr; FX.x = cv.getContext("2d"); FX.x.setTransform(dpr, 0, 0, dpr, 0, 0); FX.cv = cv;
+  FX.W = BW * CB.cell; FX.H = BH * CB.cell; cv.width = FX.W * dpr; cv.height = FX.H * dpr; FX.x = cv.getContext("2d"); FX.x.setTransform(dpr, 0, 0, dpr, 0, 0); FX.cv = cv;
   FX.amb = (MSTYLE[mapKey()] || {}).amb;
   if (!FX.run) { FX.run = true; FX.last = performance.now(); requestAnimationFrame(fxLoop); }
 }
-const cpos = u => ({x: (u.x + .5) * CB.cell, y: (u.y + .5) * CB.cell});
+const cpos = u => ({x: hcx(u.x, u.y) * CB.cell, y: hcy(u.x, u.y) * CB.cell});
 function part(o) { if (FX.parts.length > 420) return; const q = Object.assign({vx: 0, vy: 0, g: 0, gx: 0, drag: .97, life: 0, max: 40, size: 3, col: "#fff", shape: "dot", add: true}, o);
   // the board is turned 90° in landscape: rotate "screen" motion into board space so smoke still rises
   if (isLand()) { const vx = q.vx; q.vx = q.vy; q.vy = -vx; q.gx = q.g; q.g = 0; }
@@ -273,7 +273,7 @@ async function fxAttackAnim(a, t, o) {
     const inr = tk.querySelector(".in"); inr.classList.add("cast"); setTimeout(() => inr.classList.remove("cast"), 380);
     await fxProjectile(a, t, type); return;
   }
-  const dx = (t.x - a.x) * CB.cell * .3, dy = (t.y - a.y) * CB.cell * .3, inr = tk.querySelector(".in");
+  const dx = (hcx(t.x, t.y) - hcx(a.x, a.y)) * CB.cell * .3, dy = (hcy(t.x, t.y) - hcy(a.x, a.y)) * CB.cell * .3, inr = tk.querySelector(".in");
   inr.style.transform = isLand() ? `translate(${-dy}px,${dx}px) scale(1.06)` : `translate(${dx}px,${dy}px) scale(1.06)`; await sleep(110);
   fxSlash(a, t, a.side === "e" ? "#ff8a9e" : (TYPE_COL[type] || "#f3e6c8"));
   await sleep(90); inr.style.transform = "";
@@ -295,7 +295,7 @@ function fxDeath(t, small) {
 function fxHeal(t, col = "#9be0a6") { if (!FX.x || !CB) return; const P = cpos(t), C = CB.cell; for (let i = 0; i < 16; i++) part({x: P.x + (Math.random() - .5) * C * .7, y: P.y + C * .3, vx: 0, vy: -.6 - Math.random() * .8, col, size: 1.8 + Math.random(), max: 40 + Math.random() * 20, drag: .99});
   anim({dur: 18, draw(x, p) { x.globalCompositeOperation = "lighter"; x.globalAlpha = (1 - p) * .7; x.strokeStyle = col; x.lineWidth = 2; x.beginPath(); x.ellipse(P.x, P.y + C * .3, C * .4 * (.5 + p * .6), C * .14 * (.5 + p * .6), 0, 0, 7); x.stroke(); x.globalAlpha = 1; x.globalCompositeOperation = "source-over"; }}); }
 function fxArea(c, rad, type) {
-  if (!FX.x || !CB) return Promise.resolve(); const P = {x: (c.x + .5) * CB.cell, y: (c.y + .5) * CB.cell}, C = CB.cell, R = (rad + .5) * C, col = TYPE_COL[type] || "#ffe08a";
+  if (!FX.x || !CB) return Promise.resolve(); const P = cpos(c), C = CB.cell, R = (rad + .5) * C, col = TYPE_COL[type] || "#ffe08a";
   const rr = () => Math.random();
   const n = 36 + rad * 46;
   for (let i = 0; i < n; i++) { const a = rr() * Math.PI * 2, r = Math.sqrt(rr()) * R, px = P.x + Math.cos(a) * r, py = P.y + Math.sin(a) * r;
@@ -354,7 +354,7 @@ function actionsOf(u) {
   weaponsOf(c).forEach((w, i) => { const p = weapProfile(c, w); L.push({s: {k: "w", i}, ic: WEAP_IC[w] || "sword", name: p.name, cost: "a", sub: `${sgn(p.hit)} · ${p.dice}${sgn(p.flat)}`, desc: `${p.ranged ? tr(["A distanza","Ranged","A distancia"]) + " " + p.r : tr(["Mischia","Melee","Cuerpo a cuerpo"])} · ${tr(["colpire","to hit","ataque"])} ${sgn(p.hit)} · ${p.dice}${sgn(p.flat)}`, grp: 0}); });
   spellsOf(c).forEach(k => { const sp = SPELLS[k]; const left = sp.lv ? c.slots.slice(sp.lv - 1).reduce((a, b) => a + b, 0) : null; L.push({s: {k: "sp", key: k}, ic: SPELL_IC[k] || "star", name: tr(sp.n), cost: sp.bonus ? "b" : "a", lv: sp.lv, cnt: left, desc: tr(sp.d), ff: sp.ff, grp: 1}); });
   abilitiesOf(u).forEach(k => { const a = ABIL[k]; let cnt = null; if (k === "secondwind") cnt = c.res.sw; if (k === "actionsurge") cnt = c.res.as; if (k === "lay") cnt = c.res.lay; if (k === "turn") cnt = c.res.ch; L.push({s: {k: "ab", key: k}, ic: ABIL_IC[k] || "star", name: tr(a.n), cost: a.cost === "act" ? "a" : a.cost === "bon" ? "b" : "f", cnt, desc: tr(a.d), grp: 2}); });
-  Object.keys(S.inv).filter(k => S.inv[k] > 0 && ["heal", "throw", "scroll"].includes(ITEMS[k].use)).forEach(k => L.push({s: {k: "it", key: k}, ic: ITEMS[k].use === "heal" ? "potion" : ITEMS[k].use === "scroll" ? "scroll" : "flame", name: tr(ITEMS[k].n), cost: "a", cnt: S.inv[k], desc: tr(ITEMS[k].d), grp: 3}));
+  Object.keys(S.inv).filter(k => S.inv[k] > 0 && ["heal", "throw", "scroll", "oil"].includes(ITEMS[k].use)).forEach(k => L.push({s: {k: "it", key: k}, ic: ITEMS[k].use === "heal" ? "potion" : ITEMS[k].use === "scroll" ? "scroll" : ITEMS[k].type === "radiant" ? "sun" : "flame", name: tr(ITEMS[k].n), cost: isOil(k) ? "b" : "a", cnt: S.inv[k], desc: tr(ITEMS[k].d), grp: 3}));
   return L;
 }
 const sameSel = (a, b) => a && b && a.k === b.k && a.i === b.i && a.key === b.key;

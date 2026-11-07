@@ -28,8 +28,9 @@ function hexA(h, a) { const n = parseInt(h.slice(1), 16); return `rgba(${n >> 16
 function stip(x, px, py, n, r, a = .55) { x.fillStyle = INK(a); for (let i = 0; i < n; i++) { const ang = IR() * 7, rr = Math.sqrt(IR()) * r; x.fillRect(px + Math.cos(ang) * rr, py + Math.sin(ang) * rr, .9, .9); } }
 
 /* ---------- parchment + terrain ---------- */
+const hexPts = (cx, cy, r) => [0, 1, 2, 3, 4, 5].map(i => { const a = Math.PI / 180 * (60 * i - 90); return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; });
 paintTerrain = function () {
-  const cv = $("#terrain"); if (!cv || !CB) return; const st = MSTYLE[mapKey()] || MSTYLE.road, C = CB.cell, W = COLS * C, H = ROWS * C;
+  const cv = $("#terrain"); if (!cv || !CB) return; const st = MSTYLE[mapKey()] || MSTYLE.road, C = CB.cell, W = BW * C, H = BH * C;
   const dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = W * dpr; cv.height = H * dpr;
   const x = cv.getContext("2d"); x.setTransform(dpr, 0, 0, dpr, 0, 0);
   IRS = hashStr(CB.key + (CB.seed || (CB.seed = rnd(9999))));
@@ -42,13 +43,12 @@ paintTerrain = function () {
   // watercolour wash of the place
   for (let i = 0; i < 26; i++) wash(x, IR() * W, IR() * H, C * (.8 + IR() * 2.2), st.wash || "#a08060", .1 + IR() * .12);
   INKG[st.g](x, W, H, C);
-  // grid
-  for (let i = 1; i < COLS; i++) iseg(x, i * C, 2, i * C, H - 2, .7, .22);
-  for (let j = 1; j < ROWS; j++) iseg(x, 2, j * C, W - 2, j * C, .7, .22);
+  // hex grid, drawn by hand
+  for (let y = 0; y < ROWS; y++) for (let xx = 0; xx < COLS; xx++) istroke(x, hexPts(hcx(xx, y) * C, hcy(xx, y) * C, HR * C * .985), .7, .2);
   paintTerrainLayer(x, C);
   // obstacles back to front: tall ones (they block line of sight) get a long cast shadow
   const tc = TCFG[mapKey()] || {};
-  [...CB.ob].map(k => k.split(",").map(Number)).sort((a, b) => a[1] - b[1]).forEach(([ox, oy]) => { const cx = (ox + .5) * C, cy = (oy + .5) * C, tall = CB.tall && CB.tall.has(K(ox, oy));
+  [...CB.ob].map(k => k.split(",").map(Number)).sort((a, b) => a[1] - b[1]).forEach(([ox, oy]) => { const cx = hcx(ox, oy) * C, cy = hcy(ox, oy) * C, tall = CB.tall && CB.tall.has(K(ox, oy));
     if (tall) tallShadow(x, cx, cy, C);
     (INKO[tall ? tc.tall || st.ob : tc.low || st.ob] || INKO.rock)(x, cx, cy, C, st); });
   // burnt edges
@@ -67,20 +67,19 @@ const INKG = {
       for (let g = 0; g < 2; g++) { const gy = row * ph + 4 + IR() * (ph - 8); x.strokeStyle = INK(.22); x.lineWidth = .5; x.beginPath(); x.moveTo(px + 3, gy); x.bezierCurveTo(px + len * .3, gy + (IR() - .5) * 5, px + len * .6, gy + (IR() - .5) * 5, px + len - 3, gy); x.stroke(); }
       if (IR() > .6) { x.strokeStyle = INK(.4); x.lineWidth = .6; x.beginPath(); x.ellipse(px + len * IR(), row * ph + ph / 2, 3, 1.6, 0, 0, 7); x.stroke(); }
       stip(x, px + 3, row * ph + ph / 2, 1, 0, .8); px += len; } } },
-  stone(x, W, H, C) { for (let y = 0; y < ROWS; y++) for (let xx = 0; xx < COLS; xx++) { const l = xx * C, t = y * C, k = 3 + IR() * 3;
-      const pts = [[l + k, t + k * IR()], [l + C - k * IR(), t + k], [l + C - k, t + C - k * IR()], [l + k * IR(), t + C - k]]; istroke(x, pts, .9, .7);
-      if (IR() > .7) hatch(x, () => { x.beginPath(); x.rect(l + C * .55, t + C * .55, C * .45, C * .45); }, l + C * .78, t + C * .78, C * .4, Math.PI / 4, 2.4, .3, .5);
-      if (IR() > .75) { const pts2 = [[l + C * IR(), t + C * IR()]]; for (let q = 0; q < 3; q++) pts2.push([pts2[q][0] + (IR() - .5) * 12, pts2[q][1] + (IR() - .5) * 12]); istroke(x, pts2, .6, .55, false); }
-      stip(x, l + C / 2, t + C / 2, 4, C * .45, .35); } },
-  marble(x, W, H, C) { for (let y = 0; y < ROWS; y++) for (let xx = 0; xx < COLS; xx++) { const l = xx * C, t = y * C; istroke(x, [[l + 1, t + 1], [l + C - 1, t + 1], [l + C - 1, t + C - 1], [l + 1, t + C - 1]], .7, .5);
-      if ((xx + y) % 2) hatch(x, () => { x.beginPath(); x.rect(l + 2, t + 2, C - 4, C - 4); }, l + C / 2, t + C / 2, C * .75, Math.PI / 4, 3.2, .22, .5);
-      x.strokeStyle = INK(.25); x.lineWidth = .5; x.beginPath(); x.moveTo(l + C * IR(), t); x.bezierCurveTo(l + C * IR(), t + C * .4, l + C * IR(), t + C * .6, l + C * IR(), t + C); x.stroke(); } },
+  stone(x, W, H, C) { for (let y = 0; y < ROWS; y++) for (let xx = 0; xx < COLS; xx++) { const cx = hcx(xx, y) * C, cy = hcy(xx, y) * C, P = hexPts(cx, cy, HR * C * .9);
+      x.fillStyle = `rgba(${150 + IR() * 30 | 0},${140 + IR() * 25 | 0},${120 + IR() * 20 | 0},.22)`; jpath(x, P, true); x.fill(); istroke(x, P, .9, .5);
+      if (IR() > .6) { const a = IR() * 6; iseg(x, cx + Math.cos(a) * C * .1, cy + Math.sin(a) * C * .1, cx + Math.cos(a + 1) * C * .32, cy + Math.sin(a + 1) * C * .32, .6, .45); }
+      stip(x, cx, cy, 6, C * .35, .35); } },
+  marble(x, W, H, C) { for (let y = 0; y < ROWS; y++) for (let xx = 0; xx < COLS; xx++) { const cx = hcx(xx, y) * C, cy = hcy(xx, y) * C, P = hexPts(cx, cy, HR * C * .94);
+      x.fillStyle = (xx + y) % 2 ? "rgba(255,250,235,.28)" : "rgba(120,100,80,.16)"; jpath(x, P, true); x.fill(); istroke(x, P, .8, .45);
+      x.strokeStyle = INK(.18); x.lineWidth = .6; x.beginPath(); x.moveTo(cx - C * .3, cy + (IR() - .5) * C * .4); x.bezierCurveTo(cx - C * .1, cy - C * .3, cx + C * .1, cy + C * .3, cx + C * .3, cy + (IR() - .5) * C * .4); x.stroke(); } },
   tiles(x, W, H, C) { const tw = C / 2.4, th = C / 3; for (let row = 0; row * th < H + th; row++) for (let i = -1; i * tw < W + tw; i++) { const px = i * tw + (row % 2 ? tw / 2 : 0), py = row * th; x.strokeStyle = INK(.55); x.lineWidth = .8; x.beginPath(); x.moveTo(px, py + th * .6); x.quadraticCurveTo(px + tw / 2, py + th * 1.2, px + tw, py + th * .6); x.stroke(); if (IR() > .7) hatch(x, () => { x.beginPath(); x.rect(px + tw * .6, py, tw * .4, th); }, px + tw * .8, py + th / 2, th, .5, 2.5, .25, .5); } },
   snow(x, W, H, C) { for (let i = 0; i < W * H / 260; i++) stip(x, IR() * W, IR() * H, 1, 0, .3); for (let i = 0; i < 18; i++) { const px = IR() * W, py = IR() * H, w2 = C * (.5 + IR()); x.strokeStyle = INK(.4); x.lineWidth = .7; x.beginPath(); x.moveTo(px - w2, py); x.quadraticCurveTo(px, py - C * .25, px + w2, py); x.stroke(); }
     for (let i = 0; i < 10; i++) { let px = IR() * W, py = IR() * H; for (let k = 0; k < 4; k++) { x.fillStyle = INK(.35); x.beginPath(); x.ellipse(px + (k % 2) * 4, py, 1.6, 2.6, .3, 0, 7); x.fill(); px += 5; py -= 7; } } },
-  obsidian(x, W, H, C) { for (let y = 0; y < ROWS; y++) for (let xx = 0; xx < COLS; xx++) { const l = xx * C, t = y * C; istroke(x, [[l + 2, t + 2], [l + C - 2, t + 2], [l + C - 2, t + C - 2], [l + 2, t + C - 2]], .8, .6);
-      hatch(x, () => { x.beginPath(); x.rect(l + 2, t + 2, C - 4, C - 4); }, l + C / 2, t + C / 2, C * .75, (xx + y) % 2 ? Math.PI / 4 : -Math.PI / 4, 3, .28, .5);
-      if (IR() > .6) { wash(x, l + C / 2, t + C / 2, C * .55, "#7a3aa8", .25); let px = l + C * IR(), py = t + C * IR(); const pts = [[px, py]]; for (let k = 0; k < 3; k++) { px += (IR() - .5) * C * .5; py += (IR() - .5) * C * .5; pts.push([px, py]); } istroke(x, pts, .8, .8, false); } } },
+  obsidian(x, W, H, C) { for (let y = 0; y < ROWS; y++) for (let xx = 0; xx < COLS; xx++) { const cx = hcx(xx, y) * C, cy = hcy(xx, y) * C, P = hexPts(cx, cy, HR * C * .9);
+      x.fillStyle = "rgba(40,30,50,.22)"; jpath(x, P, true); x.fill(); istroke(x, P, 1.1, .7);
+      if (IR() > .6) { wash(x, cx, cy, C * .55, "#7a3aa8", .25); let px = cx + (IR() - .5) * C * .5, py = cy + (IR() - .5) * C * .5; const pts = [[px, py]]; for (let k = 0; k < 3; k++) { px += (IR() - .5) * C * .3; py += (IR() - .5) * C * .3; pts.push([px, py]); } istroke(x, pts, .8, .6, false); } } },
 };
 const INKO = {
   rock(x, cx, cy, C) { inkShadow(x, cx + C * .1, cy + C * .2, C * .42, C * .17); const pts = ipoly(cx, cy - C * .04, C * .34, 9, .35);
@@ -130,9 +129,9 @@ const INKO = {
 function coverOf(a, t) {
   if (!CB || dist(a, t) <= 1) return 0;
   const sol = (MSTYLE[mapKey()] || {}).ob !== "water", solid = k => sol || (CB.tall && CB.tall.has(k));
-  const ax = a.x + .5, ay = a.y + .5, bx = t.x + .5, by = t.y + .5, n = Math.ceil(Math.hypot(bx - ax, by - ay) * 8), seen = new Set(); let obs = 0, cre = 0;
-  for (let i = 1; i < n; i++) { const px = ax + (bx - ax) * i / n, py = ay + (by - ay) * i / n, cx = Math.floor(px), cy = Math.floor(py);
-    if (Math.abs(px - cx - .5) > .42 || Math.abs(py - cy - .5) > .42) continue;
+  const ax = hcx(a.x, a.y), ay = hcy(a.x, a.y), bx = hcx(t.x, t.y), by = hcy(t.x, t.y), n = Math.ceil(Math.hypot(bx - ax, by - ay) * 10), seen = new Set(); let obs = 0, cre = 0;
+  for (let i = 1; i < n; i++) { const px = ax + (bx - ax) * i / n, py = ay + (by - ay) * i / n, [cx, cy] = hexAt(px, py);
+    if (Math.hypot(px - hcx(cx, cy), py - hcy(cx, cy)) > .44) continue;
     const k = K(cx, cy); if (seen.has(k) || (cx === a.x && cy === a.y) || (cx === t.x && cy === t.y)) continue; seen.add(k);
     if (CB.ob.has(k)) { if (solid(k)) obs++; } else { const o = unitAt(cx, cy); if (o && o !== a && o !== t && alive(o)) cre++; } }
   if (inBrush(t)) obs++;

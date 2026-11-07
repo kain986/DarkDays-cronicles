@@ -57,7 +57,7 @@ Background, oggetti e scelte precedenti possono dare vantaggio o rendere la prov
 ## Combattimento
 
 **Struttura**
-- Si combatte su una griglia con iniziativa (d20 + DES) e un turno per unità.
+- Si combatte su una griglia di esagoni (7×9, righe dispari sfalsate) con iniziativa (d20 + DES) e un turno per unità. Le distanze sono in esagoni; il fiancheggiamento richiede un alleato nell'esagono esattamente opposto.
 - Prima di combattere c'è una fase di schieramento: il gruppo si posiziona nelle caselle di partenza.
 - In ogni turno ogni unità ha un movimento (pari alla sua velocità, in caselle), un'azione, eventuali azioni bonus e una reazione per round.
 
@@ -85,6 +85,15 @@ Background, oggetti e scelte precedenti possono dare vantaggio o rendere la prov
 - **Guardia (overwatch):** rinunci all'attacco e colpisci il primo nemico che si muove nel tuo raggio. Anche gli arcieri nemici la usano quando non hanno bersagli.
 - **Spinta:** butta a terra il bersaglio, e chi è a terra subisce attacchi in mischia con vantaggio. **Schivata**, **Scatto** e **Attacco poderoso** (−5 a colpire, +10 danni) completano le opzioni.
 - Incantesimi e pergamene usano gli slot o le cariche. Alcuni effetti colpiscono un'area.
+
+**Maestrie delle armi**
+- Guerrieri, paladini, ranger e ladri applicano la maestria della loro arma quando colpiscono:
+  - **Indebolire** (spada lunga, mazza): svantaggio al prossimo attacco del bersaglio;
+  - **Incalzare** (stocco, spada corta, arco corto): vantaggio al prossimo attacco contro lo stesso bersaglio;
+  - **Rallentare** (arco lungo, giavellotto): −2 esagoni di movimento;
+  - **Spingere** (martello): un esagono più in là; contro un ostacolo o una creatura 1d4 danni, nel fuoco brucia;
+  - **Rovesciare** (bastone): TS COS o a terra.
+- I boss non possono essere spinti né rovesciati.
 
 **Capi nemici**
 - In alcuni scontri (il mulino di Snik, il ponte di Mira, le pietre di Varga, il tetto di Doran) il gruppo nemico ha un capo, segnato da una corona.
@@ -127,3 +136,51 @@ Background, oggetti e scelte precedenti possono dare vantaggio o rendere la prov
 - Bestiario dei nemici incontrati.
 - 12 imprese.
 - Controllo degli aggiornamenti tramite GitHub Releases.
+
+## Crafting ed economia
+
+**Materiali e provenienza**
+
+| Materiale | Da dove arriva | Prezzo |
+|---|---|---|
+| Erbe | riposi all'aperto, pallidi, negozi | 4 |
+| Resina | goblin, riposi, negozi | 5 |
+| Polvere d'ossa | non morti, lupi, Vesperia | 6 |
+| Ferro | banditi, guardie, cavalieri, goblin | 8 |
+| Essenza d'ombra | accoliti, ombre, pallidi (raro) | 25 |
+| Frammento di sole | boss, segreti, Hrun | 60 |
+
+Dopo ogni scontro, ogni nemico abbattuto (non quelli fuggiti) può lasciare materiali, al massimo 3 per tipo. Riposando all'aperto il gruppo fa una prova di Sopravvivenza per raccogliere erbe, resina e, con un tiro alto, essenza.
+
+**Ricette**
+- **Alchimia** (ovunque fuori dal combattimento):
+  - pozione (2 erbe);
+  - fuoco dell'alchimista (2 resina);
+  - olio infuocato (resina + erbe);
+  - pozione superiore (2 erbe + essenza; da Grisa o dall'Archivio);
+  - acqua consacrata (erbe + 2 ossa; si impara al tempio, serve chierico o paladino);
+  - pergamene (con frammenti di sole; dall'Archivio, serve un incantatore).
+- **Fucina:**
+  - arma +1 (4 ferro + 60 mo) e armatura +1 (4 ferro + 50 mo) da Hild, a Vesperia o da Hrun;
+  - arma dei Custodi +2 (arma +1 + 2 ferro + 2 frammenti + 150 mo) solo da Hrun.
+
+**Equilibrio**
+- Fare da sé costa circa un terzo del prezzo di negozio, ma richiede materiali che arrivano giocando.
+- La vendita rende metà prezzo, così il bottino superfluo diventa oro senza rompere l'economia.
+- L'arma +2 non è più in vendita a Vesperia: va forgiata, così vale la deviazione all'eremo.
+
+## Indovinelli, rompicapo e missioni segrete
+
+**Le Tre Fiamme dei Custodi** (attraversa tutti e tre gli atti):
+1. Al pozzo di Ashford c'è un indovinello; la risposta è «eco».
+2. La meridiana nel cortile dell'Archivio di Vesperia ha tre anelli da ruotare. Il verso inciso dice l'ordine: sole, corona, occhio. Premere il centro con la combinazione sbagliata dà una scossa (−2 PF).
+3. All'eremo di Hrun, sulla porta è inciso «Basta pronunciare il mio nome per spezzarmi». Dire «Silenzio» è sbagliato; bisogna restare in silenzio.
+
+Con tutte e tre le fiamme si ottiene la Lanterna dei Custodi (+1d6 radiosi ai non morti, +1 ai TS); altrimenti due frammenti di sole.
+
+**Il ladro di ricordi** (Atto II)
+- Nell vende fiale di ricordi rubati.
+- Nella Via degli Speziali tre sospetti fanno una dichiarazione ciascuno e uno solo dice il vero. Logicamente il ladro è Vell.
+- Accusarlo porta a uno scontro con un capo; un'accusa sbagliata lo fa fuggire e la missione fallisce.
+
+**Indovinello di Nonna Grisa** (Atto I): la risposta giusta dà due fuochi dell'alchimista e la ricetta della pozione superiore.

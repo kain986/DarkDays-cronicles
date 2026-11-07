@@ -262,12 +262,12 @@ svg.ic{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;str
 .board-wrap{position:relative;flex:1;display:grid;place-items:center;padding:6px 16px;min-height:0}
 .board-wrap.shake{animation:bshake .38s}
 @keyframes bshake{20%{transform:translate(-5px,2px)}40%{transform:translate(4px,-3px)}60%{transform:translate(-3px,1px)}80%{transform:translate(2px,-1px)}}
-.board{position:relative;display:grid;grid-template-columns:repeat(7,var(--cell));grid-auto-rows:var(--cell);border-radius:6px;box-shadow:0 0 0 1px #000,0 0 0 3px #2a2018,0 0 0 4px #8a6d34,0 0 0 6px #1a130d,0 18px 40px rgba(0,0,0,.85),0 0 60px rgba(202,166,80,.08)}
+.board{position:relative;display:block;border-radius:6px;box-shadow:0 0 0 1px #000,0 0 0 3px #2a2018,0 0 0 4px #8a6d34,0 0 0 6px #1a130d,0 18px 40px rgba(0,0,0,.85),0 0 60px rgba(202,166,80,.08)}
 .board::after{content:"";position:absolute;inset:-6px;border-radius:9px;pointer-events:none;background:
  radial-gradient(circle at 0 0,#e2c26e 0 3px,transparent 3.5px),radial-gradient(circle at 100% 0,#e2c26e 0 3px,transparent 3.5px),radial-gradient(circle at 0 100%,#e2c26e 0 3px,transparent 3.5px),radial-gradient(circle at 100% 100%,#e2c26e 0 3px,transparent 3.5px)}
 #terrain,#fx{position:absolute;left:0;top:0;width:100%;height:100%;border-radius:6px;pointer-events:none}
 #terrain{z-index:0} #fx{z-index:6}
-.cell{position:relative;z-index:1}
+.cell{position:absolute;z-index:1;width:var(--cell);height:calc(var(--cell) * 1.1547);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
 .cell.reach{background:rgba(120,160,230,.07)}
 .cell.reach::after{content:"";position:absolute;left:50%;top:50%;width:9%;height:9%;transform:translate(-50%,-50%);border-radius:50%;background:#bcd2ff;box-shadow:0 0 6px 1px rgba(140,180,255,.6);opacity:.45}
 .cell.range{background:rgba(255,190,120,.06)}
@@ -622,6 +622,30 @@ a.btn{text-decoration:none}
 @keyframes barkin{from{opacity:0;translate:-50% -80%}to{opacity:1;translate:-50% -100%}}
 .endcard .rout{font-family:var(--f-ui);font-size:14px;color:#f0d48a}
 .endcard .rout svg{width:15px;height:15px;vertical-align:-2px}
+/* ---------- masteries, kill cam ---------- */
+.info .hint .mst{color:#c9b8ff}.info .hint .mst svg{width:12px;height:12px;vertical-align:-2px}
+.tok .st .c-sap{color:#c9b8ff}.tok .st .c-slow{color:#9fd8ff}.tok .st .c-pr{color:#ffd38a}
+.board-wrap.kc{animation:kcam .45s ease-out}
+.board-wrap.km{animation:kmom .7s ease-out}
+.board-wrap.km::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:30;background:radial-gradient(ellipse at center,rgba(255,220,140,0) 35%,rgba(255,200,110,.35) 100%);animation:kflash .7s ease-out forwards}
+@keyframes kcam{0%{scale:1}30%{scale:1.035}100%{scale:1}}
+@keyframes kmom{0%{scale:1;filter:none}25%{scale:1.05;filter:saturate(1.4) contrast(1.1)}100%{scale:1;filter:none}}
+@keyframes kflash{from{opacity:1}to{opacity:0}}
+/* ---------- crafting & market ---------- */
+.mats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:4px 0 10px}
+.mats span{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:6px;align-items:center;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(202,166,80,.25)}
+.mats span svg{grid-row:span 2;width:18px;height:18px;color:var(--brass)}
+.mats span b{font:600 15px var(--f-ui);color:var(--bone)}
+.mats span small{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mats span.zero{opacity:.45}
+.rcp .need{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.rcp .need span{font:500 11px var(--f-ui);padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.05)}
+.rcp .need .ok{color:#9be0a6;box-shadow:inset 0 0 0 1px rgba(155,224,166,.35)}
+.rcp .need .no{color:#ffb38a;box-shadow:inset 0 0 0 1px rgba(255,179,138,.35)}
+.rcp small.why{color:#c9b38a;font-style:italic;margin-top:3px}
+.rcp.unk b{letter-spacing:.2em;color:var(--muted)}
+.shoptabs{margin:2px 0 10px}
+.tok .st .c-oil{color:#ffb070}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 

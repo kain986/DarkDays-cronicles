@@ -271,12 +271,12 @@ svg.ic{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;str
 .board-wrap{position:relative;flex:1;display:grid;place-items:center;padding:6px 16px;min-height:0}
 .board-wrap.shake{animation:bshake .38s}
 @keyframes bshake{20%{transform:translate(-5px,2px)}40%{transform:translate(4px,-3px)}60%{transform:translate(-3px,1px)}80%{transform:translate(2px,-1px)}}
-.board{position:relative;display:grid;grid-template-columns:repeat(7,var(--cell));grid-auto-rows:var(--cell);border-radius:6px;box-shadow:0 0 0 1px #000,0 0 0 3px #2a2018,0 0 0 4px #8a6d34,0 0 0 6px #1a130d,0 18px 40px rgba(0,0,0,.85),0 0 60px rgba(202,166,80,.08)}
+.board{position:relative;display:block;border-radius:6px;box-shadow:0 0 0 1px #000,0 0 0 3px #2a2018,0 0 0 4px #8a6d34,0 0 0 6px #1a130d,0 18px 40px rgba(0,0,0,.85),0 0 60px rgba(202,166,80,.08)}
 .board::after{content:"";position:absolute;inset:-6px;border-radius:9px;pointer-events:none;background:
  radial-gradient(circle at 0 0,#e2c26e 0 3px,transparent 3.5px),radial-gradient(circle at 100% 0,#e2c26e 0 3px,transparent 3.5px),radial-gradient(circle at 0 100%,#e2c26e 0 3px,transparent 3.5px),radial-gradient(circle at 100% 100%,#e2c26e 0 3px,transparent 3.5px)}
 #terrain,#fx{position:absolute;left:0;top:0;width:100%;height:100%;border-radius:6px;pointer-events:none}
 #terrain{z-index:0} #fx{z-index:6}
-.cell{position:relative;z-index:1}
+.cell{position:absolute;z-index:1;width:var(--cell);height:calc(var(--cell) * 1.1547);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
 .cell.reach{background:rgba(120,160,230,.07)}
 .cell.reach::after{content:"";position:absolute;left:50%;top:50%;width:9%;height:9%;transform:translate(-50%,-50%);border-radius:50%;background:#bcd2ff;box-shadow:0 0 6px 1px rgba(140,180,255,.6);opacity:.45}
 .cell.range{background:rgba(255,190,120,.06)}
@@ -631,6 +631,30 @@ a.btn{text-decoration:none}
 @keyframes barkin{from{opacity:0;translate:-50% -80%}to{opacity:1;translate:-50% -100%}}
 .endcard .rout{font-family:var(--f-ui);font-size:14px;color:#f0d48a}
 .endcard .rout svg{width:15px;height:15px;vertical-align:-2px}
+/* ---------- masteries, kill cam ---------- */
+.info .hint .mst{color:#c9b8ff}.info .hint .mst svg{width:12px;height:12px;vertical-align:-2px}
+.tok .st .c-sap{color:#c9b8ff}.tok .st .c-slow{color:#9fd8ff}.tok .st .c-pr{color:#ffd38a}
+.board-wrap.kc{animation:kcam .45s ease-out}
+.board-wrap.km{animation:kmom .7s ease-out}
+.board-wrap.km::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:30;background:radial-gradient(ellipse at center,rgba(255,220,140,0) 35%,rgba(255,200,110,.35) 100%);animation:kflash .7s ease-out forwards}
+@keyframes kcam{0%{scale:1}30%{scale:1.035}100%{scale:1}}
+@keyframes kmom{0%{scale:1;filter:none}25%{scale:1.05;filter:saturate(1.4) contrast(1.1)}100%{scale:1;filter:none}}
+@keyframes kflash{from{opacity:1}to{opacity:0}}
+/* ---------- crafting & market ---------- */
+.mats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:4px 0 10px}
+.mats span{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:6px;align-items:center;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(202,166,80,.25)}
+.mats span svg{grid-row:span 2;width:18px;height:18px;color:var(--brass)}
+.mats span b{font:600 15px var(--f-ui);color:var(--bone)}
+.mats span small{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mats span.zero{opacity:.45}
+.rcp .need{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.rcp .need span{font:500 11px var(--f-ui);padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.05)}
+.rcp .need .ok{color:#9be0a6;box-shadow:inset 0 0 0 1px rgba(155,224,166,.35)}
+.rcp .need .no{color:#ffb38a;box-shadow:inset 0 0 0 1px rgba(255,179,138,.35)}
+.rcp small.why{color:#c9b38a;font-style:italic;margin-top:3px}
+.rcp.unk b{letter-spacing:.2em;color:var(--muted)}
+.shoptabs{margin:2px 0 10px}
+.tok .st .c-oil{color:#ffb070}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 
@@ -645,11 +669,11 @@ a.btn{text-decoration:none}
 /* ===== 10_data.js ===== */
 "use strict";
 /* =================== LANGUAGE =================== */
-var GAME_VERSION = "2.2.1"; // replaced by tools/build.mjs
+var GAME_VERSION = "3.0"; // replaced by tools/build.mjs
 var IS_APP = false;      // true only in the Android build (enables the update check)
 let LG = 0; // 0 it, 1 en, 2 es
 const LANG_CODES = ["it","en","es"];
-const tr = a => a == null ? "" : (Array.isArray(a) ? (a[LG] != null ? a[LG] : a[0]) : String(a));
+const tr = a => a == null ? "" : typeof a === "function" ? tr(a()) : (Array.isArray(a) ? (a[LG] != null ? a[LG] : a[0]) : String(a));
 const UI = {
   tag:["Quaranta giorni senza alba.","Forty days without a dawn.","Cuarenta días sin amanecer."],
   sub:["Cronache","Chronicles","Crónicas"],
@@ -702,10 +726,10 @@ const UI = {
   defeatTxt:["Il buio si chiude su di voi. Ma la storia non è ancora scritta.","Darkness closes over you. But the story is not yet written.","La oscuridad se cierra sobre vosotros. Pero la historia aún no está escrita."],
   retry:["Riprova lo scontro","Retry the battle","Reintentar el combate"],
   enemyTurn:["Turno nemico","Enemy turn","Turno enemigo"],
-  tapMove:["Tocca una casella per muoverti, un nemico per attaccare.","Tap a tile to move, an enemy to attack.","Toca una casilla para moverte, un enemigo para atacar."],
+  tapMove:["Tocca un esagono per muoverti, un nemico per attaccare.","Tap a hex to move, an enemy to attack.","Toca un hexágono para moverte, un enemigo para atacar."],
   tapTarget:["Scegli un bersaglio.","Choose a target.","Elige un objetivo."],
   tapArea:["Scegli il centro. Tocca di nuovo per confermare.","Pick the centre. Tap again to confirm.","Elige el centro. Toca de nuevo para confirmar."],
-  tapTile:["Scegli una casella libera.","Choose a free tile.","Elige una casilla libre."],
+  tapTile:["Scegli un esagono libero.","Choose a free hex.","Elige un hexágono libre."],
   slotsL:["Slot","Slots","Espacios"], cantrip:["trucchetto","cantrip","truco"],
   hits:["colpisce","hits","golpea"], misses:["manca","misses","falla"], crit:["CRITICO!","CRITICAL!","¡CRÍTICO!"],
   heals:["recupera","regains","recupera"], down:["è a terra!","is down!","¡cae!"], dies:["è sconfitto","is defeated","es derrotado"],
@@ -864,15 +888,15 @@ const COMPS = {
 
 /* =================== WEAPONS =================== */
 const WEAP = {
-  longsword:{n:["Spada lunga","Longsword","Espada larga"], d:"1d8", st:"str", r:1, t:"slash"},
-  warhammer:{n:["Martello da guerra","Warhammer","Martillo de guerra"], d:"1d8", st:"str", r:1, t:"blunt"},
-  javelin:{n:["Giavellotto","Javelin","Jabalina"], d:"1d6", st:"str", r:5, ranged:1, t:"pierce"},
-  rapier:{n:["Stocco","Rapier","Estoque"], d:"1d8", st:"fin", r:1, t:"pierce"},
-  shortbow:{n:["Arco corto","Shortbow","Arco corto"], d:"1d6", st:"dex", r:8, ranged:1, t:"pierce"},
-  longbow:{n:["Arco lungo","Longbow","Arco largo"], d:"1d8", st:"dex", r:10, ranged:1, t:"pierce"},
-  shortsword:{n:["Spada corta","Shortsword","Espada corta"], d:"1d6", st:"fin", r:1, t:"slash"},
-  quarterstaff:{n:["Bastone","Quarterstaff","Bastón"], d:"1d6", st:"str", r:1, t:"blunt"},
-  mace:{n:["Mazza","Mace","Maza"], d:"1d6", st:"str", r:1, t:"blunt"},
+  longsword:{m:"sap", n:["Spada lunga","Longsword","Espada larga"], d:"1d8", st:"str", r:1, t:"slash"},
+  warhammer:{m:"push", n:["Martello da guerra","Warhammer","Martillo de guerra"], d:"1d8", st:"str", r:1, t:"blunt"},
+  javelin:{m:"slow", n:["Giavellotto","Javelin","Jabalina"], d:"1d6", st:"str", r:5, ranged:1, t:"pierce"},
+  rapier:{m:"vex", n:["Stocco","Rapier","Estoque"], d:"1d8", st:"fin", r:1, t:"pierce"},
+  shortbow:{m:"vex", n:["Arco corto","Shortbow","Arco corto"], d:"1d6", st:"dex", r:8, ranged:1, t:"pierce"},
+  longbow:{m:"slow", n:["Arco lungo","Longbow","Arco largo"], d:"1d8", st:"dex", r:10, ranged:1, t:"pierce"},
+  shortsword:{m:"vex", n:["Spada corta","Shortsword","Espada corta"], d:"1d6", st:"fin", r:1, t:"slash"},
+  quarterstaff:{m:"topple", n:["Bastone","Quarterstaff","Bastón"], d:"1d6", st:"str", r:1, t:"blunt"},
+  mace:{m:"sap", n:["Mazza","Mace","Maza"], d:"1d6", st:"str", r:1, t:"blunt"},
 };
 
 /* =================== SPELLS =================== */
@@ -880,27 +904,27 @@ const SPELLS = {
   firebolt:{lv:0, n:["Dardo di fuoco","Fire Bolt","Descarga de fuego"], tgt:"enemy", r:10, d:["Attacco a distanza, 1d10 fuoco (2d10 dal 5°).","Ranged attack, 1d10 fire (2d10 from level 5).","Ataque a distancia, 1d10 fuego (2d10 desde nivel 5)."]},
   sacredflame:{lv:0, n:["Fiamma sacra","Sacred Flame","Llama sagrada"], tgt:"enemy", r:8, d:["TS Destrezza o 1d8 radiosi (2d8 dal 5°).","DEX save or 1d8 radiant (2d8 from level 5).","Salvación de DES o 1d8 radiante (2d8 desde nivel 5)."]},
   magicmissile:{lv:1, n:["Dardo incantato","Magic Missile","Proyectil mágico"], tgt:"enemy", r:12, d:["Colpisce sempre: 3d4+3 forza.","Never misses: 3d4+3 force.","Nunca falla: 3d4+3 fuerza."]},
-  sleep:{lv:1, n:["Sonno","Sleep","Dormir"], tgt:"area", r:9, rad:1, d:["Addormenta nemici per 5d8 PF totali (area 3×3). Non morti immuni.","Puts enemies to sleep up to 5d8 total HP (3×3 area). Undead immune.","Duerme enemigos hasta 5d8 PG en total (área 3×3). Muertos vivientes inmunes."]},
-  burninghands:{lv:1, n:["Mani brucianti","Burning Hands","Manos ardientes"], tgt:"area", r:2, rad:1, ff:1, d:["Area 3×3 vicina: TS DES, 3d6 fuoco (metà se riesce).","Nearby 3×3 area: DEX save, 3d6 fire (half on success).","Área 3×3 cercana: salvación DES, 3d6 fuego (mitad si la supera)."]},
+  sleep:{lv:1, n:["Sonno","Sleep","Dormir"], tgt:"area", r:9, rad:1, d:["Addormenta nemici per 5d8 PF totali (area di 7 esagoni). Non morti immuni.","Puts enemies to sleep up to 5d8 total HP (7-hex area). Undead immune.","Duerme enemigos hasta 5d8 PG en total (área de 7 hexágonos). Muertos vivientes inmunes."]},
+  burninghands:{lv:1, n:["Mani brucianti","Burning Hands","Manos ardientes"], tgt:"area", r:2, rad:1, ff:1, d:["Area di 7 esagoni vicina: TS DES, 3d6 fuoco (metà se riesce).","Nearby 7-hex area: DEX save, 3d6 fire (half on success).","Área de 7 hexágonos cercana: salvación DES, 3d6 fuego (mitad si la supera)."]},
   curewounds:{lv:1, n:["Cura ferite","Cure Wounds","Curar heridas"], tgt:"ally", r:1, d:["Tocco: cura 1d8 + modificatore.","Touch: heals 1d8 + modifier.","Toque: cura 1d8 + modificador."]},
   healingword:{lv:1, bonus:1, n:["Parola guaritrice","Healing Word","Palabra curativa"], tgt:"ally", r:8, d:["Azione bonus a distanza: cura 1d4 + modificatore. Rialza gli alleati a terra.","Bonus action at range: heals 1d4 + modifier. Raises downed allies.","Acción adicional a distancia: cura 1d4 + modificador. Levanta aliados caídos."]},
   bless:{lv:1, n:["Benedizione","Bless","Bendecir"], tgt:"none", d:["Tutto il gruppo aggiunge 1d4 ai tiri per colpire e ai tiri salvezza per lo scontro.","The whole party adds 1d4 to attack rolls and saves for the fight.","Todo el grupo suma 1d4 a ataques y salvaciones durante el combate."]},
   guidingbolt:{lv:1, n:["Dardo tracciante","Guiding Bolt","Saeta guía"], tgt:"enemy", r:12, d:["Attacco: 4d6 radiosi; il prossimo attacco contro il bersaglio ha vantaggio.","Attack: 4d6 radiant; next attack against the target has advantage.","Ataque: 4d6 radiante; el siguiente ataque contra el objetivo tiene ventaja."]},
   huntersmark:{lv:1, bonus:1, n:["Marchio del cacciatore","Hunter's Mark","Marca del cazador"], tgt:"enemy", r:18, d:["Azione bonus: +1d6 danni a ogni tuo colpo sul bersaglio.","Bonus action: +1d6 damage on each of your hits against the target.","Acción adicional: +1d6 de daño en cada golpe tuyo contra el objetivo."]},
   scorchingray:{lv:2, n:["Raggio rovente","Scorching Ray","Rayo abrasador"], tgt:"enemy", r:12, d:["Tre raggi, ognuno un attacco da 2d6 fuoco.","Three rays, each a 2d6 fire attack.","Tres rayos, cada uno un ataque de 2d6 fuego."]},
-  mistystep:{lv:2, bonus:1, n:["Passo velato","Misty Step","Paso brumoso"], tgt:"tile", r:6, d:["Azione bonus: teletrasporto fino a 6 caselle.","Bonus action: teleport up to 6 tiles.","Acción adicional: teletransporte hasta 6 casillas."]},
+  mistystep:{lv:2, bonus:1, n:["Passo velato","Misty Step","Paso brumoso"], tgt:"tile", r:6, d:["Azione bonus: teletrasporto fino a 6 esagoni.","Bonus action: teleport up to 6 hexes.","Acción adicional: teletransporte hasta 6 hexágonos."]},
   spiritualweapon:{lv:2, bonus:1, n:["Arma spirituale","Spiritual Weapon","Arma espiritual"], tgt:"none", d:["Azione bonus: evoca un'arma; nei turni seguenti attacca come azione bonus (1d8 + mod).","Bonus action: summon a weapon; on later turns strike as a bonus action (1d8 + mod).","Acción adicional: invoca un arma; en turnos siguientes ataca como acción adicional (1d8 + mod)."]},
-  fireball:{lv:3, n:["Palla di fuoco","Fireball","Bola de fuego"], tgt:"area", r:12, rad:2, ff:1, d:["Area 5×5: TS DES, 8d6 fuoco (metà se riesce).","5×5 area: DEX save, 8d6 fire (half on success).","Área 5×5: salvación DES, 8d6 fuego (mitad si la supera)."]},
-  spiritguardians:{lv:3, n:["Guardiani spirituali","Spirit Guardians","Guardianes espirituales"], tgt:"none", d:["I nemici che iniziano il turno entro 2 caselle subiscono 3d8 radiosi (TS SAG dimezza).","Enemies starting their turn within 2 tiles take 3d8 radiant (WIS save halves).","Los enemigos que empiezan su turno a 2 casillas reciben 3d8 radiante (salvación SAB a la mitad)."]},
+  fireball:{lv:3, n:["Palla di fuoco","Fireball","Bola de fuego"], tgt:"area", r:12, rad:2, ff:1, d:["Area di 19 esagoni: TS DES, 8d6 fuoco (metà se riesce).","19-hex area: DEX save, 8d6 fire (half on success).","Área de 19 hexágonos: salvación DES, 8d6 fuego (mitad si la supera)."]},
+  spiritguardians:{lv:3, n:["Guardiani spirituali","Spirit Guardians","Guardianes espirituales"], tgt:"none", d:["I nemici che iniziano il turno entro 2 esagoni subiscono 3d8 radiosi (TS SAG dimezza).","Enemies starting their turn within 2 hexes take 3d8 radiant (WIS save halves).","Los enemigos que empiezan su turno a 2 hexágonos reciben 3d8 radiante (salvación SAB a la mitad)."]},
   masshealingword:{lv:3, bonus:1, n:["Parola guaritrice di massa","Mass Healing Word","Palabra curativa en masa"], tgt:"none", d:["Azione bonus: tutto il gruppo recupera 1d4 + mod e si rialza.","Bonus action: the whole party regains 1d4 + mod and stands up.","Acción adicional: todo el grupo recupera 1d4 + mod y se levanta."]},
-  icestorm:{lv:4, n:["Tempesta di ghiaccio","Ice Storm","Tormenta de hielo"], tgt:"area", r:12, rad:2, ff:1, d:["Area 5×5: TS DES, 2d8+4d6 (metà se riesce).","5×5 area: DEX save, 2d8+4d6 (half on success).","Área 5×5: salvación DES, 2d8+4d6 (mitad si la supera)."]},
+  icestorm:{lv:4, n:["Tempesta di ghiaccio","Ice Storm","Tormenta de hielo"], tgt:"area", r:12, rad:2, ff:1, d:["Area di 19 esagoni: TS DES, 2d8+4d6 (metà se riesce).","19-hex area: DEX save, 2d8+4d6 (half on success).","Área de 19 hexágonos: salvación DES, 2d8+4d6 (mitad si la supera)."]},
 };
 
 /* =================== ITEMS =================== */
 const ITEMS = {
   potion:{n:["Pozione di guarigione","Healing potion","Poción de curación"], d:["Cura 2d4+2 PF.","Heals 2d4+2 HP.","Cura 2d4+2 PG."], price:25, use:"heal", dice:"2d4+2"},
   greater:{n:["Pozione superiore","Greater potion","Poción mayor"], d:["Cura 4d4+4 PF.","Heals 4d4+4 HP.","Cura 4d4+4 PG."], price:60, use:"heal", dice:"4d4+4"},
-  flask:{n:["Fuoco dell'alchimista","Alchemist's fire","Fuego de alquimista"], d:["Da lanciare in combattimento: 2d6 fuoco a un nemico entro 5 caselle.","Throw in combat: 2d6 fire to an enemy within 5 tiles.","Para lanzar en combate: 2d6 fuego a un enemigo a 5 casillas."], price:15, use:"throw"},
+  flask:{n:["Fuoco dell'alchimista","Alchemist's fire","Fuego de alquimista"], d:["Da lanciare in combattimento: 2d6 fuoco a un nemico entro 5 esagoni.","Throw in combat: 2d6 fire to an enemy within 5 hexes.","Para lanzar en combate: 2d6 fuego a un enemigo a 5 hexágonos."], price:15, use:"throw"},
   w1:{n:["Arma rifinita +1","Fine weapon +1","Arma refinada +1"], d:["+1 a colpire e ai danni con le armi.","+1 to hit and damage with weapons.","+1 al ataque y daño con armas."], price:200, use:"equip", slot:"w", v:1},
   a1:{n:["Piastre rinforzate +1","Reinforced plates +1","Placas reforzadas +1"], d:["+1 alla Classe Armatura (massimo +2).","+1 to Armor Class (max +2).","+1 a la Clase de Armadura (máximo +2)."], price:180, use:"equip", slot:"a", v:1},
   w2:{n:["Arma dei Custodi +2","Sunwarden weapon +2","Arma de los Custodios +2"], d:["+2 a colpire e ai danni con le armi.","+2 to hit and damage with weapons.","+2 al ataque y daño con armas."], price:550, use:"equip", slot:"w", v:2},
@@ -910,7 +934,7 @@ const ITEMS = {
   coin:{n:["Moneta della Corona Cava","Hollow Crown coin","Moneda de la Corona Hueca"], d:["Argento annerito, inciso con una corona vuota.","Blackened silver stamped with an empty crown.","Plata ennegrecida con una corona vacía grabada."], quest:1},
 };
 Object.assign(ITEMS, {
-  scroll_fire:{n:["Pergamena: Palla di fuoco","Scroll: Fireball","Pergamino: Bola de fuego"], d:["Chiunque può leggerla in combattimento: area 5×5, TS DES CD 15, 8d6 fuoco.","Anyone can read it in combat: 5×5 area, DEX save DC 15, 8d6 fire.","Cualquiera puede leerlo en combate: área 5×5, salvación DES CD 15, 8d6 fuego."], price:150, use:"scroll", spell:"fireball", tgt:"area", r:12, rad:2},
+  scroll_fire:{n:["Pergamena: Palla di fuoco","Scroll: Fireball","Pergamino: Bola de fuego"], d:["Chiunque può leggerla in combattimento: area di 19 esagoni, TS DES CD 15, 8d6 fuoco.","Anyone can read it in combat: 19-hex area, DEX save DC 15, 8d6 fire.","Cualquiera puede leerlo en combate: área de 19 hexágonos, salvación DES CD 15, 8d6 fuego."], price:150, use:"scroll", spell:"fireball", tgt:"area", r:12, rad:2},
   scroll_heal:{n:["Pergamena: Cura di gruppo","Scroll: Mass Cure","Pergamino: Curación en grupo"], d:["In combattimento: tutto il gruppo recupera 2d8+2 PF e si rialza.","In combat: the whole party regains 2d8+2 HP and stands up.","En combate: todo el grupo recupera 2d8+2 PG y se levanta."], price:110, use:"scroll", spell:"massheal", tgt:"none"},
   ring_prot:{n:["Anello di protezione","Ring of Protection","Anillo de protección"], d:["Accessorio: +1 alla CA e a tutti i tiri salvezza.","Trinket: +1 to AC and all saving throws.","Accesorio: +1 a la CA y a todas las salvaciones."], price:450, use:"equip", slot:"t"},
   amulet_health:{n:["Amuleto della salute","Amulet of Health","Amuleto de salud"], d:["Accessorio: la tua Costituzione diventa 19.","Trinket: your Constitution becomes 19.","Accesorio: tu Constitución pasa a ser 19."], price:600, use:"equip", slot:"t", setAb:["con", 19]},
@@ -923,6 +947,20 @@ Object.assign(ITEMS, {
   pearl_power:{n:["Perla del potere","Pearl of Power","Perla de poder"], d:["Accessorio per incantatori: +1 slot incantesimo (di 2° livello dal 3° livello).","Caster trinket: +1 spell slot (2nd level from character level 3).","Accesorio de lanzador: +1 espacio de conjuro (de 2º nivel desde nivel 3)."], price:500, use:"equip", slot:"t"},
   eye_hawk:{n:["Lente del falco","Hawk's Lens","Lente del halcón"], d:["Accessorio: +2 ai tiri per colpire a distanza con le armi.","Trinket: +2 to hit with ranged weapon attacks.","Accesorio: +2 al ataque a distancia con armas."], price:350, use:"equip", slot:"t"},
 });
+/* materials and crafted items (crafting: 75_crafting.js) */
+Object.assign(ITEMS, {
+  herb:{n:["Erbe di Valtenebra","Valtenebra herbs","Hierbas de Valtenebra"], d:["Materiale: foglie amare che crescono anche senza sole. Base di pozioni e oli.","Material: bitter leaves that grow even without sun. Base for potions and oils.","Material: hojas amargas que crecen incluso sin sol. Base de pociones y aceites."], price:4, use:"mat", ic:"leaf"},
+  resin:{n:["Resina nera","Black resin","Resina negra"], d:["Materiale: resina appiccicosa dei pini morti. Brucia a lungo.","Material: sticky resin from dead pines. It burns for a long time.","Material: resina pegajosa de los pinos muertos. Arde mucho tiempo."], price:5, use:"mat", ic:"flame"},
+  bone:{n:["Polvere d'ossa","Bone dust","Polvo de hueso"], d:["Materiale: ciò che resta dei non morti. Gli alchimisti la usano per l'acqua consacrata.","Material: what remains of the undead. Alchemists use it for holy water.","Material: lo que queda de los muertos vivientes. Los alquimistas la usan para el agua bendita."], price:6, use:"mat", ic:"skull"},
+  iron:{n:["Rottami di ferro","Scrap iron","Chatarra de hierro"], d:["Materiale: lame spezzate e fibbie. Un fabbro ne fa armi migliori.","Material: broken blades and buckles. A smith turns them into better gear.","Material: hojas rotas y hebillas. Un herrero las convierte en mejor equipo."], price:8, use:"mat", ic:"shield"},
+  essence:{n:["Essenza d'ombra","Shadow essence","Esencia de sombra"], d:["Materiale raro: un fumo freddo che si raccoglie dove cade un servo della Corona.","Rare material: a cold smoke that gathers where a servant of the Crown falls.","Material raro: un humo frío que se acumula donde cae un siervo de la Corona."], price:25, use:"mat", ic:"eye"},
+  sunshard:{n:["Frammento di sole","Sun shard","Fragmento de sol"], d:["Materiale raro: una scheggia d'oro tiepido, ciò che resta della luce dei Custodi.","Rare material: a warm golden splinter, what remains of the Sunwardens' light.","Material raro: una astilla de oro tibio, lo que queda de la luz de los Custodios."], price:60, use:"mat", ic:"sun"},
+  oil:{n:["Olio infuocato","Fire oil","Aceite ígneo"], d:["Azione bonus in combattimento: per il resto dello scontro i tuoi colpi con l'arma infliggono +1d4 danni da fuoco.","Bonus action in combat: for the rest of the fight your weapon hits deal +1d4 fire damage.","Acción adicional en combate: durante el resto del combate tus golpes con arma causan +1d4 de daño de fuego."], price:30, use:"oil"},
+  holywater:{n:["Acqua consacrata","Holy water","Agua bendita"], d:["Da lanciare entro 5 esagoni: 2d6 radiosi, 4d6 ai non morti.","Throw within 5 hexes: 2d6 radiant, 4d6 against the undead.","Para lanzar a 5 hexágonos: 2d6 radiante, 4d6 contra muertos vivientes."], price:25, use:"throw", dmg:"2d6", undead:"4d6", type:"radiant"},
+  sunlantern:{n:["Lanterna dei Custodi","Sunwarden Lantern","Linterna de los Custodios"], d:["Accessorio leggendario: i tuoi colpi infliggono +1d6 radiosi ai non morti, e hai +1 a tutti i tiri salvezza.","Legendary trinket: your hits deal +1d6 radiant to the undead, and you get +1 to all saving throws.","Accesorio legendario: tus golpes causan +1d6 radiante a los muertos vivientes, y tienes +1 a todas las salvaciones."], price:900, use:"equip", slot:"t"},
+  memvial:{n:["Fiala di ricordi","Vial of memories","Frasco de recuerdos"], d:["Una fiala opaca che contiene la voce di qualcuno. Va restituita.","An opaque vial holding someone's voice. It must be returned.","Un frasco opaco que contiene la voz de alguien. Hay que devolverlo."], use:"quest"},
+});
+ITEMS.flask.dmg = "2d6"; ITEMS.flask.type = "fire";
 const FEATLIST = {
   sharpshooter:{n:["Tiratore scelto","Sharpshooter","Tirador experto"], d:["I tuoi attacchi a distanza con l'arma ignorano la copertura. Sblocca «Colpo potente» a distanza: −5 a colpire, +10 danni.","Your ranged weapon attacks ignore cover. Unlocks ranged “Power attack”: −5 to hit, +10 damage.","Tus ataques a distancia con arma ignoran la cobertura. Desbloquea «Golpe poderoso» a distancia: −5 al ataque, +10 de daño."], ic:"bow"},
   gwm:{n:["Maestro d'armi","Weapon Master","Maestro de armas"], d:["Sblocca «Colpo potente» in mischia: −5 a colpire, +10 danni. Quando abbatti un nemico in mischia ottieni un attacco extra come azione bonus.","Unlocks melee “Power attack”: −5 to hit, +10 damage. When you drop an enemy in melee you get an extra attack as a bonus action.","Desbloquea «Golpe poderoso» cuerpo a cuerpo: −5 al ataque, +10 de daño. Al abatir a un enemigo cuerpo a cuerpo obtienes un ataque extra como acción adicional."], ic:"sword"},
@@ -936,9 +974,12 @@ const LOOT = {
   mill:["eye_hawk"], cem:["sun_talisman"], varga:["periapt"], varga_small:["periapt"], bandits:["cloak_displ"], tower:["pearl_power"], doran:["boots_wind"],
   duke:["ring_prot"], vault_boss:["w2","scroll_fire"], vault_boss_hard:["w2","scroll_fire"], vault_guard:["greater"], keeper:["amulet_health"], ser_guards:["headband_int"], pass:["gauntlets_ogre"], jailers:["scroll_fire","scroll_heal"],
 };
+// Mara is an herbalist, Hild a smith; Vesperia has everything at city prices; Hrun's hermitage is the last stop before the Crown.
 const SHOPS = {
-  ashford:{n:["Bottega di Mara la Vecchia","Old Mara's shop","Tienda de la vieja Mara"], items:["potion","flask","scroll_heal","a1"]},
-  vesperia:{n:["Mercato delle Candele","Candle Market","Mercado de las Velas"], items:["potion","greater","flask","scroll_heal","scroll_fire","w1","a1","w2","boots_wind","ring_prot"]},
+  ashford:{n:["Bottega di Mara la Vecchia","Old Mara's shop","Tienda de la vieja Mara"], items:["potion","flask","herb","resin","scroll_heal"]},
+  hild:{n:["Fucina di Hild","Hild's forge","Forja de Hild"], items:["iron","a1"], forge:1},
+  vesperia:{n:["Mercato delle Candele","Candle Market","Mercado de las Velas"], items:["potion","greater","flask","holywater","herb","resin","bone","iron","scroll_heal","scroll_fire","w1","a1","boots_wind","ring_prot"], forge:1},
+  hrun:{n:["L'eremo di Hrun","Hrun's hermitage","La ermita de Hrun"], items:["potion","greater","holywater","iron","sunshard","w2"], forge:2},
 };
 
 /* =================== FOES =================== */
@@ -1002,6 +1043,7 @@ const MAPS = {
   dungeon:{g:"#1c1a18", ob:"#46403a", obr:"14%", n:6},
   throne:{g:"#1a1218", ob:"#4b2a3a", obr:"50%", n:4},
 };
+FOES.vell = {n:["Vell, lo speziale","Vell the apothecary","Vell, el boticario"], hp:40, ac:13, spd:6, ic:"flame", xp:350, sv:2, atk:[{n:["Bisturi","Scalpel","Bisturí"], b:5, d:"1d6+3", r:1, t:"slash", k:2}], spells:[{n:["Fiala d'oblio","Vial of oblivion","Frasco de olvido"], b:5, d:"2d8", r:6, t:"necrotic", p:.6}]};
 const ENC = {
   cart:{map:"road", foes:["famished","famished","famished"], gold:5},
   wolves:{map:"forest", foes:["wolf","wolf","wolf"]},
@@ -1027,6 +1069,7 @@ const ENC = {
   cistern:{map:"sewer", foes:["drowned","drowned","fanatic","fanatic"]},
   mirror:{map:"mirror", foes:["shade","shade","shade","shade","shade"]},
   mirror_easy:{map:"mirror", foes:["shade","shade","shade","shade"]},
+  bottler:{lead:"vell", map:"sewer", foes:["vell","cultist","cultist","shadow"], gold:35},
   jailers:{map:"dungeon", foes:["jailer","jailer","jailer","fanatic"], gold:40},
   seraphine:{map:"throne", foes:["seraphine","shade","shade","fanatic"]},
   avatar:{map:"throne", foes:["avatar","shade","shade"]},
@@ -1043,6 +1086,7 @@ const ENC = {
 // itself with defineChapter(). Party, items, level and story flags carry over from one chapter to
 // the next, so a later chapter can react to earlier choices (e.g. has("doran_ally")).
 const SC = {};
+const CHAPTER_QUESTS = []; // journal entries declared by chapters (merged into QUESTS by the engine)
 const cat = (...parts) => { const p = parts.filter(Boolean); return [0,1,2].map(i => p.map(x => x[i]).join("\n\n")); };
 const CHAPTERS = [];
 function defineChapter(c) { if (CHAPTERS.some(x => x.id === c.id)) throw new Error("duplicate chapter " + c.id); CHAPTERS.push(c); return c; }
@@ -2020,6 +2064,166 @@ SC.end_dark = {bg:"dark", loc:LOC.throne, once(){ set("game_done"); set("end_dar
     ["FINALE: IL RE DI CENERE","ENDING: THE ASH KING","FINAL: EL REY DE CENIZA"]),
   ch:[{t:["Torna al titolo","Back to title","Volver al título"], end:1}]};
 
+/* ===== chapters/ch1_il_sole_nero/40_secrets.js ===== */
+/* =================== CHAPTER I — SECRETS, RIDDLES, CRAFTERS =================== */
+// Secret quest "The Three Flames": three Sunwarden caches, one per act, each behind a riddle or a puzzle.
+// Secret quest "The Memory Thief": a logic puzzle in Vesperia's Lower City.
+// Crafters: Hild the smith (Ashford), the shrine's holy water, Grisa's distillate, the Archive's scribes, Hrun the hermit (Act III).
+const BACK_CITY = ["Tornare in città", "Back to the city", "Volver a la ciudad"];
+const addChoice = (scene, ch, beforeLast = 1) => { const L = SC[scene].ch; L.splice(Math.max(0, L.length - beforeLast), 0, ch); };
+const flames = () => ["flame1", "flame2", "flame3"].filter(has).length;
+
+/* ---------- Ashford: Hild's forge ---------- */
+LOC.forge = ["La fucina di Hild", "Hild's forge", "La forja de Hild"];
+LOC.well = ["Il vecchio pozzo", "The old well", "El viejo pozo"];
+addChoice("ashford", {t: ["La fucina di Hild", "Hild's forge", "La forja de Hild"], go: "a1_hild"}, 6);
+addChoice("ashford", {t: ["Il vecchio pozzo della piazza", "The old well in the square", "El viejo pozo de la plaza"], req: () => !has("flame1"), go: "a1_well"}, 6);
+SC.a1_hild = {bg: "village", loc: LOC.forge, once() { xp(25); },
+  t: () => cat(["La fucina è l'unico posto caldo di Ashford. Hild, una donna larga di spalle con le braccia segnate da cento scottature, batte una lama che non diventerà mai una spada: il ferro buono è finito da settimane.\n\n«Portami ferro» dice senza alzare gli occhi. «Fibbie, lame spezzate, chiodi dei pallidi: tutto. Con quattro pezzi buoni ti affilo l'arma o ti rinforzo l'armatura. Il resto lo paghi in monete, che il carbone non cresce sugli alberi.»",
+    "The forge is the only warm place in Ashford. Hild, a broad-shouldered woman with arms marked by a hundred burns, hammers a blade that will never become a sword: the good iron ran out weeks ago.\n\n“Bring me iron,” she says without looking up. “Buckles, broken blades, the pale ones' nails: anything. With four good pieces I'll hone your weapon or reinforce your armour. The rest you pay in coin; coal doesn't grow on trees.”",
+    "La forja es el único lugar cálido de Ashford. Hild, una mujer ancha de hombros con los brazos marcados por cien quemaduras, golpea una hoja que nunca será una espada: el buen hierro se acabó hace semanas.\n\n«Tráeme hierro» dice sin levantar la vista. «Hebillas, hojas rotas, clavos de los pálidos: lo que sea. Con cuatro piezas buenas te afilo el arma o te refuerzo la armadura. El resto lo pagas en monedas, que el carbón no crece en los árboles.»"],
+    !has("flame1") && ["Indica il pozzo con il mento. «Se cerchi stranezze, mio nonno diceva che quel pozzo risponde a chi sa cosa chiedere. Mai capito cosa intendesse.»", "She nods at the well. “If you're after oddities, my grandfather used to say that well answers whoever knows what to ask. Never understood what he meant.”", "Señala el pozo con la barbilla. «Si buscas rarezas, mi abuelo decía que ese pozo responde a quien sabe qué preguntar. Nunca entendí qué quería decir.»"]),
+  ch: [{t: ["Usare la fucina", "Use the forge", "Usar la forja"], shop: "hild"}, {t: BACK_SQUARE, go: "ashford"}]};
+
+/* ---------- Ashford shrine: holy water ---------- */
+addChoice("a1_shrine", {t: ["Chiedere come si prepara l'acqua consacrata", "Ask how holy water is made", "Preguntar cómo se prepara el agua bendita"], req: () => has("met_ser") && !has("rec_holy"), go: "a1_holy"});
+SC.a1_holy = {bg: "shrine", loc: LOC.shrine, once() { set("rec_holy"); },
+  t: ["Madre Seraphine sorride. «Erbe amare, acqua di pozzo e polvere d'ossa dei morti che non riposano: quello che li tiene in piedi li disfa. Ma senza una preghiera vera è solo acqua sporca: serve qualcuno che parli con gli dèi.»\n\nTi mostra come mescolare e benedire. Le sue mani sono ferme, e per un momento sembra davvero una sacerdotessa del sole.\n\n(Ricetta imparata: Acqua consacrata. Serve un chierico o un paladino nel gruppo.)",
+    "Mother Seraphine smiles. “Bitter herbs, well water and the bone dust of the dead that do not rest: what keeps them standing undoes them. But without a true prayer it's just dirty water: you need someone who speaks with the gods.”\n\nShe shows you how to mix and bless it. Her hands are steady, and for a moment she truly looks like a priestess of the sun.\n\n(Recipe learned: Holy water. Requires a cleric or a paladin in the party.)",
+    "La Madre Seraphine sonríe. «Hierbas amargas, agua de pozo y polvo de hueso de los muertos que no descansan: lo que los mantiene en pie los deshace. Pero sin una oración verdadera es solo agua sucia: hace falta alguien que hable con los dioses.»\n\nTe enseña a mezclarla y bendecirla. Sus manos están firmes, y por un momento parece de verdad una sacerdotisa del sol.\n\n(Receta aprendida: Agua bendita. Requiere un clérigo o un paladín en el grupo.)"],
+  ch: [{t: ["Continuare", "Go on", "Continuar"], go: "a1_shrine"}]};
+
+/* ---------- Grisa teaches her distillate ---------- */
+{ const o = SC.a1_grisa_ok.once; SC.a1_grisa_ok.once = function () { o && o(); set("rec_greater"); toastQ(tr(["Ricetta imparata: Pozione superiore", "Recipe learned: Greater potion", "Receta aprendida: Poción mayor"])); }; }
+
+/* ---------- THE THREE FLAMES, 1: the well that answers ---------- */
+SC.a1_well = {bg: "village", loc: LOC.well,
+  t: ["Il pozzo è più vecchio della piazza. Sul bordo di pietra, quasi cancellate da secoli di secchi, corrono lettere nella scrittura dei Custodi del Sole. Brenna le decifra piano:\n\n«Parlo senza bocca e sento senza orecchie.\nNon ho corpo, ma vivo nel vuoto.\nChiamami per nome, e ti risponderò.»",
+    "The well is older than the square. Around its stone rim, almost worn away by centuries of buckets, run letters in the Sunwardens' script. Brenna deciphers them slowly:\n\n“I speak without a mouth and hear without ears.\nI have no body, but I live in hollow places.\nCall me by my name, and I will answer you.”",
+    "El pozo es más viejo que la plaza. En el borde de piedra, casi borradas por siglos de cubos, corren letras en la escritura de los Custodios del Sol. Brenna las descifra despacio:\n\n«Hablo sin boca y oigo sin oídos.\nNo tengo cuerpo, pero vivo en lo hueco.\nLlámame por mi nombre, y te responderé.»"],
+  ch: [
+    {t: ["Gridare nel pozzo: «Eco!»", "Shout into the well: “Echo!”", "Gritar al pozo: «¡Eco!»"], go: "a1_well_ok"},
+    {t: ["Gridare nel pozzo: «Ombra!»", "Shout into the well: “Shadow!”", "Gritar al pozo: «¡Sombra!»"], go: "a1_well_ko"},
+    {t: ["Gridare nel pozzo: «Vento!»", "Shout into the well: “Wind!”", "Gritar al pozo: «¡Viento!»"], go: "a1_well_ko"},
+    {t: ["Gridare nel pozzo: «Fantasma!»", "Shout into the well: “Ghost!”", "Gritar al pozo: «¡Fantasma!»"], go: "a1_well_ko"},
+    {t: BACK_SQUARE, go: "ashford"}]};
+SC.a1_well_ko = {bg: "village", loc: LOC.well,
+  t: ["La tua voce cade nel pozzo e non torna. Qualche passante ti guarda storto. Forse la risposta era più semplice, e più vicina, di così.", "Your voice falls into the well and does not come back. A few passers-by give you odd looks. Perhaps the answer was simpler, and closer, than that.", "Tu voz cae al pozo y no vuelve. Algunos transeúntes te miran raro. Quizá la respuesta era más sencilla, y más cercana, que eso."],
+  ch: [{t: ["Rileggere l'iscrizione", "Read the inscription again", "Releer la inscripción"], go: "a1_well"}, {t: BACK_SQUARE, go: "ashford"}]};
+SC.a1_well_ok = {bg: "village", loc: LOC.well, once() { set("flame1"); set("q_flames"); item("sunshard", 1); item("herb", 2); xp(150); },
+  t: ["«Eco!» La parola rimbalza giù, giù, e torna su sette volte… poi un'ottava, da un punto sbagliato: da dietro le pietre. Calandoti con la corda del secchio trovi una pietra che suona vuota. Dietro c'è una nicchia asciutta: un vasetto di erbe sigillate, un frammento d'oro tiepido e un disco di bronzo inciso con una fiamma.\n\nSul retro del disco: «La prima fiamma è tua. La seconda attende dove le ore non hanno ombra. La terza, dove l'ultimo fabbro custodisce il silenzio.»\n\n(Missione segreta: Le Tre Fiamme dei Custodi.)",
+    "“Echo!” The word bounces down, down, and comes back up seven times… then an eighth, from the wrong place: from behind the stones. Lowering yourself on the bucket rope you find a stone that sounds hollow. Behind it is a dry niche: a jar of sealed herbs, a warm golden shard and a bronze disc engraved with a flame.\n\nOn the back of the disc: “The first flame is yours. The second waits where the hours cast no shadow. The third, where the last smith keeps the silence.”\n\n(Secret quest: The Three Flames of the Sunwardens.)",
+    "«¡Eco!» La palabra rebota hacia abajo, abajo, y vuelve a subir siete veces… luego una octava, desde el lugar equivocado: desde detrás de las piedras. Descolgándote con la cuerda del cubo encuentras una piedra que suena hueca. Detrás hay un nicho seco: un tarro de hierbas selladas, una astilla de oro tibio y un disco de bronce grabado con una llama.\n\nEn el reverso del disco: «La primera llama es tuya. La segunda espera donde las horas no tienen sombra. La tercera, donde el último herrero guarda el silencio.»\n\n(Misión secreta: Las Tres Llamas de los Custodios.)"],
+  ch: [{t: BACK_SQUARE, go: "ashford"}]};
+
+/* ---------- THE THREE FLAMES, 2: the broken sundial (Vesperia) ---------- */
+LOC.dial = ["La meridiana spezzata", "The broken sundial", "El reloj de sol roto"];
+const DIAL = [["Sole", "Sun", "Sol"], ["Luna", "Moon", "Luna"], ["Corona", "Crown", "Corona"], ["Occhio", "Eye", "Ojo"], ["Chiave", "Key", "Llave"]];
+const DIAL_OK = [0, 2, 3];
+const dialS = () => (S.dial = S.dial || [1, 4, 0]);
+addChoice("vesperia", {t: ["La meridiana spezzata, nel cortile dell'Archivio", "The broken sundial, in the Archive courtyard", "El reloj de sol roto, en el patio del Archivo"], req: () => !has("flame2"), go: "a2_dial"}, 2);
+const ringCh = i => ({t: () => [`Ruotare l'anello ${["esterno", "di mezzo", "interno"][i]} (ora: ${tr(DIAL[dialS()[i]])})`, `Turn the ${["outer", "middle", "inner"][i]} ring (now: ${tr(DIAL[dialS()[i]])})`, `Girar el anillo ${["exterior", "central", "interior"][i]} (ahora: ${tr(DIAL[dialS()[i]])})`], fx() { const d = dialS(); d[i] = (d[i] + 1) % DIAL.length; if (typeof SFX !== "undefined" && SFX.step) SFX.step(); }, go: "a2_dial"});
+SC.a2_dial = {bg: "city", loc: LOC.dial,
+  t: () => cat(["Nel cortile dell'Archivio, sotto un cielo che non ha più ore, c'è una meridiana di bronzo spaccata a metà. Lo gnomone è caduto, ma intorno al quadrante girano tre anelli incisi con cinque simboli: sole, luna, corona, occhio, chiave.\n\nSul piedistallo, un verso: «Esterno, la luce che fu. Nel mezzo, ciò che la divorò. Dentro, ciò che veglia ancora.»",
+    "In the Archive courtyard, beneath a sky that no longer has hours, stands a bronze sundial split in half. The gnomon has fallen, but around the dial turn three rings engraved with five symbols: sun, moon, crown, eye, key.\n\nOn the pedestal, a verse: “Outer, the light that was. In the middle, what devoured it. Within, what still keeps watch.”",
+    "En el patio del Archivo, bajo un cielo que ya no tiene horas, hay un reloj de sol de bronce partido por la mitad. El gnomon ha caído, pero alrededor de la esfera giran tres anillos grabados con cinco símbolos: sol, luna, corona, ojo, llave.\n\nEn el pedestal, un verso: «Fuera, la luz que fue. En medio, lo que la devoró. Dentro, lo que aún vigila.»"],
+    has("flame1") && ["Il disco di bronzo del pozzo, nella tua borsa, è diventato tiepido.", "The bronze disc from the well, in your pack, has grown warm.", "El disco de bronce del pozo, en tu bolsa, se ha vuelto tibio."],
+    ["Ora gli anelli mostrano: " + dialS().map(i => tr(DIAL[i])).join(" · ") + ".", "The rings now show: " + dialS().map(i => tr(DIAL[i])).join(" · ") + ".", "Ahora los anillos muestran: " + dialS().map(i => tr(DIAL[i])).join(" · ") + "."]),
+  ch: [ringCh(0), ringCh(1), ringCh(2),
+    {t: ["Premere il centro del quadrante", "Press the centre of the dial", "Presionar el centro de la esfera"], go: () => dialS().every((v, i) => v === DIAL_OK[i]) ? "a2_dial_ok" : "a2_dial_ko", to: ["a2_dial_ok", "a2_dial_ko"]},
+    {t: BACK_CITY, go: "vesperia"}]};
+SC.a2_dial_ko = {bg: "city", loc: LOC.dial, once() {}, enter() { dmgParty(2); },
+  t: ["Il bronzo scatta e una scintilla gelida ti morde le dita (−2 PF a tutto il gruppo). Gli anelli tornano a girare da soli. Rileggi il verso: luce, ciò che la divorò, ciò che veglia.", "The bronze snaps and an icy spark bites your fingers (−2 HP to the whole party). The rings spin back on their own. Read the verse again: light, what devoured it, what keeps watch.", "El bronce chasquea y una chispa helada te muerde los dedos (−2 PG a todo el grupo). Los anillos vuelven a girar solos. Relee el verso: luz, lo que la devoró, lo que vigila."],
+  ch: [{t: ["Riprovare", "Try again", "Intentarlo de nuevo"], fx() { S.dial = [1, 4, 0]; }, go: "a2_dial"}, {t: BACK_CITY, go: "vesperia"}]};
+SC.a2_dial_ok = {bg: "city", loc: LOC.dial, once() { set("flame2"); set("q_flames"); item("sunshard", 2); xp(200); },
+  t: () => cat(["Sole, Corona, Occhio. Il quadrante si abbassa con un sospiro di polvere e, per un istante, sul bronzo cade un'ombra netta, come se a mezzogiorno ci fosse ancora un sole. Nel vano sotto la meridiana: due frammenti d'oro tiepido avvolti in seta e una seconda fiamma di bronzo, gemella di quella del pozzo.",
+    "Sun, Crown, Eye. The dial sinks with a sigh of dust and, for an instant, a sharp shadow falls across the bronze, as though there were still a noonday sun. In the hollow beneath the sundial: two warm golden shards wrapped in silk and a second bronze flame, twin to the one from the well.",
+    "Sol, Corona, Ojo. La esfera se hunde con un suspiro de polvo y, por un instante, cae sobre el bronce una sombra nítida, como si aún hubiera un sol de mediodía. En el hueco bajo el reloj: dos fragmentos de oro tibio envueltos en seda y una segunda llama de bronce, gemela de la del pozo."],
+    !has("flame1") && ["Sul bordo della fiamma è incisa una frase: «Tre fiamme, tre custodi. La prima risponde dal fondo di un pozzo.»", "Along the edge of the flame a phrase is engraved: “Three flames, three keepers. The first answers from the bottom of a well.”", "En el borde de la llama hay una frase grabada: «Tres llamas, tres guardianes. La primera responde desde el fondo de un pozo.»"]),
+  ch: [{t: BACK_CITY, go: "vesperia"}]};
+
+/* ---------- Archive: scribes' recipes ---------- */
+addChoice("a2_archive", {t: ["Consultare i trattati di alchimia dei Custodi", "Consult the Sunwardens' alchemy treatises", "Consultar los tratados de alquimia de los Custodios"], req: () => has("met_pellin") && !has("rec_scroll"), go: "a2_recipes"});
+SC.a2_recipes = {bg: "archive", loc: LOC.archive, once() { set("rec_scroll"); set("rec_greater"); xp(25); },
+  t: ["Pellin ti porta un volume rilegato in pelle di salamandra. «Come i Custodi scrivevano le pergamene: luce di sole fissata nell'inchiostro. Servono frammenti di sole veri, e una mano che conosca gli incantesimi.» Sfoglia ancora. «E qui, il distillato d'ombra: le pozioni superiori. Ironico, no? Il buio che rimargina.»\n\n(Ricette imparate: Pergamene di cura e di palla di fuoco, Pozione superiore.)",
+    "Pellin brings you a volume bound in salamander hide. “How the Sunwardens wrote their scrolls: sunlight fixed in ink. You need real sun shards, and a hand that knows spells.” He turns more pages. “And here, the shadow distillate: greater potions. Ironic, isn't it? Darkness that heals.”\n\n(Recipes learned: Healing and Fireball scrolls, Greater potion.)",
+    "Pellin te trae un volumen encuadernado en piel de salamandra. «Cómo escribían los Custodios sus pergaminos: luz de sol fijada en la tinta. Hacen falta fragmentos de sol de verdad, y una mano que conozca los conjuros.» Pasa más páginas. «Y aquí, el destilado de sombra: las pociones mayores. Irónico, ¿no? La oscuridad que cura.»\n\n(Recetas aprendidas: Pergaminos de curación y de bola de fuego, Poción mayor.)"],
+  ch: [{t: ["Continuare", "Go on", "Continuar"], go: "a2_archive"}]};
+
+/* ---------- THE MEMORY THIEF (secret quest, Vesperia) ---------- */
+LOC.lower = ["La Città Bassa", "The Lower City", "La Ciudad Baja"];
+addChoice("a2_rat", {t: ["Il bambino che vende fiale tra i tavoli", "The child selling vials between the tables", "El niño que vende frascos entre las mesas"], req: () => !has("q_bottler"), go: "a2_vial"});
+SC.a2_vial = {bg: "tavern2", loc: LOC.rat, once() { set("q_bottler"); xp(25); },
+  t: ["Un bambino magro, con un berretto troppo grande, offre fiale opache ai clienti. «Cinque monete. Dentro c'è una canzone. Questa era di mia madre.» Stappa una fiala e, per un respiro, senti una voce di donna che canticchia una ninna nanna. Poi più niente.\n\n«Da quando gliel'hanno presa non la canta più. Non si ricorda nemmeno di saperla.» Il bambino si chiama Nell. Sul tappo della fiala c'è un sigillo: un mortaio e un pestello. «Le fanno nella Via degli Speziali, nella Città Bassa. Ma lì tutti dicono che non sono stati loro.»\n\n(Missione segreta: Il ladro di ricordi.)",
+    "A thin child in an oversized cap is offering cloudy vials to the patrons. “Five coins. There's a song inside. This one was my mother's.” He unstoppers a vial and, for one breath, you hear a woman's voice humming a lullaby. Then nothing.\n\n“Since they took it from her she doesn't sing it any more. She doesn't even remember knowing it.” The child's name is Nell. On the vial's stopper is a seal: a mortar and pestle. “They make them on Apothecaries' Row, in the Lower City. But everyone there says it wasn't them.”\n\n(Secret quest: The Memory Thief.)",
+    "Un niño flaco, con una gorra demasiado grande, ofrece frascos turbios a los clientes. «Cinco monedas. Dentro hay una canción. Esta era de mi madre.» Destapa un frasco y, durante un suspiro, oyes una voz de mujer tarareando una nana. Luego nada.\n\n«Desde que se la quitaron ya no la canta. Ni siquiera recuerda que la sabía.» El niño se llama Nell. En el tapón del frasco hay un sello: un mortero y su mano. «Los hacen en la Calle de los Boticarios, en la Ciudad Baja. Pero allí todos dicen que no fueron ellos.»\n\n(Misión secreta: El ladrón de recuerdos.)"],
+  ch: [{t: ["Continuare", "Go on", "Continuar"], go: "a2_rat"}]};
+addChoice("vesperia", {t: ["La Via degli Speziali, nella Città Bassa", "Apothecaries' Row, in the Lower City", "La Calle de los Boticarios, en la Ciudad Baja"], req: () => has("q_bottler") && !has("bott_done"), go: "a2_bott"}, 2);
+SC.a2_bott = {bg: "city", loc: LOC.lower,
+  t: ["Nella Via degli Speziali tre botteghe hanno il sigillo del mortaio. Tre speziali vi aspettano sulla soglia, ciascuno con la sua verità. Una vecchia del quartiere vi tira per la manica: «Uno solo dice il vero. Gli altri due mentono, e uno di loro è il ladro.»\n\nTESSA, la lanterniera: «È stato Bram. L'ho visto con le fiale.»\nBRAM, il barcaiolo: «Tessa mente, come sempre.»\nVELL, lo speziale: «Io non sono stato.»\n\nSe uno solo dice il vero, chi ha rubato i ricordi?",
+    "On Apothecaries' Row three shops bear the mortar seal. Three apothecaries wait for you on their doorsteps, each with their own truth. An old woman from the quarter tugs at your sleeve: “Only one of them is telling the truth. The other two are lying, and one of them is the thief.”\n\nTESSA, the lamp-maker: “It was Bram. I saw him with the vials.”\nBRAM, the boatman: “Tessa is lying, as usual.”\nVELL, the apothecary: “It wasn't me.”\n\nIf only one is telling the truth, who stole the memories?",
+    "En la Calle de los Boticarios tres tiendas llevan el sello del mortero. Tres boticarios os esperan en el umbral, cada uno con su verdad. Una anciana del barrio os tira de la manga: «Solo uno dice la verdad. Los otros dos mienten, y uno de ellos es el ladrón.»\n\nTESSA, la farolera: «Fue Bram. Lo vi con los frascos.»\nBRAM, el barquero: «Tessa miente, como siempre.»\nVELL, el boticario: «Yo no fui.»\n\nSi solo uno dice la verdad, ¿quién robó los recuerdos?"],
+  ch: [
+    {t: ["Accusare Tessa", "Accuse Tessa", "Acusar a Tessa"], go: "a2_bott_wrong"},
+    {t: ["Accusare Bram", "Accuse Bram", "Acusar a Bram"], go: "a2_bott_wrong"},
+    {t: ["Accusare Vell", "Accuse Vell", "Acusar a Vell"], go: "a2_bott_vell"},
+    {t: ["Pensarci ancora e tornare più tardi", "Think it over and come back later", "Pensarlo más y volver luego"], go: "vesperia"}]};
+SC.a2_bott_wrong = {bg: "city", loc: LOC.lower, once() { set("bott_done"); set("bott_failed"); },
+  t: ["L'accusata impallidisce, la strada si riempie di urla, e mentre tutti guardano dalla parte sbagliata una porta sbatte in fondo alla via. Quando arrivate alla bottega di Vell, è vuota: alambicchi ancora caldi, scaffali di fiale portati via in fretta.\n\nAvevate davanti la risposta. Se Vell fosse stato innocente, avrebbe detto il vero insieme a Bram.",
+    "The accused goes pale, the street fills with shouting, and while everyone looks the wrong way a door slams at the end of the row. When you reach Vell's shop it is empty: alembics still warm, shelves of vials carried off in haste.\n\nThe answer was right in front of you. Had Vell been innocent, he would have been telling the truth along with Bram.",
+    "La acusada palidece, la calle se llena de gritos y, mientras todos miran hacia el lado equivocado, una puerta se cierra de golpe al fondo de la calle. Cuando llegáis a la tienda de Vell, está vacía: alambiques aún calientes, estantes de frascos vaciados a toda prisa.\n\nTeníais la respuesta delante. Si Vell hubiera sido inocente, habría dicho la verdad junto con Bram."],
+  ch: [{t: BACK_CITY, go: "vesperia"}]};
+SC.a2_bott_vell = {bg: "city", loc: LOC.lower,
+  t: ["«Se Tessa dicesse il vero, anche Vell direbbe il vero: due. Se fosse Bram a dire il vero, Tessa mentirebbe e Vell anche: uno solo. Quindi Vell mente.»\n\nVell sorride, si toglie il grembiule. Sotto porta il simbolo della Corona Cava. «I ricordi felici sono il cibo preferito del mio signore. Ne ho riempito cento fiale.» Batte le mani: dalle botteghe escono pallidi armati, e dietro di loro un'ombra si stacca dal muro.",
+    "“If Tessa were telling the truth, Vell would be too: two. If Bram is the one telling the truth, Tessa is lying and so is Vell: just one. So Vell is lying.”\n\nVell smiles and takes off his apron. Beneath it he wears the sign of the Hollow Crown. “Happy memories are my lord's favourite food. I have filled a hundred vials.” He claps his hands: armed pale ones step out of the shops, and behind them a shadow peels itself off the wall.",
+    "«Si Tessa dijera la verdad, Vell también: dos. Si es Bram quien dice la verdad, Tessa miente y Vell también: solo uno. Así que Vell miente.»\n\nVell sonríe y se quita el delantal. Debajo lleva el símbolo de la Corona Hueca. «Los recuerdos felices son la comida favorita de mi señor. He llenado cien frascos.» Da una palmada: de las tiendas salen pálidos armados, y tras ellos una sombra se despega de la pared."],
+  ch: [{t: ["Combattere", "Fight", "Luchar"], fight: "bottler", win: "a2_bott_won"}]};
+SC.a2_bott_won = {bg: "city", loc: LOC.lower, once() { set("bott_done"); set("memories_freed"); xp(300); gold(100); item("essence", 2); },
+  t: ["Nella bottega di Vell trovate cento fiale allineate come soldatini. Le stappate una per una: la via si riempie di risate, nomi, canzoni, un odore di pane appena sfornato che nessuno sente da quaranta giorni. Da qualche parte una donna comincia a cantare una ninna nanna, e un bambino con un berretto troppo grande scoppia a piangere.\n\nTessa e Bram vi stringono le mani. Nella cassa di Vell ci sono monete e due fiale di essenza d'ombra, il suo «conservante».",
+    "In Vell's shop you find a hundred vials lined up like toy soldiers. You unstopper them one by one: the street fills with laughter, names, songs, the smell of fresh bread nobody has smelled in forty days. Somewhere a woman starts singing a lullaby, and a child in an oversized cap bursts into tears.\n\nTessa and Bram shake your hands. In Vell's strongbox there are coins and two vials of shadow essence, his “preservative”.",
+    "En la tienda de Vell encontráis cien frascos alineados como soldaditos. Los destapáis uno a uno: la calle se llena de risas, nombres, canciones, un olor a pan recién hecho que nadie siente desde hace cuarenta días. En algún lugar una mujer empieza a cantar una nana, y un niño con una gorra demasiado grande rompe a llorar.\n\nTessa y Bram os estrechan las manos. En el cofre de Vell hay monedas y dos frascos de esencia de sombra, su «conservante»."],
+  ch: [{t: BACK_CITY, go: "vesperia"}]};
+
+/* ---------- Act III: Hrun's hermitage — the last smith, the third flame ---------- */
+LOC.hermit = ["L'eremo di Hrun", "Hrun's hermitage", "La ermita de Hrun"];
+SC.a3_title.ch.unshift({t: ["Deviare verso l'eremo sul fianco del monte", "Turn aside toward the hermitage on the mountainside", "Desviarse hacia la ermita en la ladera"], req: () => !has("hermit_left"), go: "a3_hermit"});
+SC.a3_hermit = {bg: "mountain", loc: LOC.hermit, once() { xp(50); },
+  t: () => cat(["Una casupola di pietra incassata nella roccia, con un camino che fuma ostinato contro il cielo nero. Dentro, un nano dalla barba bruciacchiata batte il ferro su un'incudine che porta il sole dei Custodi.\n\n«Hrun. Ultimo fabbro dei Custodi, se ancora significa qualcosa.» Ti squadra il marchio. «Vai alla Corona, eh. Allora ti serve acciaio migliore di quello. Ho frammenti di sole, se hai monete, e so lavorarli come nessun altro: porta un'arma rifinita e ne faccio un'arma dei Custodi.»",
+    "A stone hut sunk into the rock, its chimney smoking stubbornly against the black sky. Inside, a dwarf with a singed beard hammers iron on an anvil bearing the Sunwardens' sun.\n\n“Hrun. Last smith of the Sunwardens, if that still means anything.” He eyes your mark. “Off to the Crown, eh. Then you need better steel than that. I've sun shards, if you've coin, and I can work them like no one else: bring a fine weapon and I'll make it a Sunwarden weapon.”",
+    "Una cabaña de piedra encajada en la roca, con una chimenea que humea terca contra el cielo negro. Dentro, un enano de barba chamuscada golpea el hierro sobre un yunque que lleva el sol de los Custodios.\n\n«Hrun. Último herrero de los Custodios, si eso aún significa algo.» Te mira la marca. «Vas a la Corona, ¿eh? Entonces necesitas mejor acero que ese. Tengo fragmentos de sol, si tienes monedas, y sé trabajarlos como nadie: tráeme un arma refinada y la convierto en un arma de los Custodios.»"],
+    !has("flame3") && ["In fondo alla stanza, una porta di bronzo senza maniglia. Sopra, inciso: «Basta pronunciare il mio nome per spezzarmi.»", "At the back of the room, a bronze door without a handle. Above it, engraved: “Merely saying my name breaks me.”", "Al fondo de la sala, una puerta de bronce sin manija. Encima, grabado: «Basta con decir mi nombre para romperme.»"],
+    has("flame1") && !has("flame3") && ["Hrun nota il disco di bronzo che porti. «Una fiamma. Allora sai cosa c'è dietro quella porta. Io no: sono sessant'anni che la guardo.»", "Hrun notices the bronze disc you carry. “A flame. Then you know what's behind that door. I don't: I've been staring at it for sixty years.”", "Hrun se fija en el disco de bronce que llevas. «Una llama. Entonces sabes qué hay detrás de esa puerta. Yo no: llevo sesenta años mirándola.»"]),
+  ch: [
+    {t: ["Commerciare e usare la fucina di Hrun", "Trade and use Hrun's forge", "Comerciar y usar la forja de Hrun"], shop: "hrun"},
+    {t: ["Dire alla porta: «Promessa»", "Tell the door: “Promise”", "Decirle a la puerta: «Promesa»"], req: () => !has("flame3"), go: "a3_door_ko"},
+    {t: ["Dire alla porta: «Silenzio»", "Tell the door: “Silence”", "Decirle a la puerta: «Silencio»"], req: () => !has("flame3"), go: "a3_door_ko2"},
+    {t: ["Dire alla porta: «Specchio»", "Tell the door: “Mirror”", "Decirle a la puerta: «Espejo»"], req: () => !has("flame3"), go: "a3_door_ko"},
+    {t: ["Restare davanti alla porta senza dire nulla", "Stand before the door and say nothing", "Quedarse ante la puerta sin decir nada"], req: () => !has("flame3"), go: "a3_door_ok"},
+    {t: ["Riprendere la salita", "Resume the climb", "Retomar la subida"], fx() { set("hermit_left"); }, go: "a3_title"}]};
+SC.a3_door_ko = {bg: "mountain", loc: LOC.hermit,
+  t: ["La porta non si muove. Hrun ridacchia nella barba. «Sessant'anni di risposte sbagliate. Benvenuto nel club.»", "The door does not move. Hrun chuckles into his beard. “Sixty years of wrong answers. Welcome to the club.”", "La puerta no se mueve. Hrun se ríe en la barba. «Sesenta años de respuestas equivocadas. Bienvenido al club.»"],
+  ch: [{t: ["Tornare da Hrun", "Back to Hrun", "Volver con Hrun"], go: "a3_hermit"}]};
+SC.a3_door_ko2 = {bg: "mountain", loc: LOC.hermit,
+  t: ["«Silenzio» dici… e la parola stessa rompe quello che chiedeva. La porta resta chiusa. Hrun ti guarda con un sopracciglio alzato. «Giusto. Ma l'hai detto.»", "“Silence,” you say… and the word itself breaks what it asked for. The door stays shut. Hrun looks at you with one eyebrow raised. “Right answer. But you said it.”", "«Silencio» dices… y la propia palabra rompe lo que pedía. La puerta sigue cerrada. Hrun te mira con una ceja levantada. «Correcto. Pero lo has dicho.»"],
+  ch: [{t: ["Tornare da Hrun", "Back to Hrun", "Volver con Hrun"], go: "a3_hermit"}]};
+SC.a3_door_ok = {bg: "mountain", loc: LOC.hermit, once() { set("flame3"); set("q_flames"); xp(250); if (flames() === 3) { set("flames_done"); item("sunlantern", 1); } else item("sunshard", 2); },
+  t: () => flames() === 3 ?
+    ["Non dici niente. Resti davanti alla porta, e il silenzio della stanza si fa così pieno che persino il fuoco della fucina smette di crepitare. La porta si apre senza un suono.\n\nDentro, su un altare piccolo, tre incavi a forma di fiamma. Ci appoggi i due dischi di bronzo; il terzo è già lì. Quando le tre fiamme si toccano, la stanza si riempie di una luce che nessuno vede da quaranta giorni: viene da una lanterna d'ottone che nessuno ha acceso.\n\nHrun si toglie il cappuccio. «La Lanterna dei Custodi. Mio nonno diceva che l'avrebbe presa chi avesse seguito le tre fiamme. Prendila. Portala in quella maledetta fortezza.»\n\n(Missione segreta completata: Lanterna dei Custodi.)",
+     "You say nothing. You stand before the door, and the silence of the room grows so full that even the forge fire stops crackling. The door opens without a sound.\n\nInside, on a small altar, three flame-shaped hollows. You set the two bronze discs in them; the third is already there. When the three flames touch, the room fills with a light nobody has seen in forty days: it comes from a brass lantern that nobody lit.\n\nHrun pulls back his hood. “The Sunwarden Lantern. My grandfather said it would go to whoever followed the three flames. Take it. Carry it into that cursed fortress.”\n\n(Secret quest complete: the Sunwarden Lantern.)",
+     "No dices nada. Te quedas ante la puerta, y el silencio de la sala se vuelve tan lleno que hasta el fuego de la forja deja de crepitar. La puerta se abre sin un sonido.\n\nDentro, sobre un altar pequeño, tres huecos con forma de llama. Colocas en ellos los dos discos de bronce; el tercero ya está ahí. Cuando las tres llamas se tocan, la sala se llena de una luz que nadie ve desde hace cuarenta días: viene de una linterna de latón que nadie ha encendido.\n\nHrun se quita la capucha. «La Linterna de los Custodios. Mi abuelo decía que sería para quien siguiera las tres llamas. Tómala. Llévala a esa maldita fortaleza.»\n\n(Misión secreta completada: la Linterna de los Custodios.)"] :
+    ["Non dici niente, e la porta si apre senza un suono. Dentro, su un altare, tre incavi a forma di fiamma: uno solo è occupato. Accanto, due frammenti di sole in una ciotola di bronzo.\n\nHrun scuote la testa. «Tre fiamme. Ne hai trovate troppo poche. Qualunque cosa custodisse quest'altare, è rimasta a dormire.»",
+     "You say nothing, and the door opens without a sound. Inside, on an altar, three flame-shaped hollows: only one is filled. Beside it, two sun shards in a bronze bowl.\n\nHrun shakes his head. “Three flames. You found too few of them. Whatever this altar was guarding has stayed asleep.”",
+     "No dices nada, y la puerta se abre sin un sonido. Dentro, sobre un altar, tres huecos con forma de llama: solo uno está ocupado. Al lado, dos fragmentos de sol en un cuenco de bronce.\n\nHrun niega con la cabeza. «Tres llamas. Has encontrado demasiado pocas. Lo que guardara este altar se ha quedado dormido.»"],
+  ch: [{t: ["Tornare da Hrun", "Back to Hrun", "Volver con Hrun"], go: "a3_hermit"}]};
+
+/* ---------- journal ---------- */
+CHAPTER_QUESTS.push(
+  {s: "q_flames", d: "flame3", n: ["✦ Le Tre Fiamme dei Custodi", "✦ The Three Flames of the Sunwardens", "✦ Las Tres Llamas de los Custodios"],
+    t: () => [`Missione segreta. Fiamme trovate: ${flames()}/3. La seconda attende dove le ore non hanno ombra; la terza, dove l'ultimo fabbro custodisce il silenzio.`, `Secret quest. Flames found: ${flames()}/3. The second waits where the hours cast no shadow; the third, where the last smith keeps the silence.`, `Misión secreta. Llamas encontradas: ${flames()}/3. La segunda espera donde las horas no tienen sombra; la tercera, donde el último herrero guarda el silencio.`]},
+  {s: "q_bottler", d: "bott_done", n: ["✦ Il ladro di ricordi", "✦ The Memory Thief", "✦ El ladrón de recuerdos"],
+    t: () => has("bott_failed") ? ["Missione segreta fallita: il ladro è fuggito.", "Secret quest failed: the thief escaped.", "Misión secreta fallida: el ladrón huyó."] : ["Missione segreta. Qualcuno nella Via degli Speziali, nella Città Bassa di Vesperia, ruba i ricordi felici e li chiude in fiale.", "Secret quest. Someone on Apothecaries' Row, in Vesperia's Lower City, is stealing happy memories and sealing them in vials.", "Misión secreta. Alguien en la Calle de los Boticarios, en la Ciudad Baja de Vesperia, roba los recuerdos felices y los encierra en frascos."]},
+);
+
 /* ===== 30_engine.js ===== */
 /* =================== UTIL =================== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -2056,7 +2260,7 @@ const abEff = (c, k) => { const v = c.ab[k], t = c.trinket && ITEMS[c.trinket]; 
 const abm = (c, k) => mod(abEff(c, k));
 const hasFeat = (c, f) => !!(c && c.feats && c.feats.includes(f));
 function maxHP(c) { const h = CL(c).hd, con = abm(c, "con"); let hp = h + con + (c.lvl - 1) * (h / 2 + 1 + con); if (c.race === "dwarf") hp += c.lvl; if (hasFeat(c, "tough")) hp += 2 * c.lvl; return Math.max(1, hp); }
-function acOf(c) { const dex = abm(c, "dex"); const a = CL(c).armor; let ac = a === "heavy" ? 16 : a === "medium" ? 14 + Math.min(dex, 2) : a === "light" ? 11 + dex : 13 + dex; if (CL(c).shield) ac += 2; return ac + (c.aplus || 0) + (c.trinket === "ring_prot" ? 1 : 0); }
+function acOf(c) { const dex = abm(c, "dex"); const a = CL(c).armor; let ac = a === "heavy" ? 16 : a === "medium" ? 14 + Math.min(dex, 2) : a === "light" ? 11 + dex : 13 + dex; if (CL(c).shield) ac += 2; return ac + (c.aplus || 0) + (c.trinket === "ring_prot" || c.trinket === "sunlantern" ? 1 : 0); }
 const speedOf = c => RACES[c.race].spd + (c.trinket === "boots_wind" ? 2 : 0) + (hasFeat(c, "mobile") ? 2 : 0);
 function slotsMax(c) { const t = CL(c).caster; const tab = t === "full" ? FULL : t === "half" ? HALF : null; const s = tab ? tab[c.lvl].slice() : [0,0,0,0]; if (tab && c.trinket === "pearl_power") s[c.lvl >= 3 ? 1 : 0]++; return s; }
 const castMod = c => CL(c).cast ? abm(c, CL(c).cast) : 0;
@@ -2068,7 +2272,7 @@ function spellsOf(c) { const t = CL(c).spells || {}, out = []; Object.keys(t).fo
 const weaponsOf = c => c.weapons || CL(c).weapons;
 const skillBonus = (c, sk) => abm(c, SKILLS[sk][1]) + (c.skills.includes(sk) ? prof(c) : 0);
 function auraBonus() { if (!S) return 0; const p = S.party.find(c => c.cls === "paladin" && c.lvl >= 6 && c.hp > 0); return p ? Math.max(1, abm(p, "cha")) : 0; }
-const saveBonus = (c, ab) => abm(c, ab) + (CL(c).saves.includes(ab) ? prof(c) : 0) + auraBonus() + (c.trinket === "ring_prot" ? 1 : 0);
+const saveBonus = (c, ab) => abm(c, ab) + (CL(c).saves.includes(ab) ? prof(c) : 0) + auraBonus() + (c.trinket === "ring_prot" || c.trinket === "sunlantern" ? 1 : 0);
 function resetRes(c) { c.res = {sw: 1, as: 1, lay: 5 * c.lvl, ch: 1, arc: 1}; c.hdLeft = c.lvl; }
 function recalc(c, full) {
   const m = maxHP(c);
@@ -2404,7 +2608,7 @@ async function choose(i) {
   if (ch.toTitle) { saveGame(true); renderTitle(); return; }
   if (ch.cost) { if (S.gold < ch.cost) { toast(T_("noGold")); return; } S.gold -= ch.cost; }
   if (ch.fx) ch.fx();
-  if (ch.rest) { longRest(); toastQ(UI.rested); }
+  if (ch.rest) { longRest(); toastQ(UI.rested); if (!ch.cost) forage(); }
   if (ch.shop) { renderStory(); openShop(ch.shop); return; }
   if (ch.check) { BUSY = true; const ok = await doCheck(ch.check); BUSY = false; goScene(ok ? ch.check.ok : ch.check.ko); return; }
   if (ch.fight) { const k = typeof ch.fight === "function" ? ch.fight() : ch.fight; startCombat(k, ch.win, !!ch.surprise); return; }
@@ -2492,6 +2696,7 @@ const QUESTS = [
   {s: "vault_known", d: "vault_done", n:["Le Volte di Aurel","The Vaults of Aurel","Las Bóvedas de Aurel"], t: ["Sotto la cappella dell'Archivio di Vesperia riposano le armi dei Custodi del Sole. Il sigillo si è incrinato.","Beneath the Vesperia Archive chapel rest the Sunwardens' weapons. The seal has cracked.","Bajo la capilla del Archivo de Vesperia descansan las armas de los Custodios del Sol. El sello se ha agrietado."]},
   {s: "invite", d: "masq_done", n:["Il ballo in maschera","The masquerade","El baile de máscaras"], t: ["Il Duca Malvern custodisce un registro dei suoi patti con il buio.","Duke Malvern keeps a ledger of his pacts with the dark.","El Duque Malvern guarda un registro de sus pactos con la oscuridad."]},
 ];
+QUESTS.push(...CHAPTER_QUESTS);
 function journalHTML() {
   const qs = QUESTS.filter(q => typeof q.s === "function" ? q.s() : has(q.s));
   if (!qs.length) return `<p>${T_("noQuests")}</p>`;
@@ -2525,7 +2730,26 @@ function showLevelUp() {
 const COLS = 7, ROWS = 9;
 let CB = null, CBSNAP = null;
 const K = (x, y) => x + "," + y;
-const dist = (a, b) => Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));
+/* ---------- hex grid ----------
+   Pointy-top hexes in "odd-r" offset coordinates: odd rows are shifted half a hex to the right.
+   Distances and directions use cube coordinates. Pixel units: 1 = hex width. */
+const HR = 1 / Math.sqrt(3), HROW = Math.sqrt(3) / 2;            // hex radius (centre→corner), row spacing
+const BW = COLS + .5, BH = (ROWS - 1) * HROW + 2 * HR;            // board size in hex widths
+const toCube = (x, y) => { const q = x - (y - (y & 1)) / 2; return [q, y, -q - y]; };
+const fromCube = (q, r) => [q + (r - (r & 1)) / 2, r];
+const dist = (a, b) => { const [aq, ar, as] = toCube(a.x, a.y), [bq, br, bs] = toCube(b.x, b.y); return Math.max(Math.abs(aq - bq), Math.abs(ar - br), Math.abs(as - bs)); };
+const HDIR = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
+const nbrs = (x, y) => { const [q, r] = toCube(x, y); return HDIR.map(([dq, dr]) => fromCube(q + dq, r + dr)).filter(([a, b]) => inGrid(a, b)); };
+const hcx = (x, y) => x + .5 + (y & 1) * .5, hcy = (x, y) => y * HROW + HR;   // hex centre
+// the hex that contains a point (pixel units)
+function hexAt(px, py) {
+  const X = px - .5, Y = py - HR, q = (Math.sqrt(3) / 3 * X - Y / 3) / HR, r = (2 / 3 * Y) / HR, s = -q - r;
+  let rq = Math.round(q), rr = Math.round(r), rs = Math.round(s); const dq = Math.abs(rq - q), dr = Math.abs(rr - r), ds = Math.abs(rs - s);
+  if (dq > dr && dq > ds) rq = -rr - rs; else if (dr > ds) rr = -rq - rs;
+  return fromCube(rq, rr);
+}
+// the creature directly opposite `a` across `t`
+const opposite = (a, t) => { const [aq, ar] = toCube(a.x, a.y), [tq, tr] = toCube(t.x, t.y); return fromCube(2 * tq - aq, 2 * tr - ar); };
 const alive = u => u.side === "e" ? u.hp > 0 : !u.down;
 const cur = () => CB.order[CB.ti];
 const unitAt = (x, y) => CB.units.find(u => u.x === x && u.y === y && (u.side === "p" || u.hp > 0));
@@ -2540,7 +2764,7 @@ const ABIL = {
   lay:{n:FEATS.lay, d:["Azione, tocco: cura usando la riserva (5 × livello per riposo).","Action, touch: heal from your pool (5 × level per rest).","Acción, toque: cura usando la reserva (5 × nivel por descanso)."], cost:"act", tgt:"ally", r:1},
   smite:{n:FEATS.smite, d:["Gratis: il prossimo colpo in mischia spende uno slot per +2d8 radiosi (+1d8 contro non morti).","Free: your next melee hit spends a slot for +2d8 radiant (+1d8 vs undead).","Gratis: tu siguiente golpe cuerpo a cuerpo gasta un espacio para +2d8 radiante (+1d8 contra muertos vivientes)."], cost:"free"},
   cunning:{n:FEATS.cunning, d:["Azione bonus: scatto (raddoppia il movimento).","Bonus action: dash (double movement).","Acción adicional: correr (duplica el movimiento)."], cost:"bon"},
-  turn:{n:FEATS.turn, d:["Azione: i non morti entro 6 caselle fanno un TS SAG o restano paralizzati 2 round. Una volta per riposo.","Action: undead within 6 tiles make a WIS save or are stunned for 2 rounds. Once per rest.","Acción: los muertos vivientes a 6 casillas hacen una salvación de SAB o quedan paralizados 2 rondas. Una vez por descanso."], cost:"act"},
+  turn:{n:FEATS.turn, d:["Azione: i non morti entro 6 esagoni fanno un TS SAG o restano paralizzati 2 round. Una volta per riposo.","Action: undead within 6 hexes make a WIS save or are stunned for 2 rounds. Once per rest.","Acción: los muertos vivientes a 6 hexágonos hacen una salvación de SAB o quedan paralizados 2 rondas. Una vez por descanso."], cost:"act"},
   disengage:{n:["Disimpegno","Disengage","Retirada"], d:["Azione: puoi muoverti senza provocare attacchi d'opportunità per questo turno.","Action: you can move without provoking opportunity attacks this turn.","Acción: puedes moverte sin provocar ataques de oportunidad este turno."], cost:"act"},
   cunningdis:{n:["Disimpegno scaltro","Cunning disengage","Retirada astuta"], d:["Azione bonus: disimpegno (nessun attacco d'opportunità).","Bonus action: disengage (no opportunity attacks).","Acción adicional: retirada (sin ataques de oportunidad)."], cost:"bon"},
   overwatch:{n:["Guardia","Overwatch","Vigilancia"], d:["Azione: termini il turno pronto a colpire. Il primo nemico che si muove entro la tua portata subisce un attacco (reazione).","Action: end your turn ready to strike. The first enemy that moves within your reach takes an attack (reaction).","Acción: terminas el turno listo para golpear. El primer enemigo que se mueva a tu alcance recibe un ataque (reacción)."], cost:"act"},
@@ -2582,14 +2806,14 @@ function startCombat(key, win, surprise) {
   showScreen("combat"); buildCombat();
   logL(tr(["Tiro per l'iniziativa…","Rolling initiative…","Tirando iniciativa…"]));
   if (surprise) logL(T_("surprised"));
-  if (CB.deploy) { logL(tr(["Schieramento: tocca un tuo personaggio, poi una casella dorata.","Deployment: tap one of your characters, then a golden tile.","Despliegue: toca a uno de tus personajes y luego una casilla dorada."])); renderCombat(); showTipsOnce(); }
+  if (CB.deploy) { logL(tr(["Schieramento: tocca un tuo personaggio, poi un esagono dorato.","Deployment: tap one of your characters, then a golden hex.","Despliegue: toca a uno de tus personajes y luego un hexágono dorado."])); renderCombat(); showTipsOnce(); }
   else setTimeout(nextTurn, 450);
 }
 function startBattle() { if (!CB || !CB.deploy) return; CB.deploy = false; CB.depSel = null; renderCombat(); setTimeout(nextTurn, 250); }
 function unitAtRaw(x, y) { return CB.units.find(u => u.x === x && u.y === y); }
 function connected() {
   const seen = new Set([K(3, ROWS - 1)]), q = [[3, ROWS - 1]];
-  while (q.length) { const [x, y] = q.shift(); for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) { const nx = x + dx, ny = y + dy, k = K(nx, ny); if (inGrid(nx, ny) && !CB.ob.has(k) && !seen.has(k)) { seen.add(k); q.push([nx, ny]); } } }
+  while (q.length) { const [x, y] = q.shift(); for (const [nx, ny] of nbrs(x, y)) { const k = K(nx, ny); if (!CB.ob.has(k) && !seen.has(k)) { seen.add(k); q.push([nx, ny]); } } }
   return seen.size === COLS * ROWS - CB.ob.size;
 }
 function logL(s) { CB.log.push(s); if (CB.log.length > 80) CB.log.shift(); renderLog(); }
@@ -2602,11 +2826,11 @@ function reachOf(u, limit, ai) {
   while (open.length) {
     let bi = 0; for (let i = 1; i < open.length; i++) if (open[i][0] < open[bi][0]) bi = i;
     const [w0, x, y] = open.splice(bi, 1)[0], cur0 = res.get(K(x, y)); if (w0 > cur0.w) continue;
-    for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) {
-      const nx = x + dx, ny = y + dy, k = K(nx, ny); if ((!dx && !dy) || !inGrid(nx, ny) || CB.ob.has(k)) continue;
+    for (const [nx, ny] of nbrs(x, y)) {
+      const k = K(nx, ny); if (CB.ob.has(k)) continue;
       const o = unitAt(nx, ny); if (o && o.side !== u.side && alive(o)) continue;
       const nd = cur0.d + stepCost(x, y, nx, ny); if (nd > limit) continue;
-      const pen = Math.min(999, cur0.pen + (CB.fire && CB.fire[k] ? (ai ? 60 : 20) : 0) + (dx && dy ? .01 : 0)), nw = nd * 1000 + pen;
+      const pen = Math.min(999, cur0.pen + (CB.fire && CB.fire[k] ? (ai ? 60 : 20) : 0)), nw = nd * 1000 + pen;
       const e = res.get(k); if (e && e.w <= nw) continue;
       res.set(k, {d: nd, w: nw, pen, p: K(x, y)}); open.push([nw, nx, ny]);
     }
@@ -2685,6 +2909,7 @@ async function nextTurn() {
   const u = cur(); u.mv = u.spd; u.act = 1; u.bon = 1; u.atkLeft = 0; u.sneakUsed = 0; u.colUsed = 0; u.react = 1; delete u.cond.dodge; delete u.cond.dis; delete u.cond.ow; delete u.cond.power;
   if (u.cond.prone && !u.cond.asleep && !u.cond.stun) { delete u.cond.prone; u.mv = Math.floor(u.spd / 2); logL(`${u.name}: ${tr(["si rialza","stands up","se levanta"])}`); }
   if (u.side === "e" && u.def.gob) u.cond.dis = 1;
+  masteryTurnStart(u);
   if (u.side === "p" && u.ref.trinket === "periapt" && u.hp < u.maxhp / 2) heal(u, 2);
   CB.sel = null; CB.pend = null; CB.inspect = null; CB.mvp = null; CB.tileInfo = null;
   const tok = CB.turnTok = (CB.turnTok || 0) + 1;
@@ -2712,7 +2937,7 @@ function selSpec(u, s) {
   if (s.k === "w") { const p = weapProfile(u.ref, weaponsOf(u.ref)[s.i]); return {tgt: "enemy", r: effR(u, p.r), base: p.r}; }
   if (s.k === "sp") { const sp = SPELLS[s.key]; return {tgt: sp.tgt, r: sp.tgt === "enemy" ? effR(u, sp.r || 0) : sp.r || 0, base: sp.r || 0, rad: sp.rad || 0}; }
   if (s.k === "ab") { const a = ABIL[s.key]; return {tgt: a.tgt || "none", r: a.r || 0}; }
-  if (s.k === "it") { const it = ITEMS[s.key]; if (it.tgt) return {tgt: it.tgt, r: it.r || 0, rad: it.rad || 0}; return it.use === "throw" ? {tgt: "enemy", r: effR(u, 5), base: 5} : {tgt: "ally", r: 1}; }
+  if (s.k === "it") { const it = ITEMS[s.key]; if (it.use === "oil") return {tgt: "none"}; if (it.tgt) return {tgt: it.tgt, r: it.r || 0, rad: it.rad || 0}; return it.use === "throw" ? {tgt: "enemy", r: effR(u, 5), base: 5} : {tgt: "ally", r: 1}; }
   return {tgt: "none"};
 }
 function slotFor(c, lv) { for (let i = lv - 1; i < 4; i++) if (c.slots[i] > 0) return i; return -1; }
@@ -2720,7 +2945,7 @@ function canUse(u, s) {
   const c = u.ref;
   if (s.k === "w") return u.atkLeft > 0 || u.act > 0;
   if (s.k === "sp") { const sp = SPELLS[s.key]; if (sp.bonus ? u.bon <= 0 : u.act <= 0) return false; return sp.lv === 0 || slotFor(c, sp.lv) >= 0; }
-  if (s.k === "it") return u.act > 0 && (S.inv[s.key] || 0) > 0;
+  if (s.k === "it") return (isOil(s.key) ? u.bon > 0 && !u.cond.oil : u.act > 0) && (S.inv[s.key] || 0) > 0;
   if (s.k === "ab") { const a = ABIL[s.key], k = s.key;
     if (a.cost === "act" && u.act <= 0) return false; if (a.cost === "bon" && u.bon <= 0) return false; if (a.cost === "atk" && u.act <= 0 && u.atkLeft <= 0) return false;
     if (k === "power") return !u.cond.power && (u.act > 0 || u.atkLeft > 0); if (k === "overwatch") return !!owProfile(u); if (k === "cunningdis" || k === "disengage") return !u.cond.dis;
@@ -2812,7 +3037,7 @@ function saveRoll(t, ab, dc, cov = 0) {
 }
 function adjEnemies(a) { return CB.units.filter(o => o.side !== a.side && alive(o) && dist(o, a) <= 1); }
 function allyNear(t, a) { return CB.units.some(o => o !== a && o.side === a.side && alive(o) && dist(o, t) <= 1); }
-function flanked(a, t) { if (dist(a, t) !== 1) return false; const ox = 2 * t.x - a.x, oy = 2 * t.y - a.y; return CB.units.some(x => x !== a && x.side === a.side && alive(x) && x.x === ox && x.y === oy && !x.cond.asleep && !x.cond.stun && !x.cond.prone); }
+function flanked(a, t) { if (dist(a, t) !== 1) return false; const [ox, oy] = opposite(a, t); return CB.units.some(x => x !== a && x.side === a.side && alive(x) && x.x === ox && x.y === oy && !x.cond.asleep && !x.cond.stun && !x.cond.prone); }
 function advInfo(a, t, o) {
   let adv = false, dis = false; const why = [];
   const melee = !o.ranged && dist(a, t) <= (o.reach || 1);
@@ -2820,6 +3045,8 @@ function advInfo(a, t, o) {
   if (t.cond.guided) { adv = true; why.push("guided"); }
   if (t.cond.prone) { if (melee) { adv = true; why.push("prone"); } else { dis = true; why.push("pronefar"); } }
   if (melee && flanked(a, t)) { adv = true; why.push("flank"); }
+  if (a.cond.sapped) { dis = true; why.push("sapped"); }
+  if (a.cond.vex === t.uid) { adv = true; why.push("vex"); }
   if (melee && a.side === "e" && a.def.pack && CB.units.some(x => x !== a && x.side === a.side && alive(x) && dist(x, t) <= 1)) { adv = true; why.push("pack"); }
   if (t.cond.dodge) { dis = true; why.push("dodge"); }
   if (a.cond.prone) { dis = true; why.push("selfprone"); }
@@ -2832,6 +3059,7 @@ async function attackRoll(a, t, o) {
   const ai = advInfo(a, t, o); let adv = ai.adv, dis = ai.dis;
   if (t.cond.guided) delete t.cond.guided;
   if (ai.why.includes("displace")) t.dispR = CB.round;
+  if (a.cond.sapped) delete a.cond.sapped; if (a.cond.vex === t.uid) delete a.cond.vex;
   const r1 = a.side === "p" ? d20For(a.ref) : rnd(20); let r = r1;
   if (adv !== dis) { const r2 = a.side === "p" ? d20For(a.ref) : rnd(20); r = adv ? Math.max(r1, r2) : Math.min(r1, r2); }
   const pw = o.power ? -5 : 0, hb = highBonus(a, t, o), ex = exposed(a, t, o);
@@ -2843,7 +3071,7 @@ async function attackRoll(a, t, o) {
   logL(`${a.name} → ${t.name}: ${r}${sgn(o.hit + bl + pw + hb)}=${tot} vs ${tac}${cov ? ` (${tr(COVER_T)} +${cov})` : ""}${hb ? " " + tr(["(altura)","(high ground)","(altura)"]) : ""}${adv !== dis ? (adv ? " ▲" : " ▼") : ""}${ai.why.includes("flank") ? " " + tr(["(fianco)","(flank)","(flanco)"]) : ""}${ex ? " " + tr(["(esposto)","(exposed)","(expuesto)"]) : ""} — ${hit ? (crit ? T_("crit") : T_("hits")) : T_("misses")}`);
   if (!hit && cov && tot >= t.ac && r !== 1) floatAt(t, tr(["Coperto!","Covered!","¡Cubierto!"]), "#e8d8a8", 1);
   if (!hit) { fxMiss(a, t); floatAt(t, T_("miss"), "#d8cdb8"); await sleep(380); return 0; }
-  fxImpact(t, o.type, crit); if (crit) { floatAt(t, T_("crit"), "#ffd38a", 1); fxShake(); }
+  fxImpact(t, o.type, crit); if (crit) { floatAt(t, T_("crit"), "#ffd38a", 1); fxShake(); bigMoment(t, "crit"); }
   let dmg = roll(crit ? critDice(o.dice) : o.dice).total + (o.flat || 0) + (o.power ? 10 : 0);
   if (a.side === "p") {
     const c = a.ref, und = t.def && t.def.undead;
@@ -2855,6 +3083,8 @@ async function attackRoll(a, t, o) {
     if (o.weapon && !o.ranged && a.cond.smite) { const i = slotFor(c, 1); if (i >= 0) { c.slots[i]--; delete a.cond.smite; dmg += roll(((und ? 3 : 2) * (crit ? 2 : 1)) + "d8").total; logL(tr(FEATS.smite) + "!"); } }
     if (c.id === "pc" && has("took_flame")) dmg += rnd(4);
     if (c.trinket === "sun_talisman" && o.weapon && und) dmg += rnd(4);
+    if (c.trinket === "sunlantern" && und) dmg += rnd(6);
+    if (o.weapon && a.cond.oil) dmg += rnd(4);
   } else if (S.diff === 2) dmg += 1;
   await applyDmg(t, dmg, o.type, a);
   if (o.type === "fire" && o.ranged) igniteArea(t, 0);
@@ -2885,7 +3115,8 @@ const powerOK = (c, ranged) => ranged ? hasFeat(c, "sharpshooter") : hasFeat(c, 
 async function weaponAttack(u, t, i) {
   const c = u.ref, p = weapProfile(c, weaponsOf(c)[i]); useAttack(u);
   const power = !!u.cond.power && powerOK(c, p.ranged); if (power) delete u.cond.power;
-  await attackRoll(u, t, {hit: p.hit, dice: p.dice, flat: p.flat, type: p.t, ranged: p.ranged, weapon: 1, finesse: p.finesse, power, crit: hasF(c, "impcrit") ? 19 : 20});
+  const dmg = await attackRoll(u, t, {hit: p.hit, dice: p.dice, flat: p.flat, type: p.t, ranged: p.ranged, weapon: 1, finesse: p.finesse, power, crit: hasF(c, "impcrit") ? 19 : 20});
+  if (CB && !CB.ended) await applyMastery(u, t, p, dmg > 0);
   if (!p.ranged && t.hp <= 0 && hasFeat(c, "gwm") && u.bon > 0 && cur() === u) { u.bon--; u.atkLeft++; floatAt(u, tr(["Furia!","Cleave!","¡Furia!"]), "#ffd38a", 1); logL(`${u.name}: ${tr(["attacco bonus","bonus attack","ataque adicional"])}`); }
 }
 async function castSpell(u, key, target) {
@@ -2940,12 +3171,14 @@ async function useAbility(u, key, target) {
   }
 }
 async function useItemC(u, key, target) {
-  const it = ITEMS[key]; u.act--; take(key); logL(`${u.name}: ${tr(it.n)}`);
-  if (it.use === "heal") heal(target, roll(it.dice).total);
+  const it = ITEMS[key]; if (it.use === "oil") u.bon--; else u.act--; take(key); logL(`${u.name}: ${tr(it.n)}`);
+  if (it.use === "oil") { u.cond.oil = 1; fxImpact(u, "fire", false); floatAt(u, tr(it.n), "#ffb070", 1); placeTokens(); await sleep(250); }
+  else if (it.use === "heal") heal(target, roll(it.dice).total);
   else if (it.use === "scroll" && it.spell === "fireball") { await fxProjectile(u, target, "fire"); await fxArea(target, 2, "fire"); const dmg = roll("8d6").total;
     for (const t of inArea(target, 2).filter(t => t !== u && alive(t))) { const ok = saveRoll(t, "dex", 15, coverOf(target, t)); await applyDmg(t, ok ? Math.floor(dmg / 2) : dmg, "fire", u); } igniteArea(target, 2); }
   else if (it.use === "scroll" && it.spell === "massheal") allies().forEach(a => heal(a, roll("2d8+2").total));
-  else await attackRoll(u, target, {hit: prof(u.ref) + abm(u.ref, "dex"), dice: "2d6", type: "fire", ranged: 1});
+  else { const und = target.def && target.def.undead, ty = it.type || "fire";
+    await attackRoll(u, target, {hit: prof(u.ref) + abm(u.ref, "dex"), dice: und && it.undead ? it.undead : it.dmg || "2d6", type: ty, ranged: 1}); }
 }
 
 /* ---------- AI: utility-based positioning ---------- */
@@ -3096,7 +3329,7 @@ function buildCombat() {
   <div class="hotrow"><div class="hot" id="hot"></div><button class="endbtn" id="aEnd">${icon("end")}<span>${T_("endTurn")}</span></button></div>
   <button class="cblog" id="cblog" aria-label="Log"></button>`;
   const b = $("#board");
-  let h = ""; for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) h += `<div class="cell" data-x="${x}" data-y="${y}"></div>`;
+  let h = ""; for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) h += `<div class="cell" data-x="${x}" data-y="${y}" style="left:calc(var(--cell) * ${hcx(x, y) - .5});top:calc(var(--cell) * ${(hcy(x, y) - HR).toFixed(4)})"></div>`;
   b.insertAdjacentHTML("beforeend", h);
   CB.units.forEach(u => {
     const t = document.createElement("div"); t.className = "tok " + u.side + (u.boss ? " boss" : ""); t.id = "t_" + u.uid;
@@ -3114,11 +3347,11 @@ function sizeBoard() {
   const bw = $("#bw"); if (!bw || !CB) return;
   const land = isLand();
   const W = (land ? bw.clientWidth : Math.min(bw.clientWidth, 560)) - (land ? 20 : 32), H = bw.clientHeight - (land ? 30 : 36);
-  const cell = Math.max(24, Math.floor(land ? Math.min(W / ROWS, H / COLS) : Math.min(W / COLS, H / ROWS)));
+  const cell = Math.max(24, Math.floor(land ? Math.min(W / BH, H / BW) : Math.min(W / BW, H / BH)));
   if (cell === CB.cell && $("#terrain").width && CB.landAt === land) return;
   CB.landAt = land;
   CB.cell = cell;
-  const b = $("#board"); b.style.setProperty("--cell", CB.cell + "px");
+  const b = $("#board"); b.style.setProperty("--cell", CB.cell + "px"); b.style.width = BW * cell + "px"; b.style.height = Math.ceil(BH * cell) + "px";
   paintTerrain(); fxInit(); placeTokens();
 }
 
@@ -3220,7 +3453,7 @@ const OBST = {
 function placeTokens() {
   if (!CB) return; const c = CB.cell, curU = CB.order[CB.ti];
   CB.units.forEach(u => { const t = $("#t_" + u.uid); if (!t) return;
-    t.style.transform = `translate(${u.x * c}px,${u.y * c}px)`;
+    t.style.transform = `translate(${(hcx(u.x, u.y) - .5) * c}px,${(hcy(u.x, u.y) - .5) * c}px)`;
     t.classList.toggle("dead", u.side === "e" && u.hp <= 0); t.classList.toggle("down", u.side === "p" && u.down);
     t.classList.toggle("cur", curU === u && !CB.ended); t.classList.toggle("sg", !!u.cond.sg);
     const f = Math.max(0, u.hp / u.maxhp); const hp = t.querySelector(".ring .hp"); hp.style.strokeDashoffset = 289 * (1 - f); t.classList.toggle("low", f < .35);
@@ -3230,7 +3463,7 @@ function placeTokens() {
 }
 function floatAt(u, txt, col, big) {
   const b = $("#board"); if (!b || !CB) return; const d = document.createElement("div"); d.className = "fl" + (big ? " big" : ""); d.textContent = txt; d.style.color = col;
-  d.style.left = (u.x + .5) * CB.cell + "px"; d.style.top = (u.y * CB.cell + (big ? -6 : 2)) + "px"; b.appendChild(d); setTimeout(() => d.remove(), 1300);
+  d.style.left = hcx(u.x, u.y) * CB.cell + "px"; d.style.top = ((hcy(u.x, u.y) - .5) * CB.cell + (big ? -6 : 2)) + "px"; b.appendChild(d); setTimeout(() => d.remove(), 1300);
 }
 function shakeTok(u) { const t = $("#t_" + u.uid); if (!t) return; t.classList.remove("hit"); void t.offsetWidth; t.classList.add("hit"); }
 
@@ -3238,11 +3471,11 @@ function shakeTok(u) { const t = $("#t_" + u.uid); if (!t) return; t.classList.r
 const FX = {parts: [], anims: [], run: false};
 function fxInit() {
   const cv = $("#fx"); if (!cv) return; const dpr = Math.min(2, window.devicePixelRatio || 1);
-  FX.W = COLS * CB.cell; FX.H = ROWS * CB.cell; cv.width = FX.W * dpr; cv.height = FX.H * dpr; FX.x = cv.getContext("2d"); FX.x.setTransform(dpr, 0, 0, dpr, 0, 0); FX.cv = cv;
+  FX.W = BW * CB.cell; FX.H = BH * CB.cell; cv.width = FX.W * dpr; cv.height = FX.H * dpr; FX.x = cv.getContext("2d"); FX.x.setTransform(dpr, 0, 0, dpr, 0, 0); FX.cv = cv;
   FX.amb = (MSTYLE[mapKey()] || {}).amb;
   if (!FX.run) { FX.run = true; FX.last = performance.now(); requestAnimationFrame(fxLoop); }
 }
-const cpos = u => ({x: (u.x + .5) * CB.cell, y: (u.y + .5) * CB.cell});
+const cpos = u => ({x: hcx(u.x, u.y) * CB.cell, y: hcy(u.x, u.y) * CB.cell});
 function part(o) { if (FX.parts.length > 420) return; const q = Object.assign({vx: 0, vy: 0, g: 0, gx: 0, drag: .97, life: 0, max: 40, size: 3, col: "#fff", shape: "dot", add: true}, o);
   // the board is turned 90° in landscape: rotate "screen" motion into board space so smoke still rises
   if (isLand()) { const vx = q.vx; q.vx = q.vy; q.vy = -vx; q.gx = q.g; q.g = 0; }
@@ -3312,7 +3545,7 @@ async function fxAttackAnim(a, t, o) {
     const inr = tk.querySelector(".in"); inr.classList.add("cast"); setTimeout(() => inr.classList.remove("cast"), 380);
     await fxProjectile(a, t, type); return;
   }
-  const dx = (t.x - a.x) * CB.cell * .3, dy = (t.y - a.y) * CB.cell * .3, inr = tk.querySelector(".in");
+  const dx = (hcx(t.x, t.y) - hcx(a.x, a.y)) * CB.cell * .3, dy = (hcy(t.x, t.y) - hcy(a.x, a.y)) * CB.cell * .3, inr = tk.querySelector(".in");
   inr.style.transform = isLand() ? `translate(${-dy}px,${dx}px) scale(1.06)` : `translate(${dx}px,${dy}px) scale(1.06)`; await sleep(110);
   fxSlash(a, t, a.side === "e" ? "#ff8a9e" : (TYPE_COL[type] || "#f3e6c8"));
   await sleep(90); inr.style.transform = "";
@@ -3334,7 +3567,7 @@ function fxDeath(t, small) {
 function fxHeal(t, col = "#9be0a6") { if (!FX.x || !CB) return; const P = cpos(t), C = CB.cell; for (let i = 0; i < 16; i++) part({x: P.x + (Math.random() - .5) * C * .7, y: P.y + C * .3, vx: 0, vy: -.6 - Math.random() * .8, col, size: 1.8 + Math.random(), max: 40 + Math.random() * 20, drag: .99});
   anim({dur: 18, draw(x, p) { x.globalCompositeOperation = "lighter"; x.globalAlpha = (1 - p) * .7; x.strokeStyle = col; x.lineWidth = 2; x.beginPath(); x.ellipse(P.x, P.y + C * .3, C * .4 * (.5 + p * .6), C * .14 * (.5 + p * .6), 0, 0, 7); x.stroke(); x.globalAlpha = 1; x.globalCompositeOperation = "source-over"; }}); }
 function fxArea(c, rad, type) {
-  if (!FX.x || !CB) return Promise.resolve(); const P = {x: (c.x + .5) * CB.cell, y: (c.y + .5) * CB.cell}, C = CB.cell, R = (rad + .5) * C, col = TYPE_COL[type] || "#ffe08a";
+  if (!FX.x || !CB) return Promise.resolve(); const P = cpos(c), C = CB.cell, R = (rad + .5) * C, col = TYPE_COL[type] || "#ffe08a";
   const rr = () => Math.random();
   const n = 36 + rad * 46;
   for (let i = 0; i < n; i++) { const a = rr() * Math.PI * 2, r = Math.sqrt(rr()) * R, px = P.x + Math.cos(a) * r, py = P.y + Math.sin(a) * r;
@@ -3393,7 +3626,7 @@ function actionsOf(u) {
   weaponsOf(c).forEach((w, i) => { const p = weapProfile(c, w); L.push({s: {k: "w", i}, ic: WEAP_IC[w] || "sword", name: p.name, cost: "a", sub: `${sgn(p.hit)} · ${p.dice}${sgn(p.flat)}`, desc: `${p.ranged ? tr(["A distanza","Ranged","A distancia"]) + " " + p.r : tr(["Mischia","Melee","Cuerpo a cuerpo"])} · ${tr(["colpire","to hit","ataque"])} ${sgn(p.hit)} · ${p.dice}${sgn(p.flat)}`, grp: 0}); });
   spellsOf(c).forEach(k => { const sp = SPELLS[k]; const left = sp.lv ? c.slots.slice(sp.lv - 1).reduce((a, b) => a + b, 0) : null; L.push({s: {k: "sp", key: k}, ic: SPELL_IC[k] || "star", name: tr(sp.n), cost: sp.bonus ? "b" : "a", lv: sp.lv, cnt: left, desc: tr(sp.d), ff: sp.ff, grp: 1}); });
   abilitiesOf(u).forEach(k => { const a = ABIL[k]; let cnt = null; if (k === "secondwind") cnt = c.res.sw; if (k === "actionsurge") cnt = c.res.as; if (k === "lay") cnt = c.res.lay; if (k === "turn") cnt = c.res.ch; L.push({s: {k: "ab", key: k}, ic: ABIL_IC[k] || "star", name: tr(a.n), cost: a.cost === "act" ? "a" : a.cost === "bon" ? "b" : "f", cnt, desc: tr(a.d), grp: 2}); });
-  Object.keys(S.inv).filter(k => S.inv[k] > 0 && ["heal", "throw", "scroll"].includes(ITEMS[k].use)).forEach(k => L.push({s: {k: "it", key: k}, ic: ITEMS[k].use === "heal" ? "potion" : ITEMS[k].use === "scroll" ? "scroll" : "flame", name: tr(ITEMS[k].n), cost: "a", cnt: S.inv[k], desc: tr(ITEMS[k].d), grp: 3}));
+  Object.keys(S.inv).filter(k => S.inv[k] > 0 && ["heal", "throw", "scroll", "oil"].includes(ITEMS[k].use)).forEach(k => L.push({s: {k: "it", key: k}, ic: ITEMS[k].use === "heal" ? "potion" : ITEMS[k].use === "scroll" ? "scroll" : ITEMS[k].type === "radiant" ? "sun" : "flame", name: tr(ITEMS[k].n), cost: isOil(k) ? "b" : "a", cnt: S.inv[k], desc: tr(ITEMS[k].d), grp: 3}));
   return L;
 }
 const sameSel = (a, b) => a && b && a.k === b.k && a.i === b.i && a.key === b.key;
@@ -3919,8 +4152,9 @@ function hexA(h, a) { const n = parseInt(h.slice(1), 16); return `rgba(${n >> 16
 function stip(x, px, py, n, r, a = .55) { x.fillStyle = INK(a); for (let i = 0; i < n; i++) { const ang = IR() * 7, rr = Math.sqrt(IR()) * r; x.fillRect(px + Math.cos(ang) * rr, py + Math.sin(ang) * rr, .9, .9); } }
 
 /* ---------- parchment + terrain ---------- */
+const hexPts = (cx, cy, r) => [0, 1, 2, 3, 4, 5].map(i => { const a = Math.PI / 180 * (60 * i - 90); return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; });
 paintTerrain = function () {
-  const cv = $("#terrain"); if (!cv || !CB) return; const st = MSTYLE[mapKey()] || MSTYLE.road, C = CB.cell, W = COLS * C, H = ROWS * C;
+  const cv = $("#terrain"); if (!cv || !CB) return; const st = MSTYLE[mapKey()] || MSTYLE.road, C = CB.cell, W = BW * C, H = BH * C;
   const dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = W * dpr; cv.height = H * dpr;
   const x = cv.getContext("2d"); x.setTransform(dpr, 0, 0, dpr, 0, 0);
   IRS = hashStr(CB.key + (CB.seed || (CB.seed = rnd(9999))));
@@ -3933,13 +4167,12 @@ paintTerrain = function () {
   // watercolour wash of the place
   for (let i = 0; i < 26; i++) wash(x, IR() * W, IR() * H, C * (.8 + IR() * 2.2), st.wash || "#a08060", .1 + IR() * .12);
   INKG[st.g](x, W, H, C);
-  // grid
-  for (let i = 1; i < COLS; i++) iseg(x, i * C, 2, i * C, H - 2, .7, .22);
-  for (let j = 1; j < ROWS; j++) iseg(x, 2, j * C, W - 2, j * C, .7, .22);
+  // hex grid, drawn by hand
+  for (let y = 0; y < ROWS; y++) for (let xx = 0; xx < COLS; xx++) istroke(x, hexPts(hcx(xx, y) * C, hcy(xx, y) * C, HR * C * .985), .7, .2);
   paintTerrainLayer(x, C);
   // obstacles back to front: tall ones (they block line of sight) get a long cast shadow
   const tc = TCFG[mapKey()] || {};
-  [...CB.ob].map(k => k.split(",").map(Number)).sort((a, b) => a[1] - b[1]).forEach(([ox, oy]) => { const cx = (ox + .5) * C, cy = (oy + .5) * C, tall = CB.tall && CB.tall.has(K(ox, oy));
+  [...CB.ob].map(k => k.split(",").map(Number)).sort((a, b) => a[1] - b[1]).forEach(([ox, oy]) => { const cx = hcx(ox, oy) * C, cy = hcy(ox, oy) * C, tall = CB.tall && CB.tall.has(K(ox, oy));
     if (tall) tallShadow(x, cx, cy, C);
     (INKO[tall ? tc.tall || st.ob : tc.low || st.ob] || INKO.rock)(x, cx, cy, C, st); });
   // burnt edges
@@ -3958,20 +4191,19 @@ const INKG = {
       for (let g = 0; g < 2; g++) { const gy = row * ph + 4 + IR() * (ph - 8); x.strokeStyle = INK(.22); x.lineWidth = .5; x.beginPath(); x.moveTo(px + 3, gy); x.bezierCurveTo(px + len * .3, gy + (IR() - .5) * 5, px + len * .6, gy + (IR() - .5) * 5, px + len - 3, gy); x.stroke(); }
       if (IR() > .6) { x.strokeStyle = INK(.4); x.lineWidth = .6; x.beginPath(); x.ellipse(px + len * IR(), row * ph + ph / 2, 3, 1.6, 0, 0, 7); x.stroke(); }
       stip(x, px + 3, row * ph + ph / 2, 1, 0, .8); px += len; } } },
-  stone(x, W, H, C) { for (let y = 0; y < ROWS; y++) for (let xx = 0; xx < COLS; xx++) { const l = xx * C, t = y * C, k = 3 + IR() * 3;
-      const pts = [[l + k, t + k * IR()], [l + C - k * IR(), t + k], [l + C - k, t + C - k * IR()], [l + k * IR(), t + C - k]]; istroke(x, pts, .9, .7);
-      if (IR() > .7) hatch(x, () => { x.beginPath(); x.rect(l + C * .55, t + C * .55, C * .45, C * .45); }, l + C * .78, t + C * .78, C * .4, Math.PI / 4, 2.4, .3, .5);
-      if (IR() > .75) { const pts2 = [[l + C * IR(), t + C * IR()]]; for (let q = 0; q < 3; q++) pts2.push([pts2[q][0] + (IR() - .5) * 12, pts2[q][1] + (IR() - .5) * 12]); istroke(x, pts2, .6, .55, false); }
-      stip(x, l + C / 2, t + C / 2, 4, C * .45, .35); } },
-  marble(x, W, H, C) { for (let y = 0; y < ROWS; y++) for (let xx = 0; xx < COLS; xx++) { const l = xx * C, t = y * C; istroke(x, [[l + 1, t + 1], [l + C - 1, t + 1], [l + C - 1, t + C - 1], [l + 1, t + C - 1]], .7, .5);
-      if ((xx + y) % 2) hatch(x, () => { x.beginPath(); x.rect(l + 2, t + 2, C - 4, C - 4); }, l + C / 2, t + C / 2, C * .75, Math.PI / 4, 3.2, .22, .5);
-      x.strokeStyle = INK(.25); x.lineWidth = .5; x.beginPath(); x.moveTo(l + C * IR(), t); x.bezierCurveTo(l + C * IR(), t + C * .4, l + C * IR(), t + C * .6, l + C * IR(), t + C); x.stroke(); } },
+  stone(x, W, H, C) { for (let y = 0; y < ROWS; y++) for (let xx = 0; xx < COLS; xx++) { const cx = hcx(xx, y) * C, cy = hcy(xx, y) * C, P = hexPts(cx, cy, HR * C * .9);
+      x.fillStyle = `rgba(${150 + IR() * 30 | 0},${140 + IR() * 25 | 0},${120 + IR() * 20 | 0},.22)`; jpath(x, P, true); x.fill(); istroke(x, P, .9, .5);
+      if (IR() > .6) { const a = IR() * 6; iseg(x, cx + Math.cos(a) * C * .1, cy + Math.sin(a) * C * .1, cx + Math.cos(a + 1) * C * .32, cy + Math.sin(a + 1) * C * .32, .6, .45); }
+      stip(x, cx, cy, 6, C * .35, .35); } },
+  marble(x, W, H, C) { for (let y = 0; y < ROWS; y++) for (let xx = 0; xx < COLS; xx++) { const cx = hcx(xx, y) * C, cy = hcy(xx, y) * C, P = hexPts(cx, cy, HR * C * .94);
+      x.fillStyle = (xx + y) % 2 ? "rgba(255,250,235,.28)" : "rgba(120,100,80,.16)"; jpath(x, P, true); x.fill(); istroke(x, P, .8, .45);
+      x.strokeStyle = INK(.18); x.lineWidth = .6; x.beginPath(); x.moveTo(cx - C * .3, cy + (IR() - .5) * C * .4); x.bezierCurveTo(cx - C * .1, cy - C * .3, cx + C * .1, cy + C * .3, cx + C * .3, cy + (IR() - .5) * C * .4); x.stroke(); } },
   tiles(x, W, H, C) { const tw = C / 2.4, th = C / 3; for (let row = 0; row * th < H + th; row++) for (let i = -1; i * tw < W + tw; i++) { const px = i * tw + (row % 2 ? tw / 2 : 0), py = row * th; x.strokeStyle = INK(.55); x.lineWidth = .8; x.beginPath(); x.moveTo(px, py + th * .6); x.quadraticCurveTo(px + tw / 2, py + th * 1.2, px + tw, py + th * .6); x.stroke(); if (IR() > .7) hatch(x, () => { x.beginPath(); x.rect(px + tw * .6, py, tw * .4, th); }, px + tw * .8, py + th / 2, th, .5, 2.5, .25, .5); } },
   snow(x, W, H, C) { for (let i = 0; i < W * H / 260; i++) stip(x, IR() * W, IR() * H, 1, 0, .3); for (let i = 0; i < 18; i++) { const px = IR() * W, py = IR() * H, w2 = C * (.5 + IR()); x.strokeStyle = INK(.4); x.lineWidth = .7; x.beginPath(); x.moveTo(px - w2, py); x.quadraticCurveTo(px, py - C * .25, px + w2, py); x.stroke(); }
     for (let i = 0; i < 10; i++) { let px = IR() * W, py = IR() * H; for (let k = 0; k < 4; k++) { x.fillStyle = INK(.35); x.beginPath(); x.ellipse(px + (k % 2) * 4, py, 1.6, 2.6, .3, 0, 7); x.fill(); px += 5; py -= 7; } } },
-  obsidian(x, W, H, C) { for (let y = 0; y < ROWS; y++) for (let xx = 0; xx < COLS; xx++) { const l = xx * C, t = y * C; istroke(x, [[l + 2, t + 2], [l + C - 2, t + 2], [l + C - 2, t + C - 2], [l + 2, t + C - 2]], .8, .6);
-      hatch(x, () => { x.beginPath(); x.rect(l + 2, t + 2, C - 4, C - 4); }, l + C / 2, t + C / 2, C * .75, (xx + y) % 2 ? Math.PI / 4 : -Math.PI / 4, 3, .28, .5);
-      if (IR() > .6) { wash(x, l + C / 2, t + C / 2, C * .55, "#7a3aa8", .25); let px = l + C * IR(), py = t + C * IR(); const pts = [[px, py]]; for (let k = 0; k < 3; k++) { px += (IR() - .5) * C * .5; py += (IR() - .5) * C * .5; pts.push([px, py]); } istroke(x, pts, .8, .8, false); } } },
+  obsidian(x, W, H, C) { for (let y = 0; y < ROWS; y++) for (let xx = 0; xx < COLS; xx++) { const cx = hcx(xx, y) * C, cy = hcy(xx, y) * C, P = hexPts(cx, cy, HR * C * .9);
+      x.fillStyle = "rgba(40,30,50,.22)"; jpath(x, P, true); x.fill(); istroke(x, P, 1.1, .7);
+      if (IR() > .6) { wash(x, cx, cy, C * .55, "#7a3aa8", .25); let px = cx + (IR() - .5) * C * .5, py = cy + (IR() - .5) * C * .5; const pts = [[px, py]]; for (let k = 0; k < 3; k++) { px += (IR() - .5) * C * .3; py += (IR() - .5) * C * .3; pts.push([px, py]); } istroke(x, pts, .8, .6, false); } } },
 };
 const INKO = {
   rock(x, cx, cy, C) { inkShadow(x, cx + C * .1, cy + C * .2, C * .42, C * .17); const pts = ipoly(cx, cy - C * .04, C * .34, 9, .35);
@@ -4021,9 +4253,9 @@ const INKO = {
 function coverOf(a, t) {
   if (!CB || dist(a, t) <= 1) return 0;
   const sol = (MSTYLE[mapKey()] || {}).ob !== "water", solid = k => sol || (CB.tall && CB.tall.has(k));
-  const ax = a.x + .5, ay = a.y + .5, bx = t.x + .5, by = t.y + .5, n = Math.ceil(Math.hypot(bx - ax, by - ay) * 8), seen = new Set(); let obs = 0, cre = 0;
-  for (let i = 1; i < n; i++) { const px = ax + (bx - ax) * i / n, py = ay + (by - ay) * i / n, cx = Math.floor(px), cy = Math.floor(py);
-    if (Math.abs(px - cx - .5) > .42 || Math.abs(py - cy - .5) > .42) continue;
+  const ax = hcx(a.x, a.y), ay = hcy(a.x, a.y), bx = hcx(t.x, t.y), by = hcy(t.x, t.y), n = Math.ceil(Math.hypot(bx - ax, by - ay) * 10), seen = new Set(); let obs = 0, cre = 0;
+  for (let i = 1; i < n; i++) { const px = ax + (bx - ax) * i / n, py = ay + (by - ay) * i / n, [cx, cy] = hexAt(px, py);
+    if (Math.hypot(px - hcx(cx, cy), py - hcy(cx, cy)) > .44) continue;
     const k = K(cx, cy); if (seen.has(k) || (cx === a.x && cy === a.y) || (cx === t.x && cy === t.y)) continue; seen.add(k);
     if (CB.ob.has(k)) { if (solid(k)) obs++; } else { const o = unitAt(cx, cy); if (o && o !== a && o !== t && alive(o)) cre++; } }
   if (inBrush(t)) obs++;
@@ -4236,14 +4468,14 @@ Object.assign(ICONS, {help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.
 const TIPS = [
   ["shield", ["Copertura", "Cover", "Cobertura"], ["Ostacoli o creature tra il tiratore e il bersaglio danno +2 CA (mezza) o +5 (tre quarti). Vale anche per te: riparati dietro rocce e colonne.", "Obstacles or creatures between shooter and target give +2 AC (half) or +5 (three-quarters). It works for you too: hide behind rocks and pillars.", "Obstáculos o criaturas entre el tirador y el objetivo dan +2 CA (media) o +5 (tres cuartos). También te protege a ti: escóndete tras rocas y columnas."]],
   ["swords", ["Fianco", "Flanking", "Flanqueo"], ["Attacca in mischia un nemico che ha un tuo alleato sul lato opposto: hai vantaggio. I lupi cacciano in branco e fanno lo stesso con te.", "Melee an enemy with one of your allies on the opposite side: you get advantage. Wolves hunt in packs and do the same to you.", "Ataca cuerpo a cuerpo a un enemigo con un aliado tuyo en el lado opuesto: tienes ventaja. Los lobos cazan en manada y te lo hacen a ti."]],
-  ["end", ["Attacchi d'opportunità", "Opportunity attacks", "Ataques de oportunidad"], ["Allontanarsi da un nemico adiacente gli concede un attacco gratuito. Usa Disimpegno per sganciarti. Le caselle con il punto arancione sono a rischio.", "Moving away from an adjacent enemy gives it a free attack. Use Disengage to break away. Tiles with an orange dot are risky.", "Alejarte de un enemigo adyacente le da un ataque gratis. Usa Retirada para separarte. Las casillas con punto naranja son peligrosas."]],
+  ["end", ["Attacchi d'opportunità", "Opportunity attacks", "Ataques de oportunidad"], ["Allontanarsi da un nemico adiacente gli concede un attacco gratuito. Usa Disimpegno per sganciarti. Gli esagoni con il punto arancione sono a rischio.", "Moving away from an adjacent enemy gives it a free attack. Use Disengage to break away. Hexes with an orange dot are risky.", "Alejarte de un enemigo adyacente le da un ataque gratis. Usa Retirada para separarte. Los hexágonos con punto naranja son peligrosos."]],
   ["eye", ["Guardia", "Overwatch", "Vigilancia"], ["Termina il turno pronto a colpire: il primo nemico che si muove entro la tua portata subisce un attacco. Gli arcieri nemici fanno lo stesso: occhio al simbolo ◉.", "End your turn ready to strike: the first enemy that moves within your reach takes an attack. Enemy archers do it too: watch for the ◉ symbol.", "Termina el turno listo para golpear: el primer enemigo que se mueva a tu alcance recibe un ataque. Los arqueros enemigos también: atento al símbolo ◉."]],
   ["hand", ["Atterrare", "Knock down", "Derribar"], ["Al posto di un attacco butti a terra un nemico adiacente: gli attacchi in mischia contro di lui hanno vantaggio e rialzarsi gli costa metà movimento.", "Instead of an attack, knock an adjacent enemy prone: melee attacks against it have advantage and standing up costs half its movement.", "En lugar de un ataque, derriba a un enemigo adyacente: los ataques cuerpo a cuerpo contra él tienen ventaja y levantarse le cuesta la mitad del movimiento."]],
   ["star", ["Sfide e bottino", "Challenges and loot", "Desafíos y botín"], ["Vinci senza caduti o in pochi round per avere ricompense extra. I nemici più forti custodiscono oggetti magici unici.", "Win with nobody down or within a few rounds for extra rewards. The strongest foes carry unique magic items.", "Gana sin caídos o en pocas rondas para obtener recompensas extra. Los enemigos más fuertes guardan objetos mágicos únicos."]],
 ];
 function showTips(force) {
   if (!force && (PREF.tipsSeen || 0) >= 2) return; PREF.tipsSeen = 2; store(PREF_KEY, PREF);
-  const m = modal(`<h2>${tr(["Tattica", "Tactics", "Táctica"])}</h2><p style="color:var(--muted);font-size:14px">${tr(["Prima di ogni scontro puoi schierare il gruppo: tocca un personaggio e poi una casella dorata.", "Before each fight you can deploy the party: tap a character, then a golden tile.", "Antes de cada combate puedes desplegar al grupo: toca un personaje y luego una casilla dorada."])}</p>
+  const m = modal(`<h2>${tr(["Tattica", "Tactics", "Táctica"])}</h2><p style="color:var(--muted);font-size:14px">${tr(["Prima di ogni scontro puoi schierare il gruppo: tocca un personaggio e poi un esagono dorato.", "Before each fight you can deploy the party: tap a character, then a golden hex.", "Antes de cada combate puedes desplegar al grupo: toca un personaje y luego un hexágono dorado."])}</p>
     <div class="tips">${TIPS.map(([ic, n, d]) => `<div class="tip">${medHTML(ic, "sm")}<div><b>${tr(n)}</b><p>${tr(d)}</p></div></div>`).join("")}</div>
     <button class="btn primary" id="tipX" style="margin-top:12px">${T_("goOn")}</button>`, {center: 1});
   m.querySelector("#tipX").onclick = closeModal;
@@ -4305,7 +4537,7 @@ renderCombat = function () {
 function renderDeploy() {
   document.querySelectorAll("#board .cell").forEach(cel => { const x = +cel.dataset.x, y = +cel.dataset.y, t = unitAt(x, y); cel.className = "cell" + (depZone(x, y) && !(t && t.side === "e") ? " dep" : ""); });
   placeTokens();
-  $("#info").innerHTML = `<b>${tr(["Schieramento","Deployment","Despliegue"])}</b><span class="cost-t a">${CB.nFoes} ${tr(["nemici","enemies","enemigos"])}</span><p>${tr(["Tocca un personaggio, poi una casella dorata.","Tap a character, then a golden tile.","Toca un personaje y luego una casilla dorada."])}</p><p class="hint">${tr(["sfida: vinci entro","challenge: win within","desafío: gana en"])} ${3 + Math.ceil(CB.nFoes / 2)} ${tr(["round","rounds","rondas"])}</p>`;
+  $("#info").innerHTML = `<b>${tr(["Schieramento","Deployment","Despliegue"])}</b><span class="cost-t a">${CB.nFoes} ${tr(["nemici","enemies","enemigos"])}</span><p>${tr(["Tocca un personaggio, poi un esagono dorato.","Tap a character, then a golden hex.","Toca un personaje y luego un hexágono dorado."])}</p><p class="hint">${tr(["sfida: vinci entro","challenge: win within","desafío: gana en"])} ${3 + Math.ceil(CB.nFoes / 2)} ${tr(["round","rounds","rondas"])}</p>`;
   const s = CB.depSel;
   $("#cbp").innerHTML = s ? `<div class="por p">${icon(uIcon(s))}</div><div class="who2"><div class="nm"><b>${esc(s.name)}</b><small>${tr(CL(s.ref).n)}</small></div><div class="hpbar"><i style="width:${s.hp / s.maxhp * 100}%"></i><span>${s.hp} / ${s.maxhp}</span></div></div>` : `<div class="who2"><p class="hint" style="margin:0;color:var(--muted);font-family:var(--f-ui);font-size:13px">${tr(["Nessun personaggio selezionato","No character selected","Ningún personaje seleccionado"])}</p></div>`;
   $("#hot").innerHTML = `<button class="startb" id="startB">${icon("swords")}<span>${tr(["Inizia la battaglia","Begin the battle","Comenzar la batalla"])}</span></button>`;
@@ -4418,10 +4650,10 @@ const highBonus = (a, t, o) => (o.ranged || dist(a, t) > 1) && onHigh(a) && !onH
 // line of sight: blocked when the line between the two centres crosses the core of a tall obstacle
 function losClear(a, t) {
   if (!CB || !CB.tall || !CB.tall.size || dist(a, t) <= 1) return true;
-  const ax = a.x + .5, ay = a.y + .5, bx = t.x + .5, by = t.y + .5, n = Math.ceil(Math.hypot(bx - ax, by - ay) * 10);
-  for (let i = 1; i < n; i++) { const px = ax + (bx - ax) * i / n, py = ay + (by - ay) * i / n, cx = Math.floor(px), cy = Math.floor(py);
+  const ax = hcx(a.x, a.y), ay = hcy(a.x, a.y), bx = hcx(t.x, t.y), by = hcy(t.x, t.y), n = Math.ceil(Math.hypot(bx - ax, by - ay) * 12);
+  for (let i = 1; i < n; i++) { const px = ax + (bx - ax) * i / n, py = ay + (by - ay) * i / n, [cx, cy] = hexAt(px, py);
     if ((cx === a.x && cy === a.y) || (cx === t.x && cy === t.y)) continue;
-    if (CB.tall.has(K(cx, cy)) && Math.abs(px - cx - .5) < .36 && Math.abs(py - cy - .5) < .36) return false; }
+    if (CB.tall.has(K(cx, cy)) && Math.hypot(px - hcx(cx, cy), py - hcy(cx, cy)) < .36) return false; }
   return true;
 }
 const canSee = (a, t) => losClear(a, t);
@@ -4448,17 +4680,16 @@ function genTerrain() {
   CB.ter = {}; CB.fire = {}; CB.tall = new Set();
   const free = (x, y) => inGrid(x, y) && !CB.ob.has(K(x, y)) && !CB.ter[K(x, y)];
   const pick = (y0, y1) => { for (let g = 0; g < 60; g++) { const x = Math.floor(Math.random() * COLS), y = y0 + Math.floor(Math.random() * (y1 - y0 + 1)); if (free(x, y)) return [x, y]; } return null; };
-  const N4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];
   // tall obstacles: a few of the existing obstacles, preferring the middle of the board
   const obs = [...CB.ob].sort(() => Math.random() - .5).sort((a, b) => Math.abs(+a.split(",")[1] - 4) - Math.abs(+b.split(",")[1] - 4));
   obs.slice(0, Math.min(cfg.nt || 0, Math.ceil(obs.length / 2))).forEach(k => CB.tall.add(k));
   // hills of 2-3 tiles
   for (let h = 0; h < (cfg.hill || 0); h++) { const s = pick(2, 6); if (!s) continue; CB.ter[K(...s)] = "high"; let [x, y] = s;
-    for (let e = 0; e < 1 + (Math.random() < .5 ? 1 : 0); e++) { const n = N4.map(([dx, dy]) => [x + dx, y + dy]).filter(([a, b]) => free(a, b) && b >= 1 && b <= ROWS - 2); if (!n.length) break; [x, y] = n[Math.floor(Math.random() * n.length)]; CB.ter[K(x, y)] = "high"; } }
+    for (let e = 0; e < 1 + (Math.random() < .5 ? 1 : 0); e++) { const n = nbrs(x, y).filter(([a, b]) => free(a, b) && b >= 1 && b <= ROWS - 2); if (!n.length) break; [x, y] = n[Math.floor(Math.random() * n.length)]; CB.ter[K(x, y)] = "high"; } }
   // patches of difficult terrain
   let left = cfg.nr || 0;
   for (let g = 0; left > 0 && g < 40; g++) { const s = pick(1, ROWS - 2); if (!s) break; let [x, y] = s; const size = Math.min(left, 2 + Math.floor(Math.random() * 2));
-    for (let i = 0; i < size; i++) { if (free(x, y)) { CB.ter[K(x, y)] = cfg.rough; left--; } const n = N4.map(([dx, dy]) => [x + dx, y + dy]).filter(([a, b]) => free(a, b)); if (!n.length) break; [x, y] = n[Math.floor(Math.random() * n.length)]; } }
+    for (let i = 0; i < size; i++) { if (free(x, y)) { CB.ter[K(x, y)] = cfg.rough; left--; } const n = nbrs(x, y).filter(([a, b]) => free(a, b)); if (!n.length) break; [x, y] = n[Math.floor(Math.random() * n.length)]; } }
   if (cfg.holy) { const s = pick(3, 5); if (s) CB.ter[K(...s)] = "holy"; }
 }
 
@@ -4471,7 +4702,7 @@ function igniteArea(c, rad) {
 function tickFire() {
   if (!CB || !CB.fire) return; const ks = Object.keys(CB.fire); if (!ks.length) return; const nf = [];
   ks.forEach(k => { const [x, y] = k.split(",").map(Number);
-    [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { const n = K(x + dx, y + dy); if (CB.ter[n] === "brush" && !CB.fire[n] && Math.random() < .4) nf.push(n); });
+    nbrs(x, y).forEach(([a, b]) => { const n = K(a, b); if (CB.ter[n] === "brush" && !CB.fire[n] && Math.random() < .35) nf.push(n); });
     if (--CB.fire[k] <= 0) { delete CB.fire[k]; CB.ter[k] = "ash"; } });
   nf.forEach(n => { if (!CB.fire[n]) CB.fire[n] = 2; });
   if (nf.length) logL(tr(["Il fuoco si propaga.", "The fire spreads.", "El fuego se propaga."]));
@@ -4480,7 +4711,7 @@ function tickFire() {
 async function burnUnit(u) { logL(`${u.name}: ${tr(["tra le fiamme", "in the flames", "entre las llamas"])}`); fxImpact(u, "fire", false); await applyDmg(u, roll("1d6").total, "fire", null); }
 function fireFX() {
   const ks = Object.keys(CB.fire); if (!ks.length) return; const C = CB.cell, low = PREF.lowfx;
-  ks.forEach(k => { if (Math.random() > (low ? .12 : .5)) return; const [tx, ty] = k.split(",").map(Number), px = (tx + .2 + Math.random() * .6) * C, py = (ty + .4 + Math.random() * .45) * C;
+  ks.forEach(k => { if (Math.random() > (low ? .12 : .5)) return; const [tx, ty] = k.split(",").map(Number), px = (hcx(tx, ty) - .3 + Math.random() * .6) * C, py = (hcy(tx, ty) - .1 + Math.random() * .45) * C;
     part({x: px, y: py, vx: (Math.random() - .5) * .3, vy: -.5 - Math.random() * .7, col: ["#fff1b0", "#ffc04a", "#ff7a2a", "#ff4a1a"][Math.floor(Math.random() * 4)], size: 1.8 + Math.random() * 2.6, max: 18 + Math.random() * 16, g: -.015, drag: .96});
     if (Math.random() < .1) part({x: px, y: py - C * .2, vx: (Math.random() - .5) * .3, vy: -.35, col: "rgba(60,50,50,.4)", size: C * .16, shape: "smoke", max: 50, add: false}); });
 }
@@ -4580,17 +4811,17 @@ function paintTerrainLayer(x, C) {
   ks.filter(k => CB.ter[k] === "high").forEach(k => inkHigh(x, k, C));
   // the board is turned 90° in landscape: draw each tile's details turned back, so tufts still grow upwards
   const land = isLand();
-  ks.forEach(k => { const t = CB.ter[k], [tx, ty] = k.split(",").map(Number), l = tx * C, tp = ty * C;
+  ks.forEach(k => { const t = CB.ter[k], [tx, ty] = k.split(",").map(Number), l = (hcx(tx, ty) - .5) * C, tp = (hcy(tx, ty) - .5) * C;
     x.save(); if (land) { x.translate(l + C / 2, tp + C / 2); x.rotate(-Math.PI / 2); x.translate(-l - C / 2, -tp - C / 2); }
     if (t === "brush") (cfg.hay ? inkHay : inkBrush)(x, l, tp, C);
     else if (t === "rubble") inkRubble(x, l, tp, C); else if (t === "drift") inkDrift(x, l, tp, C);
     else if (t === "holy") inkHoly(x, l, tp, C); else if (t === "ash") inkAsh(x, l, tp, C);
     x.restore(); });
-  Object.keys(CB.fire || {}).forEach(k => { const [tx, ty] = k.split(",").map(Number); inkBurning(x, tx * C, ty * C, C); });
+  Object.keys(CB.fire || {}).forEach(k => { const [tx, ty] = k.split(",").map(Number); inkBurning(x, (hcx(tx, ty) - .5) * C, (hcy(tx, ty) - .5) * C, C); });
 }
 function inkHigh(x, k, C) {
   // a hillock drawn like an old map: contour rings, hachures down the slope, shaded side
-  const [tx, ty] = k.split(",").map(Number), cx = (tx + .5) * C, cy = (ty + .5) * C;
+  const [tx, ty] = k.split(",").map(Number), cx = hcx(tx, ty) * C, cy = hcy(tx, ty) * C;
   wash(x, cx, cy, C * .75, "#fff6dc", .6); wash(x, cx, cy, C * .5, "#c9a868", .2);
   const ring = (r, rough) => ipoly(cx, cy, r, 18, rough);
   const r1 = ring(C * .45, .08), r2 = ring(C * .3, .1), r3 = ring(C * .15, .12);
@@ -4665,15 +4896,15 @@ function zoneOf(u, s) {
   return null;
 }
 function movePreviewSVG() {
-  const sv = $("#psvg"); if (!sv) return; const C = CB.cell; sv.setAttribute("width", COLS * C); sv.setAttribute("height", ROWS * C); sv.setAttribute("viewBox", `0 0 ${COLS * C} ${ROWS * C}`);
+  const sv = $("#psvg"); if (!sv) return; const C = CB.cell; sv.setAttribute("width", BW * C); sv.setAttribute("height", BH * C); sv.setAttribute("viewBox", `0 0 ${BW * C} ${BH * C}`);
   const mv = CB.mvp, u = cur(); if (!mv || !u) { sv.innerHTML = ""; return; }
-  const P = mv.path.map(k => k.split(",").map(Number)), pt = ([a, b]) => `${(a + .5) * C},${(b + .5) * C}`;
+  const P = mv.path.map(k => k.split(",").map(Number)), pt = ([a, b]) => `${hcx(a, b) * C},${hcy(a, b) * C}`;
   let h = `<polyline points="${P.map(pt).join(" ")}" class="pl${mv.dash ? " dash" : ""}"/>`;
   let spent = 0;
   for (let i = 1; i < P.length; i++) { spent += stepCost(P[i - 1][0], P[i - 1][1], P[i][0], P[i][1]); const [a, b] = P[i], k = K(a, b);
     const hot = CB.fire[k] ? "fire" : provokers(u, {x: P[i - 1][0], y: P[i - 1][1]}, {x: a, y: b}).length ? "risk" : spent > u.mv ? "dsh" : "";
-    if (i < P.length - 1) h += `<circle cx="${(a + .5) * C}" cy="${(b + .5) * C}" r="${C * .07}" class="pd ${hot}"/>`; }
-  const [ex, ey] = P[P.length - 1], cx = (ex + .5) * C, cy = (ey + .5) * C;
+    if (i < P.length - 1) h += `<circle cx="${hcx(a, b) * C}" cy="${hcy(a, b) * C}" r="${C * .07}" class="pd ${hot}"/>`; }
+  const [ex, ey] = P[P.length - 1], cx = hcx(ex, ey) * C, cy = hcy(ex, ey) * C;
   h += `<circle cx="${cx}" cy="${cy}" r="${C * .3}" class="pe${mv.dash ? " dash" : ""}"/>`;
   h += `<text x="${cx}" y="${cy}" class="pt" ${isLand() ? `transform="rotate(-90 ${cx} ${cy})"` : ""} dy=".35em" style="font-size:${Math.round(C * .3)}px">${mv.cost}</text>`;
   sv.innerHTML = h;
@@ -4686,7 +4917,7 @@ function moveInfoHTML(u, mv) {
   const title = mv.then ? tr(["Avvicinati e attacca", "Approach and attack", "Acércate y ataca"]) : tr(["Movimento", "Move", "Movimiento"]);
   const tags = [`<span class="cost-t m" title="${tr(["movimento usato / disponibile", "movement used / available", "movimiento usado / disponible"])}">${mv.cost}/${mv.cost + left} ▸</span>`]; if (mv.dash) tags.push(`<span class="cost-t a">${tr(ABIL.dash.n)} · ${hasF(u.ref, "cunning") && u.bon > 0 ? T_("bonus") : T_("action")}</span>`);
   const notes = []; if (ti) notes.push(`<b>${tr(TER_INFO[ti][0])}</b>: ${tr(TER_INFO[ti][1])}`); if (risk) notes.push(`<span class="rk">● ${risk}</span>`);
-  return `<div class="mvbar"><div class="mvt"><b>${title}</b>${tags.join("")}${notes.length ? `<p class="hint">${notes.join(" · ")}</p>` : `<p class="hint">${tr(["Tocca di nuovo la casella o premi Vai.", "Tap the tile again or press Go.", "Toca de nuevo la casilla o pulsa Ir."])}</p>`}</div>
+  return `<div class="mvbar"><div class="mvt"><b>${title}</b>${tags.join("")}${notes.length ? `<p class="hint">${notes.join(" · ")}</p>` : `<p class="hint">${tr(["Tocca di nuovo l'esagono o premi Vai.", "Tap the hex again or press Go.", "Toca de nuevo el hexágono o pulsa Ir."])}</p>`}</div>
     <button class="mvgo" id="mvGo">${icon("end")}<span>${mv.then ? tr(["Vai e attacca", "Go & attack", "Ir y atacar"]) : tr(["Vai", "Go", "Ir"])}</span></button><button class="mvno" id="mvNo" aria-label="${T_("close")}">✕</button></div>`;
 }
 const _renderCombatZ = renderCombat;
@@ -4724,10 +4955,10 @@ renderCombat = function () {
 TIPS.push(
   ["hill", TER_INFO.high[0], TER_INFO.high[1]],
   ["brush", ["Terreno difficile e sterpaglia", "Difficult terrain and brush", "Terreno difícil y maleza"], ["Sterpaglia, macerie e neve alta costano 2 movimento. La sterpaglia dà mezza copertura a chi ci sta dentro, ma prende fuoco: un incantesimo di fuoco la trasforma in una trappola.", "Brush, rubble and deep snow cost 2 movement. Brush gives half cover to whoever stands in it, but it burns: a fire spell turns it into a trap.", "Maleza, escombros y nieve profunda cuestan 2 de movimiento. La maleza da media cobertura a quien está dentro, pero arde: un conjuro de fuego la convierte en una trampa."]],
-  ["eye", ["Linea di vista", "Line of sight", "Línea de visión"], ["Gli ostacoli alti, con l'ombra tratteggiata lunga, bloccano la vista: niente tiri né incantesimi attraverso. Le caselle scure nella zona d'azione sono fuori vista.", "Tall obstacles, with the long hatched shadow, block sight: no shots or spells through them. Dark tiles in the action zone are out of sight.", "Los obstáculos altos, con la sombra rayada larga, bloquean la vista: ni disparos ni conjuros a través. Las casillas oscuras de la zona de acción están fuera de vista."]],
+  ["eye", ["Linea di vista", "Line of sight", "Línea de visión"], ["Gli ostacoli alti, con l'ombra tratteggiata lunga, bloccano la vista: niente tiri né incantesimi attraverso. Gli esagoni scuri nella zona d'azione sono fuori vista.", "Tall obstacles, with the long hatched shadow, block sight: no shots or spells through them. Dark hexes in the action zone are out of sight.", "Los obstáculos altos, con la sombra rayada larga, bloquean la vista: ni disparos ni conjuros a través. Los hexágonos oscuros de la zona de acción están fuera de vista."]],
   ["sun", TER_INFO.holy[0], TER_INFO.holy[1]],
   ["burst", ["Bersagli esposti", "Exposed targets", "Objetivos expuestos"], ["Un nemico fiancheggiato in mischia, o senza copertura e già impegnato da un tuo alleato, è esposto (✸): i colpi critici arrivano con 18, 19 e 20. Vale anche contro di te.", "An enemy flanked in melee, or without cover and already engaged by one of your allies, is exposed (✸): critical hits land on 18, 19 and 20. It works against you too.", "Un enemigo flanqueado cuerpo a cuerpo, o sin cobertura y ya trabado por un aliado tuyo, está expuesto (✸): los críticos llegan con 18, 19 y 20. También vale contra ti."]],
-  ["wind", ["Movimento e zone d'azione", "Movement and action zones", "Movimiento y zonas de acción"], ["Tocca una casella per vedere il percorso, poi tocca di nuovo o premi Vai. Punti blu: movimento; punti dorati: serve lo Scatto. Zone: rosso attacco, arancione incantesimi e abilità, giallo guardia.", "Tap a tile to see the path, then tap again or press Go. Blue dots: movement; golden dots: needs a Dash. Zones: red attack, orange spells and abilities, yellow overwatch.", "Toca una casilla para ver el recorrido y vuelve a tocar o pulsa Ir. Puntos azules: movimiento; dorados: requiere Correr. Zonas: rojo ataque, naranja conjuros y habilidades, amarillo vigilancia."]],
+  ["wind", ["Movimento e zone d'azione", "Movement and action zones", "Movimiento y zonas de acción"], ["Tocca un esagono per vedere il percorso, poi tocca di nuovo o premi Vai. Punti blu: movimento; cerchi dorati: serve lo Scatto. Zone: rosso attacco, arancione incantesimi e abilità, giallo guardia.", "Tap a hex to see the path, then tap again or press Go. Blue dots: movement; golden rings: needs a Dash. Zones: red attack, orange spells and abilities, yellow overwatch.", "Toca un hexágono para ver el recorrido y vuelve a tocar o pulsa Ir. Puntos azules: movimiento; círculos dorados: requiere Correr. Zonas: rojo ataque, naranja conjuros y habilidades, amarillo vigilancia."]],
   ["crown", ["Capi", "Leaders", "Jefes"], ["Alcuni gruppi seguono un capo, segnato dalla corona. Ascolta cosa dicono i nemici: se il capo cade, i seguaci potrebbero darsi alla fuga e lo scontro finisce.", "Some groups follow a leader, marked by a crown. Listen to what the enemies say: if the leader falls, the followers may flee and the fight ends.", "Algunos grupos siguen a un jefe, marcado con una corona. Escucha lo que dicen los enemigos: si el jefe cae, los seguidores pueden huir y el combate termina."]],
 );
 const _extraOptsT = extraOptsHTML;
@@ -4738,6 +4969,199 @@ const _openMenuT = openMenu;
 openMenu = function (tab) {
   _openMenuT(tab);
   if (tab === "opts") document.querySelectorAll(".modal [data-qm]").forEach(b => b.onclick = () => { PREF.quickMove = b.dataset.qm === "1"; store(PREF_KEY, PREF); openMenu("opts"); });
+};
+
+/* ===== 74_masteries_fx.js ===== */
+/* =================== WEAPON MASTERIES & BIG MOMENTS =================== */
+// From the 2024 rules: fighters, paladins, rangers and rogues unlock the mastery of their weapons.
+const MASTERY = {
+  sap:    {n: ["Indebolire", "Sap", "Debilitar"], d: ["Se colpisci, il bersaglio ha svantaggio al suo prossimo attacco.", "On a hit, the target has disadvantage on its next attack.", "Si impactas, el objetivo tiene desventaja en su próximo ataque."], ic: "shield"},
+  push:   {n: ["Spingere", "Push", "Empujar"], d: ["Se colpisci, spingi il bersaglio di un esagono. Se sbatte contro un ostacolo o un'altra creatura subisce 1d4 danni; spinto tra le fiamme, brucia.", "On a hit, you push the target one hex. If it slams into an obstacle or another creature it takes 1d4 damage; pushed into flames, it burns.", "Si impactas, empujas al objetivo un hexágono. Si choca con un obstáculo u otra criatura recibe 1d4 de daño; empujado a las llamas, arde."], ic: "wind"},
+  slow:   {n: ["Rallentare", "Slow", "Ralentizar"], d: ["Se colpisci, il bersaglio ha 2 esagoni di movimento in meno nel suo prossimo turno.", "On a hit, the target has 2 fewer hexes of movement on its next turn.", "Si impactas, el objetivo tiene 2 hexágonos menos de movimiento en su próximo turno."], ic: "wind"},
+  vex:    {n: ["Incalzare", "Vex", "Hostigar"], d: ["Se colpisci, hai vantaggio al tuo prossimo attacco contro lo stesso bersaglio.", "On a hit, you have advantage on your next attack against the same target.", "Si impactas, tienes ventaja en tu próximo ataque contra el mismo objetivo."], ic: "eye"},
+  topple: {n: ["Rovesciare", "Topple", "Derribar"], d: ["Se colpisci, il bersaglio fa un TS Costituzione o cade a terra.", "On a hit, the target makes a Constitution save or falls prone.", "Si impactas, el objetivo hace una salvación de Constitución o cae derribado."], ic: "burst"},
+};
+const MASTER_CLS = ["fighter", "paladin", "ranger", "rogue"];
+const masteryOf = (c, p) => c && MASTER_CLS.includes(c.cls) && WEAP[p.key] && WEAP[p.key].m || null;
+async function applyMastery(u, t, p, hit) {
+  if (u.side !== "p") return; const m = masteryOf(u.ref, p); if (!m || !hit) return;
+  const name = tr(MASTERY[m].n), alive_ = () => t.hp > 0 && CB && !CB.ended;
+  if (!alive_()) return;
+  if (m === "sap") { t.cond.sapped = u.uid; floatAt(t, name, "#c9b8ff"); logL(`${u.name}: ${name} → ${t.name}`); }
+  else if (m === "vex") { u.cond.vex = t.uid; floatAt(u, name, "#ffd38a"); logL(`${u.name}: ${name} → ${t.name}`); }
+  else if (m === "slow") { t.cond.slow = 2; floatAt(t, name, "#9fd8ff"); logL(`${u.name}: ${name} → ${t.name}`); }
+  else if (m === "topple") {
+    if (t.boss) return; const dc = 8 + prof(u.ref) + Math.max(abm(u.ref, "str"), abm(u.ref, "dex"));
+    if (!saveRoll(t, "con", dc)) { t.cond.prone = 1; floatAt(t, tr(["A terra!", "Prone!", "¡Derribado!"]), "#ffd38a", 1); logL(`${u.name}: ${name} → ${t.name}`); placeTokens(); await sleep(200); }
+  } else if (m === "push") {
+    if (t.boss) return; const [nx, ny] = opposite(u, t), k = K(nx, ny);
+    const blocked = !inGrid(nx, ny) || CB.ob.has(k) || unitAt(nx, ny);
+    logL(`${u.name}: ${name} → ${t.name}`);
+    if (blocked) { if (inGrid(nx, ny)) { floatAt(t, tr(["Schianto!", "Slam!", "¡Choque!"]), "#ffd38a", 1); fxShake(); await applyDmg(t, rnd(4), "blunt", u); } }
+    else { t.x = nx; t.y = ny; placeTokens(); fxDust(t); await sleep(220); if (CB.fire && CB.fire[k] && t.hp > 0) await burnUnit(t); }
+  }
+}
+function masteryTurnStart(u) {
+  // effects that last "until the start of the attacker's next turn" end now
+  CB.units.forEach(o => { if (o.cond.sapped === u.uid) delete o.cond.sapped; });
+  if (u.cond.vex) delete u.cond.vex;
+  if (u.cond.slow) { u.mv = Math.max(1, u.mv - u.cond.slow); delete u.cond.slow; logL(`${u.name}: ${tr(MASTERY.slow.n)}`); }
+}
+// show the mastery of the selected weapon
+const _renderCombatM = renderCombat;
+renderCombat = function () {
+  _renderCombatM(); if (!CB || CB.deploy) return; const u = cur();
+  if (!u || u.side !== "p" || !CB.sel || CB.sel.k !== "w" || CB.mvp || CB.inspect) return;
+  const p = weapProfile(u.ref, weaponsOf(u.ref)[CB.sel.i]), m = masteryOf(u.ref, p), h = $("#info p.hint");
+  if (m && h) h.insertAdjacentHTML("beforeend", ` · <span class="mst">${icon(MASTERY[m].ic)} ${tr(MASTERY[m].n)}: ${tr(MASTERY[m].d)}</span>`);
+  const st = []; CB.units.forEach(o => { const tk = $("#t_" + o.uid); if (!tk) return; const s = tk.querySelector(".st"); if (!s) return;
+    if (o.cond.sapped && !s.querySelector(".c-sap")) s.insertAdjacentHTML("beforeend", `<i class="c-sap" title="${tr(MASTERY.sap.n)}">▾</i>`);
+    if (o.cond.slow && !s.querySelector(".c-slow")) s.insertAdjacentHTML("beforeend", `<i class="c-slow" title="${tr(MASTERY.slow.n)}">≈</i>`);
+    if (o.cond.prone && !s.querySelector(".c-pr")) s.insertAdjacentHTML("beforeend", `<i class="c-pr">⤓</i>`);
+    if (o.cond.oil && !s.querySelector(".c-oil")) s.insertAdjacentHTML("beforeend", `<i class="c-oil">♨</i>`); });
+};
+
+/* ---------- big moments: critical hits and killing blows get a short "kill cam" ---------- */
+async function bigMoment(t, kind) {
+  if (!CB || PREF.lowfx) return; const bw = $("#bw"); if (!bw) return;
+  bw.classList.remove("km", "kc"); void bw.offsetWidth; bw.classList.add(kind === "kill" ? "km" : "kc");
+  setTimeout(() => bw && bw.classList.remove("km", "kc"), 700);
+  if (kind === "kill") { const P = cpos(t), C = CB.cell; for (let i = 0; i < 26; i++) { const a = Math.random() * 6.28, v = 1 + Math.random() * 2.5; part({x: P.x, y: P.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - .6, col: ["#ffe7a8", "#ffc04a", "#fff"][i % 3], size: 1.5 + Math.random() * 2.5, max: 30 + Math.random() * 20, g: .03, drag: .95, shape: "spark"}); } await sleep(420); }
+}
+const _applyDmgM = applyDmg;
+applyDmg = async function (t, amt, type, src) {
+  const was = t.side === "e" ? t.hp : null; await _applyDmgM(t, amt, type, src);
+  if (CB && t.side === "e" && was > 0 && t.hp <= 0 && !t.fled && (t.boss || t.leader || foes().length === 0)) await bigMoment(t, "kill");
+};
+TIPS.push(["swords", ["Maestrie delle armi", "Weapon masteries", "Maestrías de armas"], ["Guerrieri, paladini, ranger e ladri sfruttano la maestria della loro arma quando colpiscono: Indebolire (spada lunga, mazza), Incalzare (stocco, spada corta, arco corto), Rallentare (arco lungo, giavellotto), Spingere (martello) e Rovesciare (bastone). Scegliendo l'arma vedi cosa fa.", "Fighters, paladins, rangers and rogues use their weapon's mastery when they hit: Sap (longsword, mace), Vex (rapier, shortsword, shortbow), Slow (longbow, javelin), Push (warhammer) and Topple (quarterstaff). Select the weapon to see what it does.", "Guerreros, paladines, exploradores y pícaros usan la maestría de su arma al impactar: Debilitar (espada larga, maza), Hostigar (estoque, espada corta, arco corto), Ralentizar (arco largo, jabalina), Empujar (martillo) y Derribar (bastón). Al elegir el arma ves qué hace."]]);
+
+/* ===== 75_crafting.js ===== */
+/* =================== CRAFTING & MARKET =================== */
+// Materials come from fallen enemies, from foraging during rests in the wild and from shops.
+// Alchemy can be done anywhere outside combat; smithing needs a forge (Hild in Ashford, Vesperia's market, Hrun's hermitage).
+// Some recipes must be learned first (flags rec_*), and some need a particular class in the party.
+const RECIPES = [
+  {id: "potion", out: "potion", kind: "alc", need: {herb: 2}},
+  {id: "flask", out: "flask", kind: "alc", need: {resin: 2}},
+  {id: "oil", out: "oil", kind: "alc", need: {resin: 1, herb: 1}},
+  {id: "greater", out: "greater", kind: "alc", need: {herb: 2, essence: 1}, learn: "rec_greater"},
+  {id: "holywater", out: "holywater", kind: "alc", need: {herb: 1, bone: 2}, learn: "rec_holy", cls: ["cleric", "paladin"]},
+  {id: "scroll_heal", out: "scroll_heal", kind: "alc", need: {herb: 2, sunshard: 1}, learn: "rec_scroll", cls: ["cleric", "wizard"]},
+  {id: "scroll_fire", out: "scroll_fire", kind: "alc", need: {resin: 2, essence: 1, sunshard: 1}, learn: "rec_scroll", cls: ["wizard"]},
+  {id: "w1", out: "w1", kind: "forge", need: {iron: 4}, gold: 60},
+  {id: "a1", out: "a1", kind: "forge", need: {iron: 4}, gold: 50},
+  {id: "w2", out: "w2", kind: "forge", need: {w1: 1, iron: 2, sunshard: 2}, gold: 150, forge: 2},
+];
+const LEARN_FROM = {
+  rec_greater: ["Si impara da Nonna Grisa, nel Bosco Cavo.", "Learned from Granny Grisa, in the Hollow Woods.", "Se aprende de la abuela Grisa, en el Bosque Hueco."],
+  rec_holy: ["Si impara al tempio di Sant'Aurel, ad Ashford.", "Learned at the Shrine of Saint Aurel, in Ashford.", "Se aprende en el templo de San Aurel, en Ashford."],
+  rec_scroll: ["Si impara al Grande Archivio di Vesperia.", "Learned at the Great Archive of Vesperia.", "Se aprende en el Gran Archivo de Vesperia."],
+};
+const CLS_N = c => tr(CLASSES[c].n);
+const known = r => !r.learn || has(r.learn);
+const clsOK = r => !r.cls || S.party.some(c => r.cls.includes(c.cls));
+const haveAll = r => Object.entries(r.need).every(([k, n]) => (S.inv[k] || 0) >= n) && S.gold >= (r.gold || 0);
+function craft(r) {
+  if (!known(r) || !clsOK(r) || !haveAll(r)) return false;
+  Object.entries(r.need).forEach(([k, n]) => { S.inv[k] -= n; if (S.inv[k] <= 0) delete S.inv[k]; });
+  S.gold -= r.gold || 0; S.inv[r.out] = (S.inv[r.out] || 0) + 1; S.crafted = (S.crafted || 0) + 1;
+  if (typeof SFX !== "undefined" && SFX.coin) SFX.coin();
+  toastQ(`${tr(["Creato", "Crafted", "Creado"])}: ${tr(ITEMS[r.out].n)}`); saveGame(true); return true;
+}
+function needHTML(r) {
+  const parts = Object.entries(r.need).map(([k, n]) => { const have = S.inv[k] || 0; return `<span class="${have >= n ? "ok" : "no"}">${tr(ITEMS[k].n)} ${have}/${n}</span>`; });
+  if (r.gold) parts.push(`<span class="${S.gold >= r.gold ? "ok" : "no"}">${r.gold} ${T_("gp")}</span>`);
+  return parts.join("");
+}
+function recipesHTML(kind, forgeLv) {
+  return RECIPES.filter(r => r.kind === kind).map(r => {
+    const it = ITEMS[r.out], k = known(r), c = clsOK(r), fz = r.kind !== "forge" || (forgeLv || 0) >= (r.forge || 1), ok = k && c && fz && haveAll(r);
+    const why = !k ? tr(LEARN_FROM[r.learn]) : !c ? `${tr(["Serve nel gruppo", "Requires in the party", "Requiere en el grupo"])}: ${r.cls.map(CLS_N).join(" / ")}` : !fz ? (r.kind === "forge" && !forgeLv ? tr(["Serve una fucina.", "Requires a forge.", "Requiere una forja."]) : tr(["Serve un maestro fabbro (l'eremo di Hrun).", "Requires a master smith (Hrun's hermitage).", "Requiere un maestro herrero (la ermita de Hrun)."])) : "";
+    return `<div class="row rcp ${k ? "" : "unk"}"><div class="t"><b>${k ? tr(it.n) : "???"}</b><small>${k ? tr(it.d) : ""}</small><div class="need">${k ? needHTML(r) : ""}</div>${why ? `<small class="why">${why}</small>` : ""}</div>
+      <button class="btn small" data-craft="${r.id}" ${ok ? "" : "disabled"}>${tr(["Crea", "Craft", "Crear"])}</button></div>`;
+  }).join("");
+}
+function matsHTML() {
+  const mats = Object.keys(ITEMS).filter(k => ITEMS[k].use === "mat");
+  return `<div class="mats">${mats.map(k => `<span class="${S.inv[k] ? "" : "zero"}">${icon(ITEMS[k].ic || "star")}<b>${S.inv[k] || 0}</b><small>${tr(ITEMS[k].n)}</small></span>`).join("")}</div>`;
+}
+function craftTabHTML() {
+  return `${matsHTML()}<h3>${tr(["Alchimia · kit da campo", "Alchemy · field kit", "Alquimia · equipo de campo"])}</h3>${recipesHTML("alc")}
+    <h3>${tr(["Fucina", "Forge", "Forja"])}</h3><p class="hint" style="font-size:13px;color:var(--muted);margin:0 0 6px">${tr(["Le armi e le armature si lavorano solo in una fucina: Hild ad Ashford, il Mercato delle Candele, l'eremo di Hrun.", "Weapons and armour can only be worked at a forge: Hild in Ashford, the Candle Market, Hrun's hermitage.", "Las armas y armaduras solo se trabajan en una forja: Hild en Ashford, el Mercado de las Velas, la ermita de Hrun."])}</p>${recipesHTML("forge", 0)}`;
+}
+function bindCraft(m, after) { m.querySelectorAll("[data-craft]").forEach(b => b.onclick = () => { const r = RECIPES.find(x => x.id === b.dataset.craft); if (craft(r)) after(); }); }
+
+// party menu: a crafting tab
+const _openMenuC = openMenu;
+openMenu = function (tab) {
+  _openMenuC(tab === "craft" ? "inv" : tab);
+  const m = document.querySelector(".modal"); if (!m) return; const tabs = m.querySelector(".tabs"); if (!tabs) return;
+  if (!tabs.querySelector('[data-tab="craft"]')) { const inv = tabs.querySelector('[data-tab="inv"]'); inv.insertAdjacentHTML("afterend", `<button data-tab="craft" aria-pressed="${tab === "craft"}">${tr(["Crafting", "Crafting", "Artesanía"])}</button>`); tabs.querySelector('[data-tab="craft"]').onclick = () => openMenu("craft"); }
+  if (tab === "craft") {
+    tabs.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.tab === "craft"));
+    const close = m.querySelector("#mClose"), sheet = m.querySelector(".sheet"); [...sheet.children].forEach(ch => { if (ch !== tabs && ch !== close) ch.remove(); });
+    tabs.insertAdjacentHTML("afterend", `<div class="crafting">${craftTabHTML()}</div>`);
+    bindCraft(m, () => openMenu("craft"));
+  }
+};
+
+// shops: buying, selling and the forge
+openShop = function (id, view) {
+  const sh = SHOPS[id], disc = id === "vesperia" && has("pia") ? .8 : 1; view = view || "buy";
+  const sellable = Object.keys(S.inv).filter(k => S.inv[k] > 0 && ITEMS[k] && ITEMS[k].price && ITEMS[k].use !== "quest");
+  const tabs = `<div class="tabs shoptabs"><button data-v="buy" aria-pressed="${view === "buy"}">${tr(["Compra", "Buy", "Comprar"])}</button><button data-v="sell" aria-pressed="${view === "sell"}">${tr(["Vendi", "Sell", "Vender"])}</button>${sh.forge ? `<button data-v="forge" aria-pressed="${view === "forge"}">${tr(["Fucina", "Forge", "Forja"])}</button>` : ""}</div>`;
+  let body = "";
+  if (view === "buy") body = sh.items.map(k => { const it = ITEMS[k], p = Math.round(it.price * disc); return `<div class="row"><div class="t"><b>${tr(it.n)}</b>${S.inv[k] ? ` <small style="display:inline">(${S.inv[k]})</small>` : ""}<small>${tr(it.d)}</small></div><button class="btn small" data-buy="${k}" data-p="${p}" ${S.gold < p ? "disabled" : ""}>${p} ${T_("gp")}</button></div>`; }).join("");
+  if (view === "sell") body = sellable.length ? sellable.map(k => { const it = ITEMS[k], p = Math.floor(it.price / 2); return `<div class="row"><div class="t"><b>${tr(it.n)}</b> <small style="display:inline">×${S.inv[k]}</small><small>${tr(it.d)}</small></div><button class="btn small" data-sell="${k}" data-p="${p}">+${p} ${T_("gp")}</button></div>`; }).join("") : `<p style="color:var(--muted)">${T_("empty")}</p>`;
+  if (view === "forge") body = `${matsHTML()}${recipesHTML("forge", sh.forge)}`;
+  const m = modal(`<h2>${tr(sh.n)}</h2><p style="color:var(--muted)">${T_("youHave")}: <b style="color:var(--brass)">${S.gold} ${T_("gp")}</b>${view === "sell" ? ` · ${tr(["i mercanti pagano metà prezzo", "merchants pay half price", "los mercaderes pagan la mitad"])}` : ""}</p>${tabs}${body}
+    <button class="btn small" id="shClose" style="margin-top:12px">${T_("close")}</button>`);
+  m.querySelectorAll("[data-v]").forEach(b => b.onclick = () => openShop(id, b.dataset.v));
+  m.querySelectorAll("[data-buy]").forEach(b => b.onclick = () => { const p = +b.dataset.p; if (S.gold < p) return; S.gold -= p; S.inv[b.dataset.buy] = (S.inv[b.dataset.buy] || 0) + 1; saveGame(true); openShop(id, view); });
+  m.querySelectorAll("[data-sell]").forEach(b => b.onclick = () => { const k = b.dataset.sell; if (!S.inv[k]) return; S.inv[k]--; if (!S.inv[k]) delete S.inv[k]; S.gold += +b.dataset.p; if (typeof SFX !== "undefined" && SFX.coin) SFX.coin(); saveGame(true); openShop(id, view); });
+  bindCraft(m, () => openShop(id, view));
+  m.querySelector("#shClose").onclick = () => { closeModal(); renderStory(); };
+};
+
+/* ---------- where materials come from ---------- */
+// what each kind of enemy leaves behind: [material, chance]
+function dropsOf(f) {
+  const k = f.foe, d = f.def;
+  if (d.boss) return [["sunshard", 1], ["essence", .7]];
+  if (["cultist", "fanatic", "jailer"].includes(k)) return [["essence", .25], ["herb", .3], ["iron", .25]];
+  if (["acolyte", "vell", "shadow", "shade", "keeper"].includes(k)) return [["essence", .45]];
+  if (["goblin", "gobarcher"].includes(k)) return [["resin", .45], ["iron", .3]];
+  if (["bandit", "xbow", "dukeguard", "hknight", "armor"].includes(k)) return [["iron", .55]];
+  if (k === "wolf") return [["bone", .45]];
+  if (d.undead) return [["bone", .6]];
+  return [["herb", .3]];
+}
+function matDrops() {
+  if (!CB) return []; const out = [], cnt = {};
+  CB.units.filter(u => u.side === "e" && u.hp <= 0 && !u.fled).forEach(f => dropsOf(f).forEach(([m, p]) => { if (Math.random() < p && (cnt[m] = (cnt[m] || 0) + 1) <= 3) out.push(m); }));
+  return out;
+}
+const _rollLootC = rollLoot;
+rollLoot = function (key) { return _rollLootC(key).concat(matDrops()); };
+// resting in the wild: the party forages
+function forage() {
+  const best = S.party.reduce((a, c) => skillBonus(c, "sur") > skillBonus(a, "sur") ? c : a, S.party[0]);
+  const r = rnd(20) + skillBonus(best, "sur"), got = {herb: r >= 12 ? 1 + rnd(2) : 1}; if (r >= 15) got.resin = 1; if (r >= 19) got.essence = 1;
+  Object.entries(got).forEach(([k, n]) => S.inv[k] = (S.inv[k] || 0) + n);
+  toastQ(`${esc(best.name.split(" ")[0])} ${tr(["raccoglie", "forages", "recolecta"])}: ${Object.entries(got).map(([k, n]) => `${n} ${tr(ITEMS[k].n)}`).join(", ")}`);
+}
+
+/* ---------- combat use of the new items ---------- */
+const isOil = k => ITEMS[k] && ITEMS[k].use === "oil";
+
+/* ---------- the memory thief's barks (secret quest) ---------- */
+LEADS.bottler = {
+  start: ["Prendeteli vivi: i ricordi dei marchiati valgono doppio.", "Take them alive: the marked ones' memories are worth double.", "Cogedlos vivos: los recuerdos de los marcados valen el doble."],
+  rally: [["Lo speziale ci ha promesso l'oblio… niente più paura.", "The apothecary promised us oblivion… no more fear.", "El boticario nos prometió el olvido… nada de miedo."],
+          ["Finché Vell ha le fiale, noi non sentiamo dolore.", "As long as Vell has the vials, we feel no pain.", "Mientras Vell tenga los frascos, no sentimos dolor."],
+          ["Proteggete il maestro! Senza di lui ricorderemo tutto…", "Protect the master! Without him we'll remember everything…", "¡Proteged al maestro! Sin él lo recordaremos todo…"]],
+  hurt: ["Le fiale… si stanno incrinando… ricordo mia madre…", "The vials… they're cracking… I remember my mother…", "Los frascos… se agrietan… recuerdo a mi madre…"],
+  fall: ["Vell è caduto… ricordo tutto… via di qui!", "Vell is down… I remember everything… get out!", "Vell ha caído… lo recuerdo todo… ¡fuera de aquí!"],
 };
 
 /* ===== 80_meta.js ===== */

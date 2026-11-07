@@ -57,10 +57,10 @@ const highBonus = (a, t, o) => (o.ranged || dist(a, t) > 1) && onHigh(a) && !onH
 // line of sight: blocked when the line between the two centres crosses the core of a tall obstacle
 function losClear(a, t) {
   if (!CB || !CB.tall || !CB.tall.size || dist(a, t) <= 1) return true;
-  const ax = a.x + .5, ay = a.y + .5, bx = t.x + .5, by = t.y + .5, n = Math.ceil(Math.hypot(bx - ax, by - ay) * 10);
-  for (let i = 1; i < n; i++) { const px = ax + (bx - ax) * i / n, py = ay + (by - ay) * i / n, cx = Math.floor(px), cy = Math.floor(py);
+  const ax = hcx(a.x, a.y), ay = hcy(a.x, a.y), bx = hcx(t.x, t.y), by = hcy(t.x, t.y), n = Math.ceil(Math.hypot(bx - ax, by - ay) * 12);
+  for (let i = 1; i < n; i++) { const px = ax + (bx - ax) * i / n, py = ay + (by - ay) * i / n, [cx, cy] = hexAt(px, py);
     if ((cx === a.x && cy === a.y) || (cx === t.x && cy === t.y)) continue;
-    if (CB.tall.has(K(cx, cy)) && Math.abs(px - cx - .5) < .36 && Math.abs(py - cy - .5) < .36) return false; }
+    if (CB.tall.has(K(cx, cy)) && Math.hypot(px - hcx(cx, cy), py - hcy(cx, cy)) < .36) return false; }
   return true;
 }
 const canSee = (a, t) => losClear(a, t);
@@ -87,17 +87,16 @@ function genTerrain() {
   CB.ter = {}; CB.fire = {}; CB.tall = new Set();
   const free = (x, y) => inGrid(x, y) && !CB.ob.has(K(x, y)) && !CB.ter[K(x, y)];
   const pick = (y0, y1) => { for (let g = 0; g < 60; g++) { const x = Math.floor(Math.random() * COLS), y = y0 + Math.floor(Math.random() * (y1 - y0 + 1)); if (free(x, y)) return [x, y]; } return null; };
-  const N4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];
   // tall obstacles: a few of the existing obstacles, preferring the middle of the board
   const obs = [...CB.ob].sort(() => Math.random() - .5).sort((a, b) => Math.abs(+a.split(",")[1] - 4) - Math.abs(+b.split(",")[1] - 4));
   obs.slice(0, Math.min(cfg.nt || 0, Math.ceil(obs.length / 2))).forEach(k => CB.tall.add(k));
   // hills of 2-3 tiles
   for (let h = 0; h < (cfg.hill || 0); h++) { const s = pick(2, 6); if (!s) continue; CB.ter[K(...s)] = "high"; let [x, y] = s;
-    for (let e = 0; e < 1 + (Math.random() < .5 ? 1 : 0); e++) { const n = N4.map(([dx, dy]) => [x + dx, y + dy]).filter(([a, b]) => free(a, b) && b >= 1 && b <= ROWS - 2); if (!n.length) break; [x, y] = n[Math.floor(Math.random() * n.length)]; CB.ter[K(x, y)] = "high"; } }
+    for (let e = 0; e < 1 + (Math.random() < .5 ? 1 : 0); e++) { const n = nbrs(x, y).filter(([a, b]) => free(a, b) && b >= 1 && b <= ROWS - 2); if (!n.length) break; [x, y] = n[Math.floor(Math.random() * n.length)]; CB.ter[K(x, y)] = "high"; } }
   // patches of difficult terrain
   let left = cfg.nr || 0;
   for (let g = 0; left > 0 && g < 40; g++) { const s = pick(1, ROWS - 2); if (!s) break; let [x, y] = s; const size = Math.min(left, 2 + Math.floor(Math.random() * 2));
-    for (let i = 0; i < size; i++) { if (free(x, y)) { CB.ter[K(x, y)] = cfg.rough; left--; } const n = N4.map(([dx, dy]) => [x + dx, y + dy]).filter(([a, b]) => free(a, b)); if (!n.length) break; [x, y] = n[Math.floor(Math.random() * n.length)]; } }
+    for (let i = 0; i < size; i++) { if (free(x, y)) { CB.ter[K(x, y)] = cfg.rough; left--; } const n = nbrs(x, y).filter(([a, b]) => free(a, b)); if (!n.length) break; [x, y] = n[Math.floor(Math.random() * n.length)]; } }
   if (cfg.holy) { const s = pick(3, 5); if (s) CB.ter[K(...s)] = "holy"; }
 }
 
@@ -110,7 +109,7 @@ function igniteArea(c, rad) {
 function tickFire() {
   if (!CB || !CB.fire) return; const ks = Object.keys(CB.fire); if (!ks.length) return; const nf = [];
   ks.forEach(k => { const [x, y] = k.split(",").map(Number);
-    [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { const n = K(x + dx, y + dy); if (CB.ter[n] === "brush" && !CB.fire[n] && Math.random() < .4) nf.push(n); });
+    nbrs(x, y).forEach(([a, b]) => { const n = K(a, b); if (CB.ter[n] === "brush" && !CB.fire[n] && Math.random() < .35) nf.push(n); });
     if (--CB.fire[k] <= 0) { delete CB.fire[k]; CB.ter[k] = "ash"; } });
   nf.forEach(n => { if (!CB.fire[n]) CB.fire[n] = 2; });
   if (nf.length) logL(tr(["Il fuoco si propaga.", "The fire spreads.", "El fuego se propaga."]));
@@ -119,7 +118,7 @@ function tickFire() {
 async function burnUnit(u) { logL(`${u.name}: ${tr(["tra le fiamme", "in the flames", "entre las llamas"])}`); fxImpact(u, "fire", false); await applyDmg(u, roll("1d6").total, "fire", null); }
 function fireFX() {
   const ks = Object.keys(CB.fire); if (!ks.length) return; const C = CB.cell, low = PREF.lowfx;
-  ks.forEach(k => { if (Math.random() > (low ? .12 : .5)) return; const [tx, ty] = k.split(",").map(Number), px = (tx + .2 + Math.random() * .6) * C, py = (ty + .4 + Math.random() * .45) * C;
+  ks.forEach(k => { if (Math.random() > (low ? .12 : .5)) return; const [tx, ty] = k.split(",").map(Number), px = (hcx(tx, ty) - .3 + Math.random() * .6) * C, py = (hcy(tx, ty) - .1 + Math.random() * .45) * C;
     part({x: px, y: py, vx: (Math.random() - .5) * .3, vy: -.5 - Math.random() * .7, col: ["#fff1b0", "#ffc04a", "#ff7a2a", "#ff4a1a"][Math.floor(Math.random() * 4)], size: 1.8 + Math.random() * 2.6, max: 18 + Math.random() * 16, g: -.015, drag: .96});
     if (Math.random() < .1) part({x: px, y: py - C * .2, vx: (Math.random() - .5) * .3, vy: -.35, col: "rgba(60,50,50,.4)", size: C * .16, shape: "smoke", max: 50, add: false}); });
 }
@@ -219,17 +218,17 @@ function paintTerrainLayer(x, C) {
   ks.filter(k => CB.ter[k] === "high").forEach(k => inkHigh(x, k, C));
   // the board is turned 90° in landscape: draw each tile's details turned back, so tufts still grow upwards
   const land = isLand();
-  ks.forEach(k => { const t = CB.ter[k], [tx, ty] = k.split(",").map(Number), l = tx * C, tp = ty * C;
+  ks.forEach(k => { const t = CB.ter[k], [tx, ty] = k.split(",").map(Number), l = (hcx(tx, ty) - .5) * C, tp = (hcy(tx, ty) - .5) * C;
     x.save(); if (land) { x.translate(l + C / 2, tp + C / 2); x.rotate(-Math.PI / 2); x.translate(-l - C / 2, -tp - C / 2); }
     if (t === "brush") (cfg.hay ? inkHay : inkBrush)(x, l, tp, C);
     else if (t === "rubble") inkRubble(x, l, tp, C); else if (t === "drift") inkDrift(x, l, tp, C);
     else if (t === "holy") inkHoly(x, l, tp, C); else if (t === "ash") inkAsh(x, l, tp, C);
     x.restore(); });
-  Object.keys(CB.fire || {}).forEach(k => { const [tx, ty] = k.split(",").map(Number); inkBurning(x, tx * C, ty * C, C); });
+  Object.keys(CB.fire || {}).forEach(k => { const [tx, ty] = k.split(",").map(Number); inkBurning(x, (hcx(tx, ty) - .5) * C, (hcy(tx, ty) - .5) * C, C); });
 }
 function inkHigh(x, k, C) {
   // a hillock drawn like an old map: contour rings, hachures down the slope, shaded side
-  const [tx, ty] = k.split(",").map(Number), cx = (tx + .5) * C, cy = (ty + .5) * C;
+  const [tx, ty] = k.split(",").map(Number), cx = hcx(tx, ty) * C, cy = hcy(tx, ty) * C;
   wash(x, cx, cy, C * .75, "#fff6dc", .6); wash(x, cx, cy, C * .5, "#c9a868", .2);
   const ring = (r, rough) => ipoly(cx, cy, r, 18, rough);
   const r1 = ring(C * .45, .08), r2 = ring(C * .3, .1), r3 = ring(C * .15, .12);
@@ -304,15 +303,15 @@ function zoneOf(u, s) {
   return null;
 }
 function movePreviewSVG() {
-  const sv = $("#psvg"); if (!sv) return; const C = CB.cell; sv.setAttribute("width", COLS * C); sv.setAttribute("height", ROWS * C); sv.setAttribute("viewBox", `0 0 ${COLS * C} ${ROWS * C}`);
+  const sv = $("#psvg"); if (!sv) return; const C = CB.cell; sv.setAttribute("width", BW * C); sv.setAttribute("height", BH * C); sv.setAttribute("viewBox", `0 0 ${BW * C} ${BH * C}`);
   const mv = CB.mvp, u = cur(); if (!mv || !u) { sv.innerHTML = ""; return; }
-  const P = mv.path.map(k => k.split(",").map(Number)), pt = ([a, b]) => `${(a + .5) * C},${(b + .5) * C}`;
+  const P = mv.path.map(k => k.split(",").map(Number)), pt = ([a, b]) => `${hcx(a, b) * C},${hcy(a, b) * C}`;
   let h = `<polyline points="${P.map(pt).join(" ")}" class="pl${mv.dash ? " dash" : ""}"/>`;
   let spent = 0;
   for (let i = 1; i < P.length; i++) { spent += stepCost(P[i - 1][0], P[i - 1][1], P[i][0], P[i][1]); const [a, b] = P[i], k = K(a, b);
     const hot = CB.fire[k] ? "fire" : provokers(u, {x: P[i - 1][0], y: P[i - 1][1]}, {x: a, y: b}).length ? "risk" : spent > u.mv ? "dsh" : "";
-    if (i < P.length - 1) h += `<circle cx="${(a + .5) * C}" cy="${(b + .5) * C}" r="${C * .07}" class="pd ${hot}"/>`; }
-  const [ex, ey] = P[P.length - 1], cx = (ex + .5) * C, cy = (ey + .5) * C;
+    if (i < P.length - 1) h += `<circle cx="${hcx(a, b) * C}" cy="${hcy(a, b) * C}" r="${C * .07}" class="pd ${hot}"/>`; }
+  const [ex, ey] = P[P.length - 1], cx = hcx(ex, ey) * C, cy = hcy(ex, ey) * C;
   h += `<circle cx="${cx}" cy="${cy}" r="${C * .3}" class="pe${mv.dash ? " dash" : ""}"/>`;
   h += `<text x="${cx}" y="${cy}" class="pt" ${isLand() ? `transform="rotate(-90 ${cx} ${cy})"` : ""} dy=".35em" style="font-size:${Math.round(C * .3)}px">${mv.cost}</text>`;
   sv.innerHTML = h;
@@ -325,7 +324,7 @@ function moveInfoHTML(u, mv) {
   const title = mv.then ? tr(["Avvicinati e attacca", "Approach and attack", "Acércate y ataca"]) : tr(["Movimento", "Move", "Movimiento"]);
   const tags = [`<span class="cost-t m" title="${tr(["movimento usato / disponibile", "movement used / available", "movimiento usado / disponible"])}">${mv.cost}/${mv.cost + left} ▸</span>`]; if (mv.dash) tags.push(`<span class="cost-t a">${tr(ABIL.dash.n)} · ${hasF(u.ref, "cunning") && u.bon > 0 ? T_("bonus") : T_("action")}</span>`);
   const notes = []; if (ti) notes.push(`<b>${tr(TER_INFO[ti][0])}</b>: ${tr(TER_INFO[ti][1])}`); if (risk) notes.push(`<span class="rk">● ${risk}</span>`);
-  return `<div class="mvbar"><div class="mvt"><b>${title}</b>${tags.join("")}${notes.length ? `<p class="hint">${notes.join(" · ")}</p>` : `<p class="hint">${tr(["Tocca di nuovo la casella o premi Vai.", "Tap the tile again or press Go.", "Toca de nuevo la casilla o pulsa Ir."])}</p>`}</div>
+  return `<div class="mvbar"><div class="mvt"><b>${title}</b>${tags.join("")}${notes.length ? `<p class="hint">${notes.join(" · ")}</p>` : `<p class="hint">${tr(["Tocca di nuovo l'esagono o premi Vai.", "Tap the hex again or press Go.", "Toca de nuevo el hexágono o pulsa Ir."])}</p>`}</div>
     <button class="mvgo" id="mvGo">${icon("end")}<span>${mv.then ? tr(["Vai e attacca", "Go & attack", "Ir y atacar"]) : tr(["Vai", "Go", "Ir"])}</span></button><button class="mvno" id="mvNo" aria-label="${T_("close")}">✕</button></div>`;
 }
 const _renderCombatZ = renderCombat;
@@ -363,10 +362,10 @@ renderCombat = function () {
 TIPS.push(
   ["hill", TER_INFO.high[0], TER_INFO.high[1]],
   ["brush", ["Terreno difficile e sterpaglia", "Difficult terrain and brush", "Terreno difícil y maleza"], ["Sterpaglia, macerie e neve alta costano 2 movimento. La sterpaglia dà mezza copertura a chi ci sta dentro, ma prende fuoco: un incantesimo di fuoco la trasforma in una trappola.", "Brush, rubble and deep snow cost 2 movement. Brush gives half cover to whoever stands in it, but it burns: a fire spell turns it into a trap.", "Maleza, escombros y nieve profunda cuestan 2 de movimiento. La maleza da media cobertura a quien está dentro, pero arde: un conjuro de fuego la convierte en una trampa."]],
-  ["eye", ["Linea di vista", "Line of sight", "Línea de visión"], ["Gli ostacoli alti, con l'ombra tratteggiata lunga, bloccano la vista: niente tiri né incantesimi attraverso. Le caselle scure nella zona d'azione sono fuori vista.", "Tall obstacles, with the long hatched shadow, block sight: no shots or spells through them. Dark tiles in the action zone are out of sight.", "Los obstáculos altos, con la sombra rayada larga, bloquean la vista: ni disparos ni conjuros a través. Las casillas oscuras de la zona de acción están fuera de vista."]],
+  ["eye", ["Linea di vista", "Line of sight", "Línea de visión"], ["Gli ostacoli alti, con l'ombra tratteggiata lunga, bloccano la vista: niente tiri né incantesimi attraverso. Gli esagoni scuri nella zona d'azione sono fuori vista.", "Tall obstacles, with the long hatched shadow, block sight: no shots or spells through them. Dark hexes in the action zone are out of sight.", "Los obstáculos altos, con la sombra rayada larga, bloquean la vista: ni disparos ni conjuros a través. Los hexágonos oscuros de la zona de acción están fuera de vista."]],
   ["sun", TER_INFO.holy[0], TER_INFO.holy[1]],
   ["burst", ["Bersagli esposti", "Exposed targets", "Objetivos expuestos"], ["Un nemico fiancheggiato in mischia, o senza copertura e già impegnato da un tuo alleato, è esposto (✸): i colpi critici arrivano con 18, 19 e 20. Vale anche contro di te.", "An enemy flanked in melee, or without cover and already engaged by one of your allies, is exposed (✸): critical hits land on 18, 19 and 20. It works against you too.", "Un enemigo flanqueado cuerpo a cuerpo, o sin cobertura y ya trabado por un aliado tuyo, está expuesto (✸): los críticos llegan con 18, 19 y 20. También vale contra ti."]],
-  ["wind", ["Movimento e zone d'azione", "Movement and action zones", "Movimiento y zonas de acción"], ["Tocca una casella per vedere il percorso, poi tocca di nuovo o premi Vai. Punti blu: movimento; punti dorati: serve lo Scatto. Zone: rosso attacco, arancione incantesimi e abilità, giallo guardia.", "Tap a tile to see the path, then tap again or press Go. Blue dots: movement; golden dots: needs a Dash. Zones: red attack, orange spells and abilities, yellow overwatch.", "Toca una casilla para ver el recorrido y vuelve a tocar o pulsa Ir. Puntos azules: movimiento; dorados: requiere Correr. Zonas: rojo ataque, naranja conjuros y habilidades, amarillo vigilancia."]],
+  ["wind", ["Movimento e zone d'azione", "Movement and action zones", "Movimiento y zonas de acción"], ["Tocca un esagono per vedere il percorso, poi tocca di nuovo o premi Vai. Punti blu: movimento; cerchi dorati: serve lo Scatto. Zone: rosso attacco, arancione incantesimi e abilità, giallo guardia.", "Tap a hex to see the path, then tap again or press Go. Blue dots: movement; golden rings: needs a Dash. Zones: red attack, orange spells and abilities, yellow overwatch.", "Toca un hexágono para ver el recorrido y vuelve a tocar o pulsa Ir. Puntos azules: movimiento; círculos dorados: requiere Correr. Zonas: rojo ataque, naranja conjuros y habilidades, amarillo vigilancia."]],
   ["crown", ["Capi", "Leaders", "Jefes"], ["Alcuni gruppi seguono un capo, segnato dalla corona. Ascolta cosa dicono i nemici: se il capo cade, i seguaci potrebbero darsi alla fuga e lo scontro finisce.", "Some groups follow a leader, marked by a crown. Listen to what the enemies say: if the leader falls, the followers may flee and the fight ends.", "Algunos grupos siguen a un jefe, marcado con una corona. Escucha lo que dicen los enemigos: si el jefe cae, los seguidores pueden huir y el combate termina."]],
 );
 const _extraOptsT = extraOptsHTML;

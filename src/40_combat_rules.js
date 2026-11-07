@@ -2,7 +2,26 @@
 const COLS = 7, ROWS = 9;
 let CB = null, CBSNAP = null;
 const K = (x, y) => x + "," + y;
-const dist = (a, b) => Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));
+/* ---------- hex grid ----------
+   Pointy-top hexes in "odd-r" offset coordinates: odd rows are shifted half a hex to the right.
+   Distances and directions use cube coordinates. Pixel units: 1 = hex width. */
+const HR = 1 / Math.sqrt(3), HROW = Math.sqrt(3) / 2;            // hex radius (centre→corner), row spacing
+const BW = COLS + .5, BH = (ROWS - 1) * HROW + 2 * HR;            // board size in hex widths
+const toCube = (x, y) => { const q = x - (y - (y & 1)) / 2; return [q, y, -q - y]; };
+const fromCube = (q, r) => [q + (r - (r & 1)) / 2, r];
+const dist = (a, b) => { const [aq, ar, as] = toCube(a.x, a.y), [bq, br, bs] = toCube(b.x, b.y); return Math.max(Math.abs(aq - bq), Math.abs(ar - br), Math.abs(as - bs)); };
+const HDIR = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
+const nbrs = (x, y) => { const [q, r] = toCube(x, y); return HDIR.map(([dq, dr]) => fromCube(q + dq, r + dr)).filter(([a, b]) => inGrid(a, b)); };
+const hcx = (x, y) => x + .5 + (y & 1) * .5, hcy = (x, y) => y * HROW + HR;   // hex centre
+// the hex that contains a point (pixel units)
+function hexAt(px, py) {
+  const X = px - .5, Y = py - HR, q = (Math.sqrt(3) / 3 * X - Y / 3) / HR, r = (2 / 3 * Y) / HR, s = -q - r;
+  let rq = Math.round(q), rr = Math.round(r), rs = Math.round(s); const dq = Math.abs(rq - q), dr = Math.abs(rr - r), ds = Math.abs(rs - s);
+  if (dq > dr && dq > ds) rq = -rr - rs; else if (dr > ds) rr = -rq - rs;
+  return fromCube(rq, rr);
+}
+// the creature directly opposite `a` across `t`
+const opposite = (a, t) => { const [aq, ar] = toCube(a.x, a.y), [tq, tr] = toCube(t.x, t.y); return fromCube(2 * tq - aq, 2 * tr - ar); };
 const alive = u => u.side === "e" ? u.hp > 0 : !u.down;
 const cur = () => CB.order[CB.ti];
 const unitAt = (x, y) => CB.units.find(u => u.x === x && u.y === y && (u.side === "p" || u.hp > 0));
@@ -17,7 +36,7 @@ const ABIL = {
   lay:{n:FEATS.lay, d:["Azione, tocco: cura usando la riserva (5 × livello per riposo).","Action, touch: heal from your pool (5 × level per rest).","Acción, toque: cura usando la reserva (5 × nivel por descanso)."], cost:"act", tgt:"ally", r:1},
   smite:{n:FEATS.smite, d:["Gratis: il prossimo colpo in mischia spende uno slot per +2d8 radiosi (+1d8 contro non morti).","Free: your next melee hit spends a slot for +2d8 radiant (+1d8 vs undead).","Gratis: tu siguiente golpe cuerpo a cuerpo gasta un espacio para +2d8 radiante (+1d8 contra muertos vivientes)."], cost:"free"},
   cunning:{n:FEATS.cunning, d:["Azione bonus: scatto (raddoppia il movimento).","Bonus action: dash (double movement).","Acción adicional: correr (duplica el movimiento)."], cost:"bon"},
-  turn:{n:FEATS.turn, d:["Azione: i non morti entro 6 caselle fanno un TS SAG o restano paralizzati 2 round. Una volta per riposo.","Action: undead within 6 tiles make a WIS save or are stunned for 2 rounds. Once per rest.","Acción: los muertos vivientes a 6 casillas hacen una salvación de SAB o quedan paralizados 2 rondas. Una vez por descanso."], cost:"act"},
+  turn:{n:FEATS.turn, d:["Azione: i non morti entro 6 esagoni fanno un TS SAG o restano paralizzati 2 round. Una volta per riposo.","Action: undead within 6 hexes make a WIS save or are stunned for 2 rounds. Once per rest.","Acción: los muertos vivientes a 6 hexágonos hacen una salvación de SAB o quedan paralizados 2 rondas. Una vez por descanso."], cost:"act"},
   disengage:{n:["Disimpegno","Disengage","Retirada"], d:["Azione: puoi muoverti senza provocare attacchi d'opportunità per questo turno.","Action: you can move without provoking opportunity attacks this turn.","Acción: puedes moverte sin provocar ataques de oportunidad este turno."], cost:"act"},
   cunningdis:{n:["Disimpegno scaltro","Cunning disengage","Retirada astuta"], d:["Azione bonus: disimpegno (nessun attacco d'opportunità).","Bonus action: disengage (no opportunity attacks).","Acción adicional: retirada (sin ataques de oportunidad)."], cost:"bon"},
   overwatch:{n:["Guardia","Overwatch","Vigilancia"], d:["Azione: termini il turno pronto a colpire. Il primo nemico che si muove entro la tua portata subisce un attacco (reazione).","Action: end your turn ready to strike. The first enemy that moves within your reach takes an attack (reaction).","Acción: terminas el turno listo para golpear. El primer enemigo que se mueva a tu alcance recibe un ataque (reacción)."], cost:"act"},
@@ -59,14 +78,14 @@ function startCombat(key, win, surprise) {
   showScreen("combat"); buildCombat();
   logL(tr(["Tiro per l'iniziativa…","Rolling initiative…","Tirando iniciativa…"]));
   if (surprise) logL(T_("surprised"));
-  if (CB.deploy) { logL(tr(["Schieramento: tocca un tuo personaggio, poi una casella dorata.","Deployment: tap one of your characters, then a golden tile.","Despliegue: toca a uno de tus personajes y luego una casilla dorada."])); renderCombat(); showTipsOnce(); }
+  if (CB.deploy) { logL(tr(["Schieramento: tocca un tuo personaggio, poi un esagono dorato.","Deployment: tap one of your characters, then a golden hex.","Despliegue: toca a uno de tus personajes y luego un hexágono dorado."])); renderCombat(); showTipsOnce(); }
   else setTimeout(nextTurn, 450);
 }
 function startBattle() { if (!CB || !CB.deploy) return; CB.deploy = false; CB.depSel = null; renderCombat(); setTimeout(nextTurn, 250); }
 function unitAtRaw(x, y) { return CB.units.find(u => u.x === x && u.y === y); }
 function connected() {
   const seen = new Set([K(3, ROWS - 1)]), q = [[3, ROWS - 1]];
-  while (q.length) { const [x, y] = q.shift(); for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) { const nx = x + dx, ny = y + dy, k = K(nx, ny); if (inGrid(nx, ny) && !CB.ob.has(k) && !seen.has(k)) { seen.add(k); q.push([nx, ny]); } } }
+  while (q.length) { const [x, y] = q.shift(); for (const [nx, ny] of nbrs(x, y)) { const k = K(nx, ny); if (!CB.ob.has(k) && !seen.has(k)) { seen.add(k); q.push([nx, ny]); } } }
   return seen.size === COLS * ROWS - CB.ob.size;
 }
 function logL(s) { CB.log.push(s); if (CB.log.length > 80) CB.log.shift(); renderLog(); }
@@ -79,11 +98,11 @@ function reachOf(u, limit, ai) {
   while (open.length) {
     let bi = 0; for (let i = 1; i < open.length; i++) if (open[i][0] < open[bi][0]) bi = i;
     const [w0, x, y] = open.splice(bi, 1)[0], cur0 = res.get(K(x, y)); if (w0 > cur0.w) continue;
-    for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) {
-      const nx = x + dx, ny = y + dy, k = K(nx, ny); if ((!dx && !dy) || !inGrid(nx, ny) || CB.ob.has(k)) continue;
+    for (const [nx, ny] of nbrs(x, y)) {
+      const k = K(nx, ny); if (CB.ob.has(k)) continue;
       const o = unitAt(nx, ny); if (o && o.side !== u.side && alive(o)) continue;
       const nd = cur0.d + stepCost(x, y, nx, ny); if (nd > limit) continue;
-      const pen = Math.min(999, cur0.pen + (CB.fire && CB.fire[k] ? (ai ? 60 : 20) : 0) + (dx && dy ? .01 : 0)), nw = nd * 1000 + pen;
+      const pen = Math.min(999, cur0.pen + (CB.fire && CB.fire[k] ? (ai ? 60 : 20) : 0)), nw = nd * 1000 + pen;
       const e = res.get(k); if (e && e.w <= nw) continue;
       res.set(k, {d: nd, w: nw, pen, p: K(x, y)}); open.push([nw, nx, ny]);
     }
@@ -162,6 +181,7 @@ async function nextTurn() {
   const u = cur(); u.mv = u.spd; u.act = 1; u.bon = 1; u.atkLeft = 0; u.sneakUsed = 0; u.colUsed = 0; u.react = 1; delete u.cond.dodge; delete u.cond.dis; delete u.cond.ow; delete u.cond.power;
   if (u.cond.prone && !u.cond.asleep && !u.cond.stun) { delete u.cond.prone; u.mv = Math.floor(u.spd / 2); logL(`${u.name}: ${tr(["si rialza","stands up","se levanta"])}`); }
   if (u.side === "e" && u.def.gob) u.cond.dis = 1;
+  masteryTurnStart(u);
   if (u.side === "p" && u.ref.trinket === "periapt" && u.hp < u.maxhp / 2) heal(u, 2);
   CB.sel = null; CB.pend = null; CB.inspect = null; CB.mvp = null; CB.tileInfo = null;
   const tok = CB.turnTok = (CB.turnTok || 0) + 1;
@@ -189,7 +209,7 @@ function selSpec(u, s) {
   if (s.k === "w") { const p = weapProfile(u.ref, weaponsOf(u.ref)[s.i]); return {tgt: "enemy", r: effR(u, p.r), base: p.r}; }
   if (s.k === "sp") { const sp = SPELLS[s.key]; return {tgt: sp.tgt, r: sp.tgt === "enemy" ? effR(u, sp.r || 0) : sp.r || 0, base: sp.r || 0, rad: sp.rad || 0}; }
   if (s.k === "ab") { const a = ABIL[s.key]; return {tgt: a.tgt || "none", r: a.r || 0}; }
-  if (s.k === "it") { const it = ITEMS[s.key]; if (it.tgt) return {tgt: it.tgt, r: it.r || 0, rad: it.rad || 0}; return it.use === "throw" ? {tgt: "enemy", r: effR(u, 5), base: 5} : {tgt: "ally", r: 1}; }
+  if (s.k === "it") { const it = ITEMS[s.key]; if (it.use === "oil") return {tgt: "none"}; if (it.tgt) return {tgt: it.tgt, r: it.r || 0, rad: it.rad || 0}; return it.use === "throw" ? {tgt: "enemy", r: effR(u, 5), base: 5} : {tgt: "ally", r: 1}; }
   return {tgt: "none"};
 }
 function slotFor(c, lv) { for (let i = lv - 1; i < 4; i++) if (c.slots[i] > 0) return i; return -1; }
@@ -197,7 +217,7 @@ function canUse(u, s) {
   const c = u.ref;
   if (s.k === "w") return u.atkLeft > 0 || u.act > 0;
   if (s.k === "sp") { const sp = SPELLS[s.key]; if (sp.bonus ? u.bon <= 0 : u.act <= 0) return false; return sp.lv === 0 || slotFor(c, sp.lv) >= 0; }
-  if (s.k === "it") return u.act > 0 && (S.inv[s.key] || 0) > 0;
+  if (s.k === "it") return (isOil(s.key) ? u.bon > 0 && !u.cond.oil : u.act > 0) && (S.inv[s.key] || 0) > 0;
   if (s.k === "ab") { const a = ABIL[s.key], k = s.key;
     if (a.cost === "act" && u.act <= 0) return false; if (a.cost === "bon" && u.bon <= 0) return false; if (a.cost === "atk" && u.act <= 0 && u.atkLeft <= 0) return false;
     if (k === "power") return !u.cond.power && (u.act > 0 || u.atkLeft > 0); if (k === "overwatch") return !!owProfile(u); if (k === "cunningdis" || k === "disengage") return !u.cond.dis;
@@ -289,7 +309,7 @@ function saveRoll(t, ab, dc, cov = 0) {
 }
 function adjEnemies(a) { return CB.units.filter(o => o.side !== a.side && alive(o) && dist(o, a) <= 1); }
 function allyNear(t, a) { return CB.units.some(o => o !== a && o.side === a.side && alive(o) && dist(o, t) <= 1); }
-function flanked(a, t) { if (dist(a, t) !== 1) return false; const ox = 2 * t.x - a.x, oy = 2 * t.y - a.y; return CB.units.some(x => x !== a && x.side === a.side && alive(x) && x.x === ox && x.y === oy && !x.cond.asleep && !x.cond.stun && !x.cond.prone); }
+function flanked(a, t) { if (dist(a, t) !== 1) return false; const [ox, oy] = opposite(a, t); return CB.units.some(x => x !== a && x.side === a.side && alive(x) && x.x === ox && x.y === oy && !x.cond.asleep && !x.cond.stun && !x.cond.prone); }
 function advInfo(a, t, o) {
   let adv = false, dis = false; const why = [];
   const melee = !o.ranged && dist(a, t) <= (o.reach || 1);
@@ -297,6 +317,8 @@ function advInfo(a, t, o) {
   if (t.cond.guided) { adv = true; why.push("guided"); }
   if (t.cond.prone) { if (melee) { adv = true; why.push("prone"); } else { dis = true; why.push("pronefar"); } }
   if (melee && flanked(a, t)) { adv = true; why.push("flank"); }
+  if (a.cond.sapped) { dis = true; why.push("sapped"); }
+  if (a.cond.vex === t.uid) { adv = true; why.push("vex"); }
   if (melee && a.side === "e" && a.def.pack && CB.units.some(x => x !== a && x.side === a.side && alive(x) && dist(x, t) <= 1)) { adv = true; why.push("pack"); }
   if (t.cond.dodge) { dis = true; why.push("dodge"); }
   if (a.cond.prone) { dis = true; why.push("selfprone"); }
@@ -309,6 +331,7 @@ async function attackRoll(a, t, o) {
   const ai = advInfo(a, t, o); let adv = ai.adv, dis = ai.dis;
   if (t.cond.guided) delete t.cond.guided;
   if (ai.why.includes("displace")) t.dispR = CB.round;
+  if (a.cond.sapped) delete a.cond.sapped; if (a.cond.vex === t.uid) delete a.cond.vex;
   const r1 = a.side === "p" ? d20For(a.ref) : rnd(20); let r = r1;
   if (adv !== dis) { const r2 = a.side === "p" ? d20For(a.ref) : rnd(20); r = adv ? Math.max(r1, r2) : Math.min(r1, r2); }
   const pw = o.power ? -5 : 0, hb = highBonus(a, t, o), ex = exposed(a, t, o);
@@ -320,7 +343,7 @@ async function attackRoll(a, t, o) {
   logL(`${a.name} → ${t.name}: ${r}${sgn(o.hit + bl + pw + hb)}=${tot} vs ${tac}${cov ? ` (${tr(COVER_T)} +${cov})` : ""}${hb ? " " + tr(["(altura)","(high ground)","(altura)"]) : ""}${adv !== dis ? (adv ? " ▲" : " ▼") : ""}${ai.why.includes("flank") ? " " + tr(["(fianco)","(flank)","(flanco)"]) : ""}${ex ? " " + tr(["(esposto)","(exposed)","(expuesto)"]) : ""} — ${hit ? (crit ? T_("crit") : T_("hits")) : T_("misses")}`);
   if (!hit && cov && tot >= t.ac && r !== 1) floatAt(t, tr(["Coperto!","Covered!","¡Cubierto!"]), "#e8d8a8", 1);
   if (!hit) { fxMiss(a, t); floatAt(t, T_("miss"), "#d8cdb8"); await sleep(380); return 0; }
-  fxImpact(t, o.type, crit); if (crit) { floatAt(t, T_("crit"), "#ffd38a", 1); fxShake(); }
+  fxImpact(t, o.type, crit); if (crit) { floatAt(t, T_("crit"), "#ffd38a", 1); fxShake(); bigMoment(t, "crit"); }
   let dmg = roll(crit ? critDice(o.dice) : o.dice).total + (o.flat || 0) + (o.power ? 10 : 0);
   if (a.side === "p") {
     const c = a.ref, und = t.def && t.def.undead;
@@ -332,6 +355,8 @@ async function attackRoll(a, t, o) {
     if (o.weapon && !o.ranged && a.cond.smite) { const i = slotFor(c, 1); if (i >= 0) { c.slots[i]--; delete a.cond.smite; dmg += roll(((und ? 3 : 2) * (crit ? 2 : 1)) + "d8").total; logL(tr(FEATS.smite) + "!"); } }
     if (c.id === "pc" && has("took_flame")) dmg += rnd(4);
     if (c.trinket === "sun_talisman" && o.weapon && und) dmg += rnd(4);
+    if (c.trinket === "sunlantern" && und) dmg += rnd(6);
+    if (o.weapon && a.cond.oil) dmg += rnd(4);
   } else if (S.diff === 2) dmg += 1;
   await applyDmg(t, dmg, o.type, a);
   if (o.type === "fire" && o.ranged) igniteArea(t, 0);
@@ -362,7 +387,8 @@ const powerOK = (c, ranged) => ranged ? hasFeat(c, "sharpshooter") : hasFeat(c, 
 async function weaponAttack(u, t, i) {
   const c = u.ref, p = weapProfile(c, weaponsOf(c)[i]); useAttack(u);
   const power = !!u.cond.power && powerOK(c, p.ranged); if (power) delete u.cond.power;
-  await attackRoll(u, t, {hit: p.hit, dice: p.dice, flat: p.flat, type: p.t, ranged: p.ranged, weapon: 1, finesse: p.finesse, power, crit: hasF(c, "impcrit") ? 19 : 20});
+  const dmg = await attackRoll(u, t, {hit: p.hit, dice: p.dice, flat: p.flat, type: p.t, ranged: p.ranged, weapon: 1, finesse: p.finesse, power, crit: hasF(c, "impcrit") ? 19 : 20});
+  if (CB && !CB.ended) await applyMastery(u, t, p, dmg > 0);
   if (!p.ranged && t.hp <= 0 && hasFeat(c, "gwm") && u.bon > 0 && cur() === u) { u.bon--; u.atkLeft++; floatAt(u, tr(["Furia!","Cleave!","¡Furia!"]), "#ffd38a", 1); logL(`${u.name}: ${tr(["attacco bonus","bonus attack","ataque adicional"])}`); }
 }
 async function castSpell(u, key, target) {
@@ -417,12 +443,14 @@ async function useAbility(u, key, target) {
   }
 }
 async function useItemC(u, key, target) {
-  const it = ITEMS[key]; u.act--; take(key); logL(`${u.name}: ${tr(it.n)}`);
-  if (it.use === "heal") heal(target, roll(it.dice).total);
+  const it = ITEMS[key]; if (it.use === "oil") u.bon--; else u.act--; take(key); logL(`${u.name}: ${tr(it.n)}`);
+  if (it.use === "oil") { u.cond.oil = 1; fxImpact(u, "fire", false); floatAt(u, tr(it.n), "#ffb070", 1); placeTokens(); await sleep(250); }
+  else if (it.use === "heal") heal(target, roll(it.dice).total);
   else if (it.use === "scroll" && it.spell === "fireball") { await fxProjectile(u, target, "fire"); await fxArea(target, 2, "fire"); const dmg = roll("8d6").total;
     for (const t of inArea(target, 2).filter(t => t !== u && alive(t))) { const ok = saveRoll(t, "dex", 15, coverOf(target, t)); await applyDmg(t, ok ? Math.floor(dmg / 2) : dmg, "fire", u); } igniteArea(target, 2); }
   else if (it.use === "scroll" && it.spell === "massheal") allies().forEach(a => heal(a, roll("2d8+2").total));
-  else await attackRoll(u, target, {hit: prof(u.ref) + abm(u.ref, "dex"), dice: "2d6", type: "fire", ranged: 1});
+  else { const und = target.def && target.def.undead, ty = it.type || "fire";
+    await attackRoll(u, target, {hit: prof(u.ref) + abm(u.ref, "dex"), dice: und && it.undead ? it.undead : it.dmg || "2d6", type: ty, ranged: 1}); }
 }
 
 /* ---------- AI: utility-based positioning ---------- */

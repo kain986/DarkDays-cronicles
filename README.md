@@ -24,12 +24,13 @@ Il gioco funziona offline. Nell'app controlla da solo se è uscita una versione 
 
 ## Caratteristiche
 
-- **Storia a capitoli.** Il *Capitolo I — Il Sole Nero* ha tre atti, un dungeon opzionale (le Volte di Aurel), 161 scene, compagni reclutabili e tre finali. La durata è di circa 5–6 ore. Gruppo, oggetti, livello e scelte passano ai capitoli successivi.
+- **Storia a capitoli.** Il *Capitolo I — Il Sole Nero* ha tre atti, un dungeon opzionale (le Volte di Aurel), due missioni segrete, 179 scene, compagni reclutabili e tre finali. La durata è di circa 5–6 ore. Gruppo, oggetti, livello e scelte passano ai capitoli successivi.
 - **Tre lingue:** italiano, inglese e spagnolo, cambiabili in qualsiasi momento.
 - **Creazione del personaggio in stile 5e:** 6 razze, 6 classi, background, acquisto a punti (27), abilità e competenze.
 - **Prove di abilità con il d20**, vantaggio e svantaggio, tiri salvezza e classi difficoltà visibili.
-- **Combattimento tattico a turni:**
-  - griglia con copertura mezza (+2 CA) e tre quarti (+5 CA);
+- **Combattimento tattico a turni su griglia esagonale:**
+  - maestrie delle armi (regole 5e 2024): Indebolire, Incalzare, Rallentare, Spingere, Rovesciare;
+  - copertura mezza (+2 CA) e tre quarti (+5 CA);
   - terreni con effetti: alture, sterpaglia che dà copertura e prende fuoco, macerie e neve alta, cerchi sacri, ostacoli alti che bloccano la linea di vista;
   - fiancheggiamento e bersagli esposti (critici con 18–20), attacchi di opportunità, Disimpegno, Guardia (overwatch), Atterrare, Colpo potente;
   - reazioni, condizioni e incantesimi con slot;
@@ -37,6 +38,11 @@ Il gioco funziona offline. Nell'app controlla da solo se è uscita una versione 
   - Le zone d'azione sono colorate: rosso per gli attacchi, arancione per gli incantesimi, giallo per la Guardia, scuro fuori vista. Il movimento mostra il percorso e il costo prima di confermare.
   - Toccando un nemico vedi la probabilità di colpirlo; le caselle rischiose sono segnalate prima di muoverti.
   - Prima dello scontro puoi schierare il gruppo; durante lo scontro ci sono sfide facoltative che danno ricompense.
+- **Crafting e mercato:**
+  - materiali lasciati dai nemici, raccolti riposando all'aperto o comprati;
+  - alchimia ovunque e fucine per armi e armature;
+  - ricette da imparare, vendita nei negozi.
+- **Indovinelli, rompicapo e missioni segrete**, tra cui la caccia alle Tre Fiamme dei Custodi e l'enigma del ladro di ricordi.
 - **IA dei nemici "utility":** valuta ogni casella raggiungibile in base al danno atteso, alla copertura, alle alture, alla linea di vista, al fuoco e al rischio di subire attacchi di opportunità o la Guardia.
 - **Progressione alla Baldur's Gate:**
   - livelli fino al 7 nel Capitolo I, talenti, dadi vita, riposi brevi e lunghi;
@@ -66,9 +72,11 @@ src/                      sorgenti del gioco (HTML/CSS/JS), concatenati in ordin
   71_tactics.js           schieramento, rischio di movimento, sfide
   72_landscape.js         modalità orizzontale
   73_terrain_leaders.js   terreni, linea di vista, fuoco, capi nemici, zone d'azione
+  74_masteries_fx.js      maestrie delle armi, kill cam
+  75_crafting.js          materiali, ricette, fucina, mercato
   80_meta.js              salvataggi, bestiario, obiettivi, opzioni, aggiornamenti
   99_boot.js              avvio
-  chapters/ch1_il_sole_nero/   Capitolo I (definizione + tre atti)
+  chapters/ch1_il_sole_nero/   Capitolo I (definizione, tre atti, segreti e indovinelli)
 tools/
   build.mjs               assembla il gioco nei tre file di uscita
   validate-story.mjs      controlla che ogni scena e ogni scelta portino da qualche parte

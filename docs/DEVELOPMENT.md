@@ -43,7 +43,7 @@ Il paragrafo che comincia in maiuscolo prima di un `\n\n` viene mostrato come ti
 
 ### Scelte
 
-Ogni scelta ha `t` (il testo) e una o più di queste chiavi:
+Ogni scelta ha `t` (il testo: array trilingue oppure funzione che lo restituisce) e una o più di queste chiavi:
 
 | Chiave | Effetto |
 |---|---|
@@ -53,6 +53,7 @@ Ogni scelta ha `t` (il testo) e una o più di queste chiavi:
 | `fight: "chiave"` + `win: "scena"` | combattimento dello scontro `ENC[chiave]` (può essere una funzione); `surprise: 1` fa iniziare i nemici |
 | `cost: n` | costa n monete d'oro (la scelta fallisce se non bastano) |
 | `fx: () => {…}` | effetto qualsiasi prima del resto |
+| `go: () => "scena"` + `to: ["a", "b"]` | destinazione calcolata (per esempio un rompicapo); `to` elenca le uscite possibili per il validatore |
 | `rest: 1` | riposo lungo |
 | `shop: "chiave"` | apre il negozio `SHOPS[chiave]` |
 | `end: 1` | fine del capitolo: la scena corrente deve essere uno dei finali dichiarati in `defineChapter` |
@@ -68,6 +69,8 @@ Funzioni di supporto per `once`, `enter` e `fx`:
 - `longRest()` e `shortRest()` per i riposi.
 
 I flag restano nel salvataggio e passano ai capitoli successivi.
+
+Le voci del diario dichiarate da un capitolo vanno in `CHAPTER_QUESTS.push({s, d, n, t})`: il motore le unisce a `QUESTS`. Per aggiungere scelte a scene già esistenti, ad esempio un hub, usa `addChoice(scena, scelta, primaDegliUltimiN)` (vedi `40_secrets.js`).
 
 ## Capitoli
 
@@ -147,3 +150,22 @@ Regole:
 - espone `DDCAndroid.setOrientation("land" | "port" | "auto")` e `DDCAndroid.appVersion()`.
 
 Per rilasciare: aumenta `versionCode`/`versionName`, aggiungi la sezione in `CHANGELOG.md` e fai il push su `main`. La CI crea la release `vX.Y` con l'APK, se non esiste già.
+
+## Griglia esagonale
+
+Gli esagoni hanno la punta in alto e usano coordinate "odd-r": le righe dispari sono spostate di mezzo esagono a destra. In `40_combat_rules.js` ci sono le funzioni di base:
+
+- `dist(a, b)`: distanza in esagoni, calcolata con le coordinate cubiche;
+- `nbrs(x, y)`: i sei vicini;
+- `opposite(a, t)`: l'esagono dietro `t` visto da `a` (per fiancheggiamento e Spinta);
+- `hcx`, `hcy`: il centro di un esagono, in larghezze di esagono;
+- `hexAt(px, py)`: l'esagono che contiene un punto;
+- `BW`, `BH`: le dimensioni della plancia.
+
+Linea di vista e copertura campionano la retta tra i centri.
+
+## Crafting
+
+- **Ricette:** `RECIPES` in `75_crafting.js`, con `need` (materiali), `gold`, `kind` (`alc` o `forge`), `learn` (flag da avere), `cls` (classi richieste nel gruppo) e `forge` (livello della fucina: 2 = maestro).
+- **Materiali:** sono `ITEMS` con `use: "mat"`. Cosa lascia ogni nemico lo decide `dropsOf(f)`.
+- **Negozi:** `SHOPS[id].forge` (1 o 2) aggiunge la scheda Fucina.

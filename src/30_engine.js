@@ -33,7 +33,7 @@ const abEff = (c, k) => { const v = c.ab[k], t = c.trinket && ITEMS[c.trinket]; 
 const abm = (c, k) => mod(abEff(c, k));
 const hasFeat = (c, f) => !!(c && c.feats && c.feats.includes(f));
 function maxHP(c) { const h = CL(c).hd, con = abm(c, "con"); let hp = h + con + (c.lvl - 1) * (h / 2 + 1 + con); if (c.race === "dwarf") hp += c.lvl; if (hasFeat(c, "tough")) hp += 2 * c.lvl; return Math.max(1, hp); }
-function acOf(c) { const dex = abm(c, "dex"); const a = CL(c).armor; let ac = a === "heavy" ? 16 : a === "medium" ? 14 + Math.min(dex, 2) : a === "light" ? 11 + dex : 13 + dex; if (CL(c).shield) ac += 2; return ac + (c.aplus || 0) + (c.trinket === "ring_prot" ? 1 : 0); }
+function acOf(c) { const dex = abm(c, "dex"); const a = CL(c).armor; let ac = a === "heavy" ? 16 : a === "medium" ? 14 + Math.min(dex, 2) : a === "light" ? 11 + dex : 13 + dex; if (CL(c).shield) ac += 2; return ac + (c.aplus || 0) + (c.trinket === "ring_prot" || c.trinket === "sunlantern" ? 1 : 0); }
 const speedOf = c => RACES[c.race].spd + (c.trinket === "boots_wind" ? 2 : 0) + (hasFeat(c, "mobile") ? 2 : 0);
 function slotsMax(c) { const t = CL(c).caster; const tab = t === "full" ? FULL : t === "half" ? HALF : null; const s = tab ? tab[c.lvl].slice() : [0,0,0,0]; if (tab && c.trinket === "pearl_power") s[c.lvl >= 3 ? 1 : 0]++; return s; }
 const castMod = c => CL(c).cast ? abm(c, CL(c).cast) : 0;
@@ -45,7 +45,7 @@ function spellsOf(c) { const t = CL(c).spells || {}, out = []; Object.keys(t).fo
 const weaponsOf = c => c.weapons || CL(c).weapons;
 const skillBonus = (c, sk) => abm(c, SKILLS[sk][1]) + (c.skills.includes(sk) ? prof(c) : 0);
 function auraBonus() { if (!S) return 0; const p = S.party.find(c => c.cls === "paladin" && c.lvl >= 6 && c.hp > 0); return p ? Math.max(1, abm(p, "cha")) : 0; }
-const saveBonus = (c, ab) => abm(c, ab) + (CL(c).saves.includes(ab) ? prof(c) : 0) + auraBonus() + (c.trinket === "ring_prot" ? 1 : 0);
+const saveBonus = (c, ab) => abm(c, ab) + (CL(c).saves.includes(ab) ? prof(c) : 0) + auraBonus() + (c.trinket === "ring_prot" || c.trinket === "sunlantern" ? 1 : 0);
 function resetRes(c) { c.res = {sw: 1, as: 1, lay: 5 * c.lvl, ch: 1, arc: 1}; c.hdLeft = c.lvl; }
 function recalc(c, full) {
   const m = maxHP(c);
@@ -381,7 +381,7 @@ async function choose(i) {
   if (ch.toTitle) { saveGame(true); renderTitle(); return; }
   if (ch.cost) { if (S.gold < ch.cost) { toast(T_("noGold")); return; } S.gold -= ch.cost; }
   if (ch.fx) ch.fx();
-  if (ch.rest) { longRest(); toastQ(UI.rested); }
+  if (ch.rest) { longRest(); toastQ(UI.rested); if (!ch.cost) forage(); }
   if (ch.shop) { renderStory(); openShop(ch.shop); return; }
   if (ch.check) { BUSY = true; const ok = await doCheck(ch.check); BUSY = false; goScene(ok ? ch.check.ok : ch.check.ko); return; }
   if (ch.fight) { const k = typeof ch.fight === "function" ? ch.fight() : ch.fight; startCombat(k, ch.win, !!ch.surprise); return; }
@@ -469,6 +469,7 @@ const QUESTS = [
   {s: "vault_known", d: "vault_done", n:["Le Volte di Aurel","The Vaults of Aurel","Las Bóvedas de Aurel"], t: ["Sotto la cappella dell'Archivio di Vesperia riposano le armi dei Custodi del Sole. Il sigillo si è incrinato.","Beneath the Vesperia Archive chapel rest the Sunwardens' weapons. The seal has cracked.","Bajo la capilla del Archivo de Vesperia descansan las armas de los Custodios del Sol. El sello se ha agrietado."]},
   {s: "invite", d: "masq_done", n:["Il ballo in maschera","The masquerade","El baile de máscaras"], t: ["Il Duca Malvern custodisce un registro dei suoi patti con il buio.","Duke Malvern keeps a ledger of his pacts with the dark.","El Duque Malvern guarda un registro de sus pactos con la oscuridad."]},
 ];
+QUESTS.push(...CHAPTER_QUESTS);
 function journalHTML() {
   const qs = QUESTS.filter(q => typeof q.s === "function" ? q.s() : has(q.s));
   if (!qs.length) return `<p>${T_("noQuests")}</p>`;

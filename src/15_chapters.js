@@ -3,6 +3,7 @@
 // itself with defineChapter(). Party, items, level and story flags carry over from one chapter to
 // the next, so a later chapter can react to earlier choices (e.g. has("doran_ally")).
 const SC = {};
+const CHAPTER_QUESTS = []; // journal entries declared by chapters (merged into QUESTS by the engine)
 const cat = (...parts) => { const p = parts.filter(Boolean); return [0,1,2].map(i => p.map(x => x[i]).join("\n\n")); };
 const CHAPTERS = [];
 function defineChapter(c) { if (CHAPTERS.some(x => x.id === c.id)) throw new Error("duplicate chapter " + c.id); CHAPTERS.push(c); return c; }

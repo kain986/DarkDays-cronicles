@@ -4,7 +4,7 @@ var GAME_VERSION = "dev"; // replaced by tools/build.mjs
 var IS_APP = false;      // true only in the Android build (enables the update check)
 let LG = 0; // 0 it, 1 en, 2 es
 const LANG_CODES = ["it","en","es"];
-const tr = a => a == null ? "" : (Array.isArray(a) ? (a[LG] != null ? a[LG] : a[0]) : String(a));
+const tr = a => a == null ? "" : typeof a === "function" ? tr(a()) : (Array.isArray(a) ? (a[LG] != null ? a[LG] : a[0]) : String(a));
 const UI = {
   tag:["Quaranta giorni senza alba.","Forty days without a dawn.","Cuarenta días sin amanecer."],
   sub:["Cronache","Chronicles","Crónicas"],
@@ -57,10 +57,10 @@ const UI = {
   defeatTxt:["Il buio si chiude su di voi. Ma la storia non è ancora scritta.","Darkness closes over you. But the story is not yet written.","La oscuridad se cierra sobre vosotros. Pero la historia aún no está escrita."],
   retry:["Riprova lo scontro","Retry the battle","Reintentar el combate"],
   enemyTurn:["Turno nemico","Enemy turn","Turno enemigo"],
-  tapMove:["Tocca una casella per muoverti, un nemico per attaccare.","Tap a tile to move, an enemy to attack.","Toca una casilla para moverte, un enemigo para atacar."],
+  tapMove:["Tocca un esagono per muoverti, un nemico per attaccare.","Tap a hex to move, an enemy to attack.","Toca un hexágono para moverte, un enemigo para atacar."],
   tapTarget:["Scegli un bersaglio.","Choose a target.","Elige un objetivo."],
   tapArea:["Scegli il centro. Tocca di nuovo per confermare.","Pick the centre. Tap again to confirm.","Elige el centro. Toca de nuevo para confirmar."],
-  tapTile:["Scegli una casella libera.","Choose a free tile.","Elige una casilla libre."],
+  tapTile:["Scegli un esagono libero.","Choose a free hex.","Elige un hexágono libre."],
   slotsL:["Slot","Slots","Espacios"], cantrip:["trucchetto","cantrip","truco"],
   hits:["colpisce","hits","golpea"], misses:["manca","misses","falla"], crit:["CRITICO!","CRITICAL!","¡CRÍTICO!"],
   heals:["recupera","regains","recupera"], down:["è a terra!","is down!","¡cae!"], dies:["è sconfitto","is defeated","es derrotado"],
@@ -219,15 +219,15 @@ const COMPS = {
 
 /* =================== WEAPONS =================== */
 const WEAP = {
-  longsword:{n:["Spada lunga","Longsword","Espada larga"], d:"1d8", st:"str", r:1, t:"slash"},
-  warhammer:{n:["Martello da guerra","Warhammer","Martillo de guerra"], d:"1d8", st:"str", r:1, t:"blunt"},
-  javelin:{n:["Giavellotto","Javelin","Jabalina"], d:"1d6", st:"str", r:5, ranged:1, t:"pierce"},
-  rapier:{n:["Stocco","Rapier","Estoque"], d:"1d8", st:"fin", r:1, t:"pierce"},
-  shortbow:{n:["Arco corto","Shortbow","Arco corto"], d:"1d6", st:"dex", r:8, ranged:1, t:"pierce"},
-  longbow:{n:["Arco lungo","Longbow","Arco largo"], d:"1d8", st:"dex", r:10, ranged:1, t:"pierce"},
-  shortsword:{n:["Spada corta","Shortsword","Espada corta"], d:"1d6", st:"fin", r:1, t:"slash"},
-  quarterstaff:{n:["Bastone","Quarterstaff","Bastón"], d:"1d6", st:"str", r:1, t:"blunt"},
-  mace:{n:["Mazza","Mace","Maza"], d:"1d6", st:"str", r:1, t:"blunt"},
+  longsword:{m:"sap", n:["Spada lunga","Longsword","Espada larga"], d:"1d8", st:"str", r:1, t:"slash"},
+  warhammer:{m:"push", n:["Martello da guerra","Warhammer","Martillo de guerra"], d:"1d8", st:"str", r:1, t:"blunt"},
+  javelin:{m:"slow", n:["Giavellotto","Javelin","Jabalina"], d:"1d6", st:"str", r:5, ranged:1, t:"pierce"},
+  rapier:{m:"vex", n:["Stocco","Rapier","Estoque"], d:"1d8", st:"fin", r:1, t:"pierce"},
+  shortbow:{m:"vex", n:["Arco corto","Shortbow","Arco corto"], d:"1d6", st:"dex", r:8, ranged:1, t:"pierce"},
+  longbow:{m:"slow", n:["Arco lungo","Longbow","Arco largo"], d:"1d8", st:"dex", r:10, ranged:1, t:"pierce"},
+  shortsword:{m:"vex", n:["Spada corta","Shortsword","Espada corta"], d:"1d6", st:"fin", r:1, t:"slash"},
+  quarterstaff:{m:"topple", n:["Bastone","Quarterstaff","Bastón"], d:"1d6", st:"str", r:1, t:"blunt"},
+  mace:{m:"sap", n:["Mazza","Mace","Maza"], d:"1d6", st:"str", r:1, t:"blunt"},
 };
 
 /* =================== SPELLS =================== */
@@ -235,27 +235,27 @@ const SPELLS = {
   firebolt:{lv:0, n:["Dardo di fuoco","Fire Bolt","Descarga de fuego"], tgt:"enemy", r:10, d:["Attacco a distanza, 1d10 fuoco (2d10 dal 5°).","Ranged attack, 1d10 fire (2d10 from level 5).","Ataque a distancia, 1d10 fuego (2d10 desde nivel 5)."]},
   sacredflame:{lv:0, n:["Fiamma sacra","Sacred Flame","Llama sagrada"], tgt:"enemy", r:8, d:["TS Destrezza o 1d8 radiosi (2d8 dal 5°).","DEX save or 1d8 radiant (2d8 from level 5).","Salvación de DES o 1d8 radiante (2d8 desde nivel 5)."]},
   magicmissile:{lv:1, n:["Dardo incantato","Magic Missile","Proyectil mágico"], tgt:"enemy", r:12, d:["Colpisce sempre: 3d4+3 forza.","Never misses: 3d4+3 force.","Nunca falla: 3d4+3 fuerza."]},
-  sleep:{lv:1, n:["Sonno","Sleep","Dormir"], tgt:"area", r:9, rad:1, d:["Addormenta nemici per 5d8 PF totali (area 3×3). Non morti immuni.","Puts enemies to sleep up to 5d8 total HP (3×3 area). Undead immune.","Duerme enemigos hasta 5d8 PG en total (área 3×3). Muertos vivientes inmunes."]},
-  burninghands:{lv:1, n:["Mani brucianti","Burning Hands","Manos ardientes"], tgt:"area", r:2, rad:1, ff:1, d:["Area 3×3 vicina: TS DES, 3d6 fuoco (metà se riesce).","Nearby 3×3 area: DEX save, 3d6 fire (half on success).","Área 3×3 cercana: salvación DES, 3d6 fuego (mitad si la supera)."]},
+  sleep:{lv:1, n:["Sonno","Sleep","Dormir"], tgt:"area", r:9, rad:1, d:["Addormenta nemici per 5d8 PF totali (area di 7 esagoni). Non morti immuni.","Puts enemies to sleep up to 5d8 total HP (7-hex area). Undead immune.","Duerme enemigos hasta 5d8 PG en total (área de 7 hexágonos). Muertos vivientes inmunes."]},
+  burninghands:{lv:1, n:["Mani brucianti","Burning Hands","Manos ardientes"], tgt:"area", r:2, rad:1, ff:1, d:["Area di 7 esagoni vicina: TS DES, 3d6 fuoco (metà se riesce).","Nearby 7-hex area: DEX save, 3d6 fire (half on success).","Área de 7 hexágonos cercana: salvación DES, 3d6 fuego (mitad si la supera)."]},
   curewounds:{lv:1, n:["Cura ferite","Cure Wounds","Curar heridas"], tgt:"ally", r:1, d:["Tocco: cura 1d8 + modificatore.","Touch: heals 1d8 + modifier.","Toque: cura 1d8 + modificador."]},
   healingword:{lv:1, bonus:1, n:["Parola guaritrice","Healing Word","Palabra curativa"], tgt:"ally", r:8, d:["Azione bonus a distanza: cura 1d4 + modificatore. Rialza gli alleati a terra.","Bonus action at range: heals 1d4 + modifier. Raises downed allies.","Acción adicional a distancia: cura 1d4 + modificador. Levanta aliados caídos."]},
   bless:{lv:1, n:["Benedizione","Bless","Bendecir"], tgt:"none", d:["Tutto il gruppo aggiunge 1d4 ai tiri per colpire e ai tiri salvezza per lo scontro.","The whole party adds 1d4 to attack rolls and saves for the fight.","Todo el grupo suma 1d4 a ataques y salvaciones durante el combate."]},
   guidingbolt:{lv:1, n:["Dardo tracciante","Guiding Bolt","Saeta guía"], tgt:"enemy", r:12, d:["Attacco: 4d6 radiosi; il prossimo attacco contro il bersaglio ha vantaggio.","Attack: 4d6 radiant; next attack against the target has advantage.","Ataque: 4d6 radiante; el siguiente ataque contra el objetivo tiene ventaja."]},
   huntersmark:{lv:1, bonus:1, n:["Marchio del cacciatore","Hunter's Mark","Marca del cazador"], tgt:"enemy", r:18, d:["Azione bonus: +1d6 danni a ogni tuo colpo sul bersaglio.","Bonus action: +1d6 damage on each of your hits against the target.","Acción adicional: +1d6 de daño en cada golpe tuyo contra el objetivo."]},
   scorchingray:{lv:2, n:["Raggio rovente","Scorching Ray","Rayo abrasador"], tgt:"enemy", r:12, d:["Tre raggi, ognuno un attacco da 2d6 fuoco.","Three rays, each a 2d6 fire attack.","Tres rayos, cada uno un ataque de 2d6 fuego."]},
-  mistystep:{lv:2, bonus:1, n:["Passo velato","Misty Step","Paso brumoso"], tgt:"tile", r:6, d:["Azione bonus: teletrasporto fino a 6 caselle.","Bonus action: teleport up to 6 tiles.","Acción adicional: teletransporte hasta 6 casillas."]},
+  mistystep:{lv:2, bonus:1, n:["Passo velato","Misty Step","Paso brumoso"], tgt:"tile", r:6, d:["Azione bonus: teletrasporto fino a 6 esagoni.","Bonus action: teleport up to 6 hexes.","Acción adicional: teletransporte hasta 6 hexágonos."]},
   spiritualweapon:{lv:2, bonus:1, n:["Arma spirituale","Spiritual Weapon","Arma espiritual"], tgt:"none", d:["Azione bonus: evoca un'arma; nei turni seguenti attacca come azione bonus (1d8 + mod).","Bonus action: summon a weapon; on later turns strike as a bonus action (1d8 + mod).","Acción adicional: invoca un arma; en turnos siguientes ataca como acción adicional (1d8 + mod)."]},
-  fireball:{lv:3, n:["Palla di fuoco","Fireball","Bola de fuego"], tgt:"area", r:12, rad:2, ff:1, d:["Area 5×5: TS DES, 8d6 fuoco (metà se riesce).","5×5 area: DEX save, 8d6 fire (half on success).","Área 5×5: salvación DES, 8d6 fuego (mitad si la supera)."]},
-  spiritguardians:{lv:3, n:["Guardiani spirituali","Spirit Guardians","Guardianes espirituales"], tgt:"none", d:["I nemici che iniziano il turno entro 2 caselle subiscono 3d8 radiosi (TS SAG dimezza).","Enemies starting their turn within 2 tiles take 3d8 radiant (WIS save halves).","Los enemigos que empiezan su turno a 2 casillas reciben 3d8 radiante (salvación SAB a la mitad)."]},
+  fireball:{lv:3, n:["Palla di fuoco","Fireball","Bola de fuego"], tgt:"area", r:12, rad:2, ff:1, d:["Area di 19 esagoni: TS DES, 8d6 fuoco (metà se riesce).","19-hex area: DEX save, 8d6 fire (half on success).","Área de 19 hexágonos: salvación DES, 8d6 fuego (mitad si la supera)."]},
+  spiritguardians:{lv:3, n:["Guardiani spirituali","Spirit Guardians","Guardianes espirituales"], tgt:"none", d:["I nemici che iniziano il turno entro 2 esagoni subiscono 3d8 radiosi (TS SAG dimezza).","Enemies starting their turn within 2 hexes take 3d8 radiant (WIS save halves).","Los enemigos que empiezan su turno a 2 hexágonos reciben 3d8 radiante (salvación SAB a la mitad)."]},
   masshealingword:{lv:3, bonus:1, n:["Parola guaritrice di massa","Mass Healing Word","Palabra curativa en masa"], tgt:"none", d:["Azione bonus: tutto il gruppo recupera 1d4 + mod e si rialza.","Bonus action: the whole party regains 1d4 + mod and stands up.","Acción adicional: todo el grupo recupera 1d4 + mod y se levanta."]},
-  icestorm:{lv:4, n:["Tempesta di ghiaccio","Ice Storm","Tormenta de hielo"], tgt:"area", r:12, rad:2, ff:1, d:["Area 5×5: TS DES, 2d8+4d6 (metà se riesce).","5×5 area: DEX save, 2d8+4d6 (half on success).","Área 5×5: salvación DES, 2d8+4d6 (mitad si la supera)."]},
+  icestorm:{lv:4, n:["Tempesta di ghiaccio","Ice Storm","Tormenta de hielo"], tgt:"area", r:12, rad:2, ff:1, d:["Area di 19 esagoni: TS DES, 2d8+4d6 (metà se riesce).","19-hex area: DEX save, 2d8+4d6 (half on success).","Área de 19 hexágonos: salvación DES, 2d8+4d6 (mitad si la supera)."]},
 };
 
 /* =================== ITEMS =================== */
 const ITEMS = {
   potion:{n:["Pozione di guarigione","Healing potion","Poción de curación"], d:["Cura 2d4+2 PF.","Heals 2d4+2 HP.","Cura 2d4+2 PG."], price:25, use:"heal", dice:"2d4+2"},
   greater:{n:["Pozione superiore","Greater potion","Poción mayor"], d:["Cura 4d4+4 PF.","Heals 4d4+4 HP.","Cura 4d4+4 PG."], price:60, use:"heal", dice:"4d4+4"},
-  flask:{n:["Fuoco dell'alchimista","Alchemist's fire","Fuego de alquimista"], d:["Da lanciare in combattimento: 2d6 fuoco a un nemico entro 5 caselle.","Throw in combat: 2d6 fire to an enemy within 5 tiles.","Para lanzar en combate: 2d6 fuego a un enemigo a 5 casillas."], price:15, use:"throw"},
+  flask:{n:["Fuoco dell'alchimista","Alchemist's fire","Fuego de alquimista"], d:["Da lanciare in combattimento: 2d6 fuoco a un nemico entro 5 esagoni.","Throw in combat: 2d6 fire to an enemy within 5 hexes.","Para lanzar en combate: 2d6 fuego a un enemigo a 5 hexágonos."], price:15, use:"throw"},
   w1:{n:["Arma rifinita +1","Fine weapon +1","Arma refinada +1"], d:["+1 a colpire e ai danni con le armi.","+1 to hit and damage with weapons.","+1 al ataque y daño con armas."], price:200, use:"equip", slot:"w", v:1},
   a1:{n:["Piastre rinforzate +1","Reinforced plates +1","Placas reforzadas +1"], d:["+1 alla Classe Armatura (massimo +2).","+1 to Armor Class (max +2).","+1 a la Clase de Armadura (máximo +2)."], price:180, use:"equip", slot:"a", v:1},
   w2:{n:["Arma dei Custodi +2","Sunwarden weapon +2","Arma de los Custodios +2"], d:["+2 a colpire e ai danni con le armi.","+2 to hit and damage with weapons.","+2 al ataque y daño con armas."], price:550, use:"equip", slot:"w", v:2},
@@ -265,7 +265,7 @@ const ITEMS = {
   coin:{n:["Moneta della Corona Cava","Hollow Crown coin","Moneda de la Corona Hueca"], d:["Argento annerito, inciso con una corona vuota.","Blackened silver stamped with an empty crown.","Plata ennegrecida con una corona vacía grabada."], quest:1},
 };
 Object.assign(ITEMS, {
-  scroll_fire:{n:["Pergamena: Palla di fuoco","Scroll: Fireball","Pergamino: Bola de fuego"], d:["Chiunque può leggerla in combattimento: area 5×5, TS DES CD 15, 8d6 fuoco.","Anyone can read it in combat: 5×5 area, DEX save DC 15, 8d6 fire.","Cualquiera puede leerlo en combate: área 5×5, salvación DES CD 15, 8d6 fuego."], price:150, use:"scroll", spell:"fireball", tgt:"area", r:12, rad:2},
+  scroll_fire:{n:["Pergamena: Palla di fuoco","Scroll: Fireball","Pergamino: Bola de fuego"], d:["Chiunque può leggerla in combattimento: area di 19 esagoni, TS DES CD 15, 8d6 fuoco.","Anyone can read it in combat: 19-hex area, DEX save DC 15, 8d6 fire.","Cualquiera puede leerlo en combate: área de 19 hexágonos, salvación DES CD 15, 8d6 fuego."], price:150, use:"scroll", spell:"fireball", tgt:"area", r:12, rad:2},
   scroll_heal:{n:["Pergamena: Cura di gruppo","Scroll: Mass Cure","Pergamino: Curación en grupo"], d:["In combattimento: tutto il gruppo recupera 2d8+2 PF e si rialza.","In combat: the whole party regains 2d8+2 HP and stands up.","En combate: todo el grupo recupera 2d8+2 PG y se levanta."], price:110, use:"scroll", spell:"massheal", tgt:"none"},
   ring_prot:{n:["Anello di protezione","Ring of Protection","Anillo de protección"], d:["Accessorio: +1 alla CA e a tutti i tiri salvezza.","Trinket: +1 to AC and all saving throws.","Accesorio: +1 a la CA y a todas las salvaciones."], price:450, use:"equip", slot:"t"},
   amulet_health:{n:["Amuleto della salute","Amulet of Health","Amuleto de salud"], d:["Accessorio: la tua Costituzione diventa 19.","Trinket: your Constitution becomes 19.","Accesorio: tu Constitución pasa a ser 19."], price:600, use:"equip", slot:"t", setAb:["con", 19]},
@@ -278,6 +278,20 @@ Object.assign(ITEMS, {
   pearl_power:{n:["Perla del potere","Pearl of Power","Perla de poder"], d:["Accessorio per incantatori: +1 slot incantesimo (di 2° livello dal 3° livello).","Caster trinket: +1 spell slot (2nd level from character level 3).","Accesorio de lanzador: +1 espacio de conjuro (de 2º nivel desde nivel 3)."], price:500, use:"equip", slot:"t"},
   eye_hawk:{n:["Lente del falco","Hawk's Lens","Lente del halcón"], d:["Accessorio: +2 ai tiri per colpire a distanza con le armi.","Trinket: +2 to hit with ranged weapon attacks.","Accesorio: +2 al ataque a distancia con armas."], price:350, use:"equip", slot:"t"},
 });
+/* materials and crafted items (crafting: 75_crafting.js) */
+Object.assign(ITEMS, {
+  herb:{n:["Erbe di Valtenebra","Valtenebra herbs","Hierbas de Valtenebra"], d:["Materiale: foglie amare che crescono anche senza sole. Base di pozioni e oli.","Material: bitter leaves that grow even without sun. Base for potions and oils.","Material: hojas amargas que crecen incluso sin sol. Base de pociones y aceites."], price:4, use:"mat", ic:"leaf"},
+  resin:{n:["Resina nera","Black resin","Resina negra"], d:["Materiale: resina appiccicosa dei pini morti. Brucia a lungo.","Material: sticky resin from dead pines. It burns for a long time.","Material: resina pegajosa de los pinos muertos. Arde mucho tiempo."], price:5, use:"mat", ic:"flame"},
+  bone:{n:["Polvere d'ossa","Bone dust","Polvo de hueso"], d:["Materiale: ciò che resta dei non morti. Gli alchimisti la usano per l'acqua consacrata.","Material: what remains of the undead. Alchemists use it for holy water.","Material: lo que queda de los muertos vivientes. Los alquimistas la usan para el agua bendita."], price:6, use:"mat", ic:"skull"},
+  iron:{n:["Rottami di ferro","Scrap iron","Chatarra de hierro"], d:["Materiale: lame spezzate e fibbie. Un fabbro ne fa armi migliori.","Material: broken blades and buckles. A smith turns them into better gear.","Material: hojas rotas y hebillas. Un herrero las convierte en mejor equipo."], price:8, use:"mat", ic:"shield"},
+  essence:{n:["Essenza d'ombra","Shadow essence","Esencia de sombra"], d:["Materiale raro: un fumo freddo che si raccoglie dove cade un servo della Corona.","Rare material: a cold smoke that gathers where a servant of the Crown falls.","Material raro: un humo frío que se acumula donde cae un siervo de la Corona."], price:25, use:"mat", ic:"eye"},
+  sunshard:{n:["Frammento di sole","Sun shard","Fragmento de sol"], d:["Materiale raro: una scheggia d'oro tiepido, ciò che resta della luce dei Custodi.","Rare material: a warm golden splinter, what remains of the Sunwardens' light.","Material raro: una astilla de oro tibio, lo que queda de la luz de los Custodios."], price:60, use:"mat", ic:"sun"},
+  oil:{n:["Olio infuocato","Fire oil","Aceite ígneo"], d:["Azione bonus in combattimento: per il resto dello scontro i tuoi colpi con l'arma infliggono +1d4 danni da fuoco.","Bonus action in combat: for the rest of the fight your weapon hits deal +1d4 fire damage.","Acción adicional en combate: durante el resto del combate tus golpes con arma causan +1d4 de daño de fuego."], price:30, use:"oil"},
+  holywater:{n:["Acqua consacrata","Holy water","Agua bendita"], d:["Da lanciare entro 5 esagoni: 2d6 radiosi, 4d6 ai non morti.","Throw within 5 hexes: 2d6 radiant, 4d6 against the undead.","Para lanzar a 5 hexágonos: 2d6 radiante, 4d6 contra muertos vivientes."], price:25, use:"throw", dmg:"2d6", undead:"4d6", type:"radiant"},
+  sunlantern:{n:["Lanterna dei Custodi","Sunwarden Lantern","Linterna de los Custodios"], d:["Accessorio leggendario: i tuoi colpi infliggono +1d6 radiosi ai non morti, e hai +1 a tutti i tiri salvezza.","Legendary trinket: your hits deal +1d6 radiant to the undead, and you get +1 to all saving throws.","Accesorio legendario: tus golpes causan +1d6 radiante a los muertos vivientes, y tienes +1 a todas las salvaciones."], price:900, use:"equip", slot:"t"},
+  memvial:{n:["Fiala di ricordi","Vial of memories","Frasco de recuerdos"], d:["Una fiala opaca che contiene la voce di qualcuno. Va restituita.","An opaque vial holding someone's voice. It must be returned.","Un frasco opaco que contiene la voz de alguien. Hay que devolverlo."], use:"quest"},
+});
+ITEMS.flask.dmg = "2d6"; ITEMS.flask.type = "fire";
 const FEATLIST = {
   sharpshooter:{n:["Tiratore scelto","Sharpshooter","Tirador experto"], d:["I tuoi attacchi a distanza con l'arma ignorano la copertura. Sblocca «Colpo potente» a distanza: −5 a colpire, +10 danni.","Your ranged weapon attacks ignore cover. Unlocks ranged “Power attack”: −5 to hit, +10 damage.","Tus ataques a distancia con arma ignoran la cobertura. Desbloquea «Golpe poderoso» a distancia: −5 al ataque, +10 de daño."], ic:"bow"},
   gwm:{n:["Maestro d'armi","Weapon Master","Maestro de armas"], d:["Sblocca «Colpo potente» in mischia: −5 a colpire, +10 danni. Quando abbatti un nemico in mischia ottieni un attacco extra come azione bonus.","Unlocks melee “Power attack”: −5 to hit, +10 damage. When you drop an enemy in melee you get an extra attack as a bonus action.","Desbloquea «Golpe poderoso» cuerpo a cuerpo: −5 al ataque, +10 de daño. Al abatir a un enemigo cuerpo a cuerpo obtienes un ataque extra como acción adicional."], ic:"sword"},
@@ -291,9 +305,12 @@ const LOOT = {
   mill:["eye_hawk"], cem:["sun_talisman"], varga:["periapt"], varga_small:["periapt"], bandits:["cloak_displ"], tower:["pearl_power"], doran:["boots_wind"],
   duke:["ring_prot"], vault_boss:["w2","scroll_fire"], vault_boss_hard:["w2","scroll_fire"], vault_guard:["greater"], keeper:["amulet_health"], ser_guards:["headband_int"], pass:["gauntlets_ogre"], jailers:["scroll_fire","scroll_heal"],
 };
+// Mara is an herbalist, Hild a smith; Vesperia has everything at city prices; Hrun's hermitage is the last stop before the Crown.
 const SHOPS = {
-  ashford:{n:["Bottega di Mara la Vecchia","Old Mara's shop","Tienda de la vieja Mara"], items:["potion","flask","scroll_heal","a1"]},
-  vesperia:{n:["Mercato delle Candele","Candle Market","Mercado de las Velas"], items:["potion","greater","flask","scroll_heal","scroll_fire","w1","a1","w2","boots_wind","ring_prot"]},
+  ashford:{n:["Bottega di Mara la Vecchia","Old Mara's shop","Tienda de la vieja Mara"], items:["potion","flask","herb","resin","scroll_heal"]},
+  hild:{n:["Fucina di Hild","Hild's forge","Forja de Hild"], items:["iron","a1"], forge:1},
+  vesperia:{n:["Mercato delle Candele","Candle Market","Mercado de las Velas"], items:["potion","greater","flask","holywater","herb","resin","bone","iron","scroll_heal","scroll_fire","w1","a1","boots_wind","ring_prot"], forge:1},
+  hrun:{n:["L'eremo di Hrun","Hrun's hermitage","La ermita de Hrun"], items:["potion","greater","holywater","iron","sunshard","w2"], forge:2},
 };
 
 /* =================== FOES =================== */
@@ -357,6 +374,7 @@ const MAPS = {
   dungeon:{g:"#1c1a18", ob:"#46403a", obr:"14%", n:6},
   throne:{g:"#1a1218", ob:"#4b2a3a", obr:"50%", n:4},
 };
+FOES.vell = {n:["Vell, lo speziale","Vell the apothecary","Vell, el boticario"], hp:40, ac:13, spd:6, ic:"flame", xp:350, sv:2, atk:[{n:["Bisturi","Scalpel","Bisturí"], b:5, d:"1d6+3", r:1, t:"slash", k:2}], spells:[{n:["Fiala d'oblio","Vial of oblivion","Frasco de olvido"], b:5, d:"2d8", r:6, t:"necrotic", p:.6}]};
 const ENC = {
   cart:{map:"road", foes:["famished","famished","famished"], gold:5},
   wolves:{map:"forest", foes:["wolf","wolf","wolf"]},
@@ -382,6 +400,7 @@ const ENC = {
   cistern:{map:"sewer", foes:["drowned","drowned","fanatic","fanatic"]},
   mirror:{map:"mirror", foes:["shade","shade","shade","shade","shade"]},
   mirror_easy:{map:"mirror", foes:["shade","shade","shade","shade"]},
+  bottler:{lead:"vell", map:"sewer", foes:["vell","cultist","cultist","shadow"], gold:35},
   jailers:{map:"dungeon", foes:["jailer","jailer","jailer","fanatic"], gold:40},
   seraphine:{map:"throne", foes:["seraphine","shade","shade","fanatic"]},
   avatar:{map:"throne", foes:["avatar","shade","shade"]},

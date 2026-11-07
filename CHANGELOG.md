@@ -1,5 +1,48 @@
 # Cronologia delle versioni
 
+## 3.0 — 2026-11-07
+
+**Griglia esagonale**
+- Il combattimento si gioca su esagoni: sei direzioni, distanze naturali, fiancheggiamento dalla parte opposta.
+- Movimento, linea di vista, copertura, aree degli incantesimi, terreni, fuoco e IA sono stati riscritti per la nuova griglia.
+- Le mappe a inchiostro disegnano gli esagoni a mano; in orizzontale la griglia si gira.
+
+**Combattimento**
+- **Maestrie delle armi** (regole 5e 2024) per guerrieri, paladini, ranger e ladri:
+  - Indebolire (spada lunga, mazza);
+  - Incalzare (stocco, spada corta, arco corto);
+  - Rallentare (arco lungo, giavellotto);
+  - Spingere (martello: chi sbatte contro un ostacolo si fa male, chi finisce tra le fiamme brucia);
+  - Rovesciare (bastone).
+- "Kill cam": i colpi critici e i colpi che abbattono un capo o l'ultimo nemico hanno un breve effetto di zoom e luce.
+- Nuovi oggetti da combattimento: **Olio infuocato** (azione bonus, +1d4 fuoco ai colpi) e **Acqua consacrata** (4d6 radiosi ai non morti).
+
+**Crafting e mercato**
+- **Materiali:** erbe, resina, polvere d'ossa, ferro, essenza d'ombra, frammenti di sole. Si ottengono così:
+  - li lasciano i nemici, in base a chi sono;
+  - si raccolgono riposando all'aperto;
+  - si comprano nei negozi.
+- **Alchimia** dal menu (scheda Crafting), ovunque fuori dal combattimento: pozioni, fuoco dell'alchimista, olio, acqua consacrata, pergamene. Alcune ricette vanno imparate e alcune richiedono un chierico, un paladino o un mago nel gruppo.
+- **Fucina** per migliorare armi e armature:
+  - Hild ad Ashford;
+  - il Mercato delle Candele;
+  - l'eremo di Hrun, dove si forgiano le armi dei Custodi.
+- **Mercato:** si può vendere a metà prezzo. Mara è diventata un'erborista. Nell'Atto III c'è un nuovo mercante.
+
+**Storia: indovinelli, rompicapo e missioni segrete**
+- **Missione segreta «Le Tre Fiamme dei Custodi»:**
+  - un indovinello al pozzo di Ashford;
+  - il rompicapo della meridiana spezzata a Vesperia;
+  - la porta del silenzio all'eremo di Hrun.
+  - Chi trova le tre fiamme ottiene la leggendaria **Lanterna dei Custodi**.
+- **Missione segreta «Il ladro di ricordi»:** un enigma logico nella Via degli Speziali (chi mente?) e uno scontro con un capo.
+- Nuovi personaggi: Hild la fabbra, Nell, Vell lo speziale, Hrun l'ultimo fabbro dei Custodi.
+- Ricette insegnate da Madre Seraphine, Nonna Grisa e Pellin.
+- Le missioni segrete compaiono nel diario solo dopo essere state scoperte.
+
+**Lingue**
+- Tutti i testi nuovi sono in italiano, inglese e spagnolo. Un controllo automatico verifica che nessun testo del gioco manchi di una traduzione.
+
 ## 2.2.1 — 2026-10-15
 - Schermata iniziale in orizzontale rifatta per i telefoni: entra tutta nello schermo senza scorrere, il Sole Nero ha la giusta misura, Carica / Imprese / Capitoli stanno su una riga.
 

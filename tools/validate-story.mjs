@@ -32,8 +32,9 @@ for(const [id,sc] of Object.entries(SC)){
     if(!Array.isArray(t)||t.length!==3||t.some(x=>typeof x!=='string'||!x.length)) errs.push(`${id}: bad text`);
   }
   (sc.ch||[]).forEach((c,i)=>{
-    if(!Array.isArray(c.t)||c.t.length!==3) errs.push(`${id}#${i}: bad choice text`);
+    { const ct=typeof c.t==='function'?c.t():c.t; if(!Array.isArray(ct)||ct.length!==3||ct.some(x=>typeof x!=='string'||!x.length)) errs.push(`${id}#${i}: bad choice text`); }
     if(c.req) c.req();
+    (c.to||[]).forEach(v=>{ chk(id,v,'to'); reach.add(v); }); // possible targets of a computed `go` (puzzles)
     if(c.go){ if(typeof c.go==='function'){ S.flags={}; chk(id,c.go(),'go'); S.flags={has_key:1}; chk(id,c.go(),'go'); } else chk(id,c.go,'go'); reach.add(typeof c.go==='string'?c.go:'a2_archive'); reach.add('a2_betrayal'); }
     if(c.check){ chk(id,c.check.ok,'ok'); chk(id,c.check.ko,'ko'); reach.add(c.check.ok); reach.add(c.check.ko); if(c.check.sk&&!['ath','ste','sle','arc','his','inv','rel','ins','med','per','sur','dec','inti','pers'].includes(c.check.sk)) errs.push(id+' bad skill '+c.check.sk); }
     if(c.fight){ const ks= typeof c.fight==='function'?[(S.flags={},c.fight()),(S.flags={v_taken:1,guard_ally:1,children_saved:1,oil_done:1,mira_ally:1},c.fight())]:[c.fight]; ks.forEach(k=>{ if(!ENC[k]) errs.push(`${id}: enc ${k} missing`);}); chk(id,c.win,'win'); reach.add(c.win); }
