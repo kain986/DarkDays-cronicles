@@ -90,7 +90,8 @@ const t0 = Date.now();
 for (const cls of CLASSES) {
   const r = await ctx.runAll(plan0, cls, DIFF);
   // tactical fights (ENC.tac) are meant to need tactics the bot only half uses: they pass at 1/3
-  const weak = Object.entries(r).filter(([k, v]) => v === "ERR" || +v.split("/")[0] < +v.split("/")[1].split(" ")[0] * (ctx.ENC_TAC && ctx.ENC_TAC[k] ? .33 : .5));
+  // (in --quick mode, with only 2 runs, they are checked for crashes only: run the full simulation for balance)
+  const weak = Object.entries(r).filter(([k, v]) => v === "ERR" || +v.split("/")[0] < +v.split("/")[1].split(" ")[0] * (ctx.ENC_TAC && ctx.ENC_TAC[k] ? (QUICK ? 0 : .33) : .5));
   console.log(`${cls.padEnd(8)} ${weak.length ? "WEAK: " + weak.map(([k, v]) => k + " " + v).join(", ") : "ok"}`);
   if (argv.includes("--verbose")) for (const [k, v] of Object.entries(r)) console.log("   ", k.padEnd(16), v);
   if (weak.length) failed = true;
