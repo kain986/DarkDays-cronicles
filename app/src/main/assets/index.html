@@ -552,13 +552,14 @@ a.btn{text-decoration:none}
 .land .pagebody{padding:14px 22px 28px 10px;max-width:72ch}
 .land .hud{padding-inline:16px}
 /* combat: map left (turned 90°), panel right */
-.land #combat{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,36%);grid-template-rows:auto auto auto minmax(0,1fr) auto}
+.land #combat{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,36%);grid-template-rows:auto auto auto auto minmax(0,1fr) auto}
 .land #combat #bw{grid-column:1;grid-row:1/-1;padding:24px 10px 6px}
 .land #combat #ini{grid-column:2;grid-row:1}
 .land #combat #cbp{grid-column:2;grid-row:2}
 .land #combat #info{grid-column:2;grid-row:3;height:auto;max-height:76px}
-.land #combat .hotrow{grid-column:2;grid-row:4;min-height:0;align-items:flex-start}
-.land #combat #cblog{grid-column:2;grid-row:5}
+.land #combat .grptabs{grid-column:2;grid-row:4;padding:4px 10px 0}
+.land #combat .hotrow{grid-column:2;grid-row:5;min-height:0;align-items:flex-start}
+.land #combat #cblog{grid-column:2;grid-row:6}
 .land .hot{flex-wrap:wrap;align-content:flex-start;overflow-y:auto;max-height:100%;scroll-snap-type:none}
 .land .hot .sep{display:none}
 .land .endbtn{height:70px;flex:none}
@@ -676,7 +677,88 @@ a.btn{text-decoration:none}
 .tok.obj .disc svg{color:#2a0e06}
 @keyframes brz{from{box-shadow:0 0 10px 2px rgba(255,120,40,.45)}to{box-shadow:0 0 18px 6px rgba(160,90,255,.55)}}
 .tok.obj.dead{opacity:.35}
+/* ---------- clarity: hp bars, compact sheet, action tabs ---------- */
+.tok .ring{display:none}
+.tok .hpb{position:absolute;left:14%;right:14%;bottom:-3%;height:max(6px,9%);border-radius:4px;background:rgba(10,6,8,.85);box-shadow:0 0 0 1.5px rgba(0,0,0,.85),0 1px 3px rgba(0,0,0,.6);z-index:7;overflow:hidden;pointer-events:none}
+.tok .hpb i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(#9cf0a8,#3fa85a);transition:width .4s ease}
+.tok .hpb.mid i{background:linear-gradient(#ffe08a,#d9a020)}
+.tok .hpb.lo i{background:linear-gradient(#ff9a8a,#c8302a)}
+.tok .hpb.e i{background:linear-gradient(#ff7a8e,#a8102c)}
+.tok .hpb.obj i{background:linear-gradient(#ffc070,#c05a10)}
+.tok.boss .hpb{left:6%;right:6%;box-shadow:0 0 0 1.5px #caa650,0 1px 3px rgba(0,0,0,.6)}
+.tok .hpb span{position:absolute;inset:0;display:grid;place-items:center;font:800 max(8px,calc(var(--cell) * .16))/1 var(--f-ui);color:#fff;text-shadow:0 0 2px #000,0 0 2px #000}
+.tok .hpb:has(span:not(:empty)){height:max(11px,15%)}
+/* compact sheet */
+.cs .cs-head{display:flex;gap:12px;align-items:center}
+.cs .cs-head .med{flex:none;width:52px;height:52px}
+.cs .cs-id{flex:1;min-width:0}
+.cs .cs-id b{display:block;font:600 22px/1.1 var(--f-display);color:var(--bone)}
+.cs .cs-id>span{font-size:13px;color:var(--muted)}
+.cs-hp{position:relative;height:16px;margin-top:6px;border-radius:8px;background:rgba(0,0,0,.5);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.cs-hp i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(#9cf0a8,#3fa85a)}
+.cs-hp.mid i{background:linear-gradient(#ffe08a,#d9a020)}.cs-hp.lo i{background:linear-gradient(#ff9a8a,#c8302a)}
+.cs-hp span{position:relative;display:block;text-align:center;font:700 11px/16px var(--f-ui);color:#fff;text-shadow:0 0 3px #000}
+.cs-pills{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin:10px 0 8px}
+.cs-pills span{display:grid;justify-items:center;padding:5px 2px;border-radius:8px;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(202,166,80,.22);font:500 10px var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.cs-pills b{font:600 17px var(--f-display);color:var(--bone);letter-spacing:0;text-transform:none}
+.cs-ab{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin-bottom:6px}
+.cs-ab div{display:grid;justify-items:center;padding:5px 0 4px;border-radius:8px;background:rgba(255,255,255,.03);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+.cs-ab div.sv{box-shadow:inset 0 0 0 1px rgba(202,166,80,.55)}
+.cs-ab span{font:600 10px var(--f-ui);letter-spacing:.08em;color:var(--muted)}
+.cs-ab b{font:600 19px/1.1 var(--f-display);color:var(--bone)}
+.cs-ab small{font:500 11px var(--f-ui);color:var(--muted)}
+.cs-ab em{font:600 9.5px var(--f-ui);font-style:normal;color:#9a8e7a;margin-top:2px}
+.cs-ab .sv em{color:var(--brass)}
+.cs-sec{margin:10px 0 5px;font:600 11px var(--f-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
+.cs-w{display:grid;grid-template-columns:18px 1fr auto auto;column-gap:8px;align-items:center;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.03);margin-bottom:4px}
+.cs-w svg{width:16px;height:16px;color:var(--brass)}
+.cs-w b{font:600 15px var(--f-body);color:var(--bone)}
+.cs-w span{font:700 13px var(--f-ui);color:#f0d48a;font-variant-numeric:tabular-nums}
+.cs-w small{grid-column:2/-1;font-size:12px;color:var(--muted)}
+.cs .taglist span b{color:#f0d48a;font-weight:700}
+.cs-d{margin:6px 0;border-radius:8px;background:rgba(255,255,255,.03);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+.cs-d summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;padding:8px 10px;font:600 11px var(--f-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
+.cs-d summary::-webkit-details-marker{display:none}
+.cs-d summary::after{content:"▾";margin-left:auto;color:var(--muted)}
+.cs-d[open] summary::after{content:"▴"}
+.cs-d summary b{font:700 11px var(--f-ui);padding:1px 7px;border-radius:999px;background:rgba(202,166,80,.18);color:var(--bone);letter-spacing:0}
+.cs-d .cs-slots{letter-spacing:.05em;color:#bcd2ff;text-transform:none;font-weight:500}
+.cs-d p{margin:0;padding:6px 10px;border-top:1px solid rgba(255,255,255,.06);font-size:13.5px;line-height:1.4;color:#d8ccb4}
+.cs-d p b{color:var(--bone)}.cs-d p small{color:var(--muted)}
+.cs-xp{margin-top:10px}
+.cs-xp span{font:600 11px var(--f-ui);letter-spacing:.08em;color:var(--muted)}
+.cs-xp div{height:6px;margin-top:4px;border-radius:3px;background:rgba(0,0,0,.5);overflow:hidden}
+.cs-xp i{display:block;height:100%;background:linear-gradient(90deg,#caa650,#f0d48a)}
+.cs-rest{display:flex;gap:10px;align-items:center;margin-top:12px;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.03)}
+.cs-rest>div{flex:1;min-width:0}.cs-rest b{display:block;font:600 14px var(--f-ui);color:var(--bone)}.cs-rest small{font-size:12px;color:var(--muted)}
+.cs-rest .btn{flex:none;width:auto;padding:7px 12px}
+/* combat panel: economy chips and action tabs */
+.econ{display:flex;flex-direction:column;gap:4px;justify-items:stretch}
+.econ .ec{display:flex;align-items:center;gap:4px;padding:2px 7px;border-radius:999px;font:700 10.5px var(--f-ui);letter-spacing:.03em;white-space:nowrap;opacity:.35;box-shadow:inset 0 0 0 1px currentColor}
+.econ .ec.on{opacity:1}
+.econ .ec.a{color:#f0d48a}.econ .ec.b{color:#9fc2ff}.econ .ec.m{color:#bcd2ff}
+.econ .ec svg{width:12px;height:12px}
+.grptabs{display:flex;gap:4px;padding:6px 16px 0;background:#141017;overflow-x:auto;scrollbar-width:none;flex:none}
+.grptabs button{flex:1 0 auto;display:flex;align-items:center;justify-content:center;gap:5px;padding:6px 10px;border:0;border-radius:8px 8px 0 0;background:rgba(255,255,255,.04);color:var(--muted);font:600 12px var(--f-ui)}
+.grptabs button svg{width:14px;height:14px}
+.grptabs button b{font:700 10px var(--f-ui);padding:0 5px;border-radius:999px;background:rgba(255,255,255,.1);color:var(--bone)}
+.grptabs button[aria-pressed="true"]{background:#231b26;color:var(--brass);box-shadow:inset 0 2px 0 var(--brass)}
+.grptabs button.hassel:not([aria-pressed="true"])::after{content:"•";color:var(--brass)}
+.slot[hidden]{display:none!important}
+.slot .cost{top:0;left:0;right:0;width:auto;height:3px;border:0!important;transform:none!important;border-radius:8px 8px 0 0;background:#caa650}
+.slot .cost.b{background:#8fb0f0}.slot .cost.f{background:#7fd18f}
+.tok .chance{top:-16%!important;bottom:auto!important}
+.econ{justify-content:center;gap:3px}
+.econ .ec{padding:1px 6px;font-size:9.5px;line-height:1.35}
+.grptabs button{gap:4px;padding:6px 8px}
+.grptabs button span{display:none}
+.grptabs button[aria-pressed="true"] span{display:inline}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+/* subclass picker */
+.sub-opt .sub-f{margin-top:8px;border-top:1px solid var(--line);padding-top:6px}
+.sub-opt .sub-f i{display:block;font-style:normal;font-size:12.5px;line-height:1.35;margin-top:4px;color:var(--muted)}
+.sub-opt .sub-f i b{display:inline;font:600 12.5px var(--f-ui);color:var(--bone)}
+.sub-opt .sub-lv{display:inline-block;font:600 10px var(--f-ui);padding:1px 6px;border-radius:8px;background:var(--stone);color:var(--brass);margin-right:2px}
 </style>
 
 <div id="app">
@@ -690,7 +772,7 @@ a.btn{text-decoration:none}
 /* ===== 10_data.js ===== */
 "use strict";
 /* =================== LANGUAGE =================== */
-var GAME_VERSION = "3.2"; // replaced by tools/build.mjs
+var GAME_VERSION = "3.3"; // replaced by tools/build.mjs
 var IS_APP = true;      // true only in the Android build (enables the update check)
 let LG = 0; // 0 it, 1 en, 2 es
 const LANG_CODES = ["it","en","es"];
@@ -854,7 +936,7 @@ const CLASSES = {
   ranger:{n:["Ranger","Ranger","Explorador"], icon:"bow", hd:10, armor:"medium", prim:"dex", cast:"wis", caster:"half", saves:["str","dex"], skills:["sur","per","ste"], weapons:["longbow","shortsword"],
     rec:{str:10,dex:15,con:14,int:8,wis:14,cha:10},
     spells:{2:["huntersmark","curewounds"]},
-    d:["Cacciatore dei confini. Nemico prescelto (non morti), Marchio del cacciatore, Uccisore di colossi.","Hunter of the borderlands. Favored enemy (undead), Hunter's Mark, Colossus Slayer.","Cazador de las fronteras. Enemigo predilecto (muertos vivientes), Marca del cazador, Asesino de colosos."]},
+    d:["Cacciatore dei confini. Nemico prescelto (non morti), Marchio del cacciatore, Attacco extra.","Hunter of the borderlands. Favored enemy (undead), Hunter's Mark, Extra Attack.","Cazador de las fronteras. Enemigo predilecto (muertos vivientes), Marca del cazador, Ataque extra."]},
   wizard:{n:["Mago","Wizard","Mago"], icon:"star", hd:6, armor:"mage", prim:"int", cast:"int", caster:"full", saves:["int","wis"], skills:["arc","inv","his"], weapons:["quarterstaff"],
     rec:{str:8,dex:14,con:14,int:15,wis:12,cha:8},
     spells:{1:["firebolt","magicmissile","sleep","burninghands"],3:["scorchingray","mistystep"],5:["fireball"],7:["icestorm"]},
@@ -2381,13 +2463,13 @@ function saveGame(silent) { if (!S) return; const ok = store(SAVE_KEY, S); if (!
 
 /* =================== CHARACTER RULES =================== */
 const CL = c => CLASSES[c.cls];
-const prof = c => c.lvl >= 5 ? 3 : 2;
+const prof = c => c.lvl <= 20 ? 2 + Math.floor((c.lvl - 1) / 4) : 6 + Math.ceil((c.lvl - 20) / 8);
 const abEff = (c, k) => { const v = c.ab[k], t = c.trinket && ITEMS[c.trinket]; return t && t.setAb && t.setAb[0] === k ? Math.max(v, t.setAb[1]) : v; };
 const abm = (c, k) => mod(abEff(c, k));
 const hasFeat = (c, f) => !!(c && c.feats && c.feats.includes(f));
 function maxHP(c) { const h = CL(c).hd, con = abm(c, "con"); let hp = h + con + (c.lvl - 1) * (h / 2 + 1 + con); if (c.race === "dwarf") hp += c.lvl; if (hasFeat(c, "tough")) hp += 2 * c.lvl; return Math.max(1, hp); }
 function acOf(c) { const dex = abm(c, "dex"); const a = CL(c).armor; let ac = a === "heavy" ? 16 : a === "medium" ? 14 + Math.min(dex, 2) : a === "light" ? 11 + dex : 13 + dex; if (CL(c).shield) ac += 2; return ac + (c.aplus || 0) + (c.trinket === "ring_prot" || c.trinket === "sunlantern" ? 1 : 0); }
-const speedOf = c => RACES[c.race].spd + (c.trinket === "boots_wind" ? 2 : 0) + (hasFeat(c, "mobile") ? 2 : 0);
+const speedOf = c => RACES[c.race].spd + (c.trinket === "boots_wind" ? 2 : 0) + (hasFeat(c, "mobile") ? 2 : 0) + subSpd(c);
 function slotsMax(c) { const t = CL(c).caster; const tab = t === "full" ? FULL : t === "half" ? HALF : null; const s = tab ? tab[c.lvl].slice() : [0,0,0,0]; if (tab && c.trinket === "pearl_power") s[c.lvl >= 3 ? 1 : 0]++; return s; }
 const castMod = c => CL(c).cast ? abm(c, CL(c).cast) : 0;
 const spellDC = c => 8 + prof(c) + castMod(c);
@@ -2398,7 +2480,7 @@ function spellsOf(c) { const t = CL(c).spells || {}, out = []; Object.keys(t).fo
 const weaponsOf = c => c.weapons || CL(c).weapons;
 const skillBonus = (c, sk) => abm(c, SKILLS[sk][1]) + (c.skills.includes(sk) ? prof(c) : 0);
 function auraBonus() { if (!S) return 0; const p = S.party.find(c => c.cls === "paladin" && c.lvl >= 6 && c.hp > 0); return p ? Math.max(1, abm(p, "cha")) : 0; }
-const saveBonus = (c, ab) => abm(c, ab) + (CL(c).saves.includes(ab) ? prof(c) : 0) + auraBonus() + (c.trinket === "ring_prot" || c.trinket === "sunlantern" ? 1 : 0);
+const saveBonus = (c, ab) => abm(c, ab) + (CL(c).saves.includes(ab) ? prof(c) : 0) + auraBonus() + (c.trinket === "ring_prot" || c.trinket === "sunlantern" ? 1 : 0) + subSave(c, ab);
 function resetRes(c) { c.res = {sw: 1, as: 1, lay: 5 * c.lvl, ch: 1, arc: 1}; c.hdLeft = c.lvl; }
 function recalc(c, full) {
   const m = maxHP(c);
@@ -2409,7 +2491,7 @@ function recalc(c, full) {
 function asiLevels(c) { const t = CLASS_FEATS[c.cls] || {}; return Object.keys(t).filter(l => t[l].includes("asi")).map(Number); }
 function autoASI(c) {
   c.asiDone = c.asiDone || [];
-  asiLevels(c).forEach(l => { if (c.lvl >= l && !c.asiDone.includes(l)) { c.feats = c.feats || []; if (l === 4 && COMP_FEAT[c.id] && !c.feats.includes(COMP_FEAT[c.id])) { c.feats.push(COMP_FEAT[c.id]); c.asiDone.push(l); recalc(c); return; } const k = c.ab[CL(c).prim] >= 19 ? "con" : CL(c).prim; c.ab[k] = Math.min(20, c.ab[k] + 2); c.asiDone.push(l); } });
+  asiLevels(c).forEach(l => { if (c.lvl >= l && !c.asiDone.includes(l)) { c.feats = c.feats || []; if (l === 4 && COMP_FEAT[c.id] && !c.feats.includes(COMP_FEAT[c.id])) { c.feats.push(COMP_FEAT[c.id]); c.asiDone.push(l); recalc(c); return; } const k = [CL(c).prim, "con", "dex", "wis", "str", "cha", "int"].find(a => c.ab[a] < abCap(c) - 1) || CL(c).prim; c.ab[k] = Math.min(abCap(c), c.ab[k] + 2); c.asiDone.push(l); } });
 }
 function weapProfile(c, wk) {
   const w = WEAP[wk]; const stat = w.st === "fin" ? (abm(c, "str") > abm(c, "dex") ? "str" : "dex") : w.st; const m = abm(c, stat);
@@ -2793,9 +2875,8 @@ let menuMember = 0;
 function openMenu(tab) {
   const tabs = [["party", T_("party")], ["inv", T_("inv")], ["journal", T_("journal")], ["opts", T_("settings")]];
   let body = "";
-  if (tab === "party") { const c = S.party[Math.min(menuMember, S.party.length - 1)]; body = `<div class="who" style="margin:0 0 10px">${S.party.map((p, i) => `<button data-mm="${i}" aria-pressed="${p === c}" style="${p === c ? "border-color:var(--brass);color:var(--brass)" : ""}">${esc(p.name.split(" ")[0])}</button>`).join("")}</div>${sheetHTML(c)}
-    <h3>${T_("xp")}</h3><p style="font-variant-numeric:tabular-nums">${S.xp} ${S.level < MAXLV ? `/ ${XPT[S.level + 1]} · ${T_("nextLv")}` : ""}</p>
-    ${SCREEN === "story" ? `<h3>${tr(["Riposo breve","Short rest","Descanso corto"])} · ${2 - (S.shortRests || 0)}/2</h3><p style="font-size:14px;color:var(--muted);margin:0 0 8px">${tr(["Un'ora di sosta: ogni personaggio spende dadi vita per curarsi e recupera Recupero, Impeto d'azione e Incanalare divinità. Il mago recupera alcuni slot. Si ricarica con il riposo lungo.","An hour's rest: each character spends hit dice to heal and regains Second Wind, Action Surge and Channel Divinity. The wizard recovers some slots. Recharges on a long rest.","Una hora de descanso: cada personaje gasta dados de golpe para curarse y recupera Nuevas energías, Oleada de acción y Canalizar divinidad. El mago recupera algunos espacios. Se recarga con un descanso largo."])}</p><button class="btn small" id="shortR" ${(S.shortRests || 0) >= 2 ? "disabled" : ""}>${tr(["Riposa un'ora","Rest for an hour","Descansar una hora"])}</button>` : ""}`; }
+  if (tab === "party") { const c = S.party[Math.min(menuMember, S.party.length - 1)]; body = `<div class="who" style="margin:0 0 10px">${S.party.map((p, i) => `<button data-mm="${i}" aria-pressed="${p === c}" style="${p === c ? "border-color:var(--brass);color:var(--brass)" : ""}">${esc(p.name.split(" ")[0])}</button>`).join("")}</div>${sheetCompact(c)}
+    ${SCREEN === "story" ? `<div class="cs-rest"><div><b>${tr(["Riposo breve","Short rest","Descanso corto"])} · ${2 - (S.shortRests || 0)}/2</b><small>${tr(["Spendi dadi vita per curarti e recuperi alcune capacità.","Spend hit dice to heal and regain some abilities.","Gasta dados de golpe para curarte y recuperas algunas capacidades."])}</small></div><button class="btn small" id="shortR" ${(S.shortRests || 0) >= 2 ? "disabled" : ""}>${tr(["Riposa un'ora","Rest for an hour","Descansar una hora"])}</button></div>` : ""}`; }
   if (tab === "inv") body = invHTML();
   if (tab === "journal") body = journalHTML();
   if (tab === "opts") body = `<h3>${T_("lang")}</h3>${langSeg()}<h3>${T_("diff")}</h3>${diffSeg(S.diff)}<h3>${tr(["Velocità combattimento","Combat speed","Velocidad de combate"])}</h3><div class="seg"><button data-fast="0" aria-pressed="${!PREF.fast}">${tr(["Normale","Normal","Normal"])}</button><button data-fast="1" aria-pressed="${!!PREF.fast}">${tr(["Veloce","Fast","Rápida"])}</button></div>${audioOptsHTML()}<div style="display:grid;gap:8px;margin-top:8px"><button class="btn small" id="oSave">${T_("save")}</button><button class="btn small" id="oTitle">${T_("toTitle")}</button></div><p style="font-size:14px;color:var(--muted);margin-top:14px">${T_("install")}</p>`;
@@ -2856,14 +2937,14 @@ function openShop(id) {
 function showLevelUp() {
   const L = S.pendingLv[0], p = pc();
   const needAsi = asiLevels(p).includes(L) && !(p.asiDone || []).includes(L);
-  const lines = S.party.map(c => { const nf = ((CLASS_FEATS[c.cls] || {})[L] || []).filter(f => f !== "asi").map(f => tr(FEATS[f])); const ns = ((CL(c).spells || {})[L] || []).map(k => tr(SPELLS[k].n));
+  const lines = S.party.map(c => { const nf = (L === 3 && subOf(c) ? [tr(subOf(c).n)] : []).concat(newFeatsAt(c, L).map(f => tr(FEATS[f]))); const ns = ((CL(c).spells || {})[L] || []).map(k => tr(SPELLS[k].n));
     return `<div class="row"><div class="t"><b>${esc(c.name)}</b> · ${T_("hp")} ${c.maxhp}<small>${[...nf, ...ns].join(", ") || "—"}</small></div></div>`; }).join("");
   const featOpts = Object.keys(FEATLIST).filter(f => !hasFeat(p, f));
   const m = modal(`<h2>${T_("levelUp")} ${T_("lvl")} ${L}</h2>${lines}${needAsi ? `<h3>${T_("asi")}</h3><div class="abgrid">${AB.map(k => `<button data-asi="${k}" style="background:var(--stone);border-radius:6px;padding:6px 2px"><span class="lbl" style="font-size:10px">${abS(k)}</span><b style="display:block;font-family:var(--f-display);font-size:18px">${p.ab[k]}</b></button>`).join("")}</div>
     <h3>${tr(["…oppure scegli un talento","…or choose a feat","…o elige una dote"])}</h3><div class="opts">${featOpts.map(f => `<button class="opt" data-feat="${f}">${medHTML(FEATLIST[f].ic)}<span style="min-width:0"><b>${tr(FEATLIST[f].n)}</b><span>${tr(FEATLIST[f].d)}</span></span></button>`).join("")}</div>` : `<button class="btn primary" id="lvOk" style="margin-top:12px">${T_("goOn")}</button>`}`, {center: 1, locked: 1});
   m.querySelectorAll("[data-feat]").forEach(b => b.onclick = () => { (p.feats = p.feats || []).push(b.dataset.feat); (p.asiDone = p.asiDone || []).push(L); recalc(p); done(); });
   const done = () => { S.pendingLv.shift(); closeModal(); saveGame(true); if (S.pendingLv.length) showLevelUp(); else if (SCREEN === "story") renderStory(); };
-  m.querySelectorAll("[data-asi]").forEach(b => b.onclick = () => { const k = b.dataset.asi; p.ab[k] = Math.min(20, p.ab[k] + 2); (p.asiDone = p.asiDone || []).push(L); recalc(p); done(); });
+  m.querySelectorAll("[data-asi]").forEach(b => b.onclick = () => { const k = b.dataset.asi; p.ab[k] = Math.min(abCap(p), p.ab[k] + 2); (p.asiDone = p.asiDone || []).push(L); recalc(p); done(); });
   const ok = m.querySelector("#lvOk"); if (ok) ok.onclick = done;
 }
 
@@ -2944,7 +3025,7 @@ function startCombat(key, win, surprise) {
   });
   tacSetup(enc);
   if (enc.lead) { const L = CB.units.find(u => u.foe === enc.lead); if (L && CB.units.some(u => u.side === "e" && u !== L)) { CB.lead = L.uid; L.leader = 1; } }
-  CB.units.forEach(u => u.init = rnd(20) + (u.side === "p" ? abm(u.ref, "dex") + (hasFeat(u.ref, "alert") ? 5 : 0) : (u.def.sv || 0)) + Math.random() * .1);
+  CB.units.forEach(u => u.init = rnd(20) + (u.side === "p" ? abm(u.ref, "dex") + (hasFeat(u.ref, "alert") ? 5 : 0) + subInit(u.ref) : (u.def.sv || 0)) + Math.random() * .1);
   CB.order = CB.units.filter(u => !u.obj).sort((a, b) => b.init - a.init);
   showScreen("combat"); buildCombat();
   logL(tr(["Tiro per l'iniziativa…","Rolling initiative…","Tirando iniciativa…"]));
@@ -3006,7 +3087,7 @@ function meleeOf(o) {
 function owProfile(o) {
   if (o.side === "p") { const c = o.ref, ws = weaponsOf(c), i = ws.findIndex(w => WEAP[w].ranged);
     if (i >= 0) { const p = weapProfile(c, ws[i]); return {hit: p.hit, dice: p.dice, flat: p.flat, type: p.t, ranged: 1, weapon: 1, r: p.r}; }
-    if (spellsOf(c).includes("firebolt")) return {hit: spellAtk(c), dice: c.lvl >= 5 ? "2d10" : "1d10", type: "fire", ranged: 1, r: 10};
+    if (spellsOf(c).includes("firebolt")) return {hit: spellAtk(c), dice: cantripN(c) + "d10", type: "fire", ranged: 1, r: 10};
     const m = meleeOf(o); return m && Object.assign({r: 1}, m); }
   const a = o.def.atk[0]; return {hit: a.b + (S.diff === 0 ? -1 : S.diff === 2 ? 1 : 0), dice: a.d, type: a.t, ranged: !!a.ranged, r: a.r};
 }
@@ -3052,7 +3133,7 @@ async function nextTurn() {
   const u = cur(); u.mv = u.spd; u.act = 1; u.bon = 1; u.atkLeft = 0; u.sneakUsed = 0; u.colUsed = 0; u.react = 1; delete u.cond.dodge; delete u.cond.dis; delete u.cond.ow; delete u.cond.power;
   if (u.cond.prone && !u.cond.asleep && !u.cond.stun) { delete u.cond.prone; u.mv = Math.floor(u.spd / 2); logL(`${u.name}: ${tr(["si rialza","stands up","se levanta"])}`); }
   if (u.side === "e" && u.def.gob) u.cond.dis = 1;
-  masteryTurnStart(u);
+  masteryTurnStart(u); subTurnStart(u);
   if (u.side === "p" && u.ref.trinket === "periapt" && u.hp < u.maxhp / 2) heal(u, 2);
   CB.sel = null; CB.pend = null; CB.inspect = null; CB.mvp = null; CB.tileInfo = null;
   const tok = CB.turnTok = (CB.turnTok || 0) + 1;
@@ -3061,6 +3142,7 @@ async function nextTurn() {
   if (!CB.introDone) { CB.introDone = true; await leaderIntro(); if (!CB || CB.turnTok !== tok) return; }
   if (await tacTurnStart(u)) { if (!CB) return; if (!checkEnd()) setTimeout(nextTurn, 250); return; }
   if (await terrainTurnStart(u)) { if (!CB) return; if (!checkEnd()) setTimeout(nextTurn, 250); return; }
+  await subNimbus(u); if (!CB || checkEnd()) return;
   if (u.side === "e") {
     // spirit guardians
     for (const p of allies()) if (!p.down && p.cond.sg && dist(p, u) <= 2 && u.hp > 0) { const ok = saveRoll(u, "wis", spellDC(p.ref)); const dmg = roll("3d8").total; logL(`${tr(SPELLS.spiritguardians.n)} → ${u.name}`); await applyDmg(u, ok ? Math.floor(dmg / 2) : dmg, "radiant", p); }
@@ -3196,7 +3278,7 @@ function advInfo(a, t, o) {
   if (a.cond.prone) { dis = true; why.push("selfprone"); }
   if (o.ranged && adjEnemies(a).length) { dis = true; why.push("closerange"); }
   if (t.side === "p" && t.ref.trinket === "cloak_displ" && t.dispR !== CB.round) { dis = true; why.push("displace"); }
-  return {adv, dis, why};
+  return subAdv(a, t, o, {adv, dis, why});
 }
 function coverFor(a, t, o) { if (!(o.ranged || dist(a, t) > 1)) return 0; if (a.side === "p" && o.ranged && hasFeat(a.ref, "sharpshooter")) return 0; return coverOf(a, t); }
 async function attackRoll(a, t, o) {
@@ -3221,8 +3303,9 @@ async function attackRoll(a, t, o) {
     const c = a.ref, und = t.def && t.def.undead;
     if (crit && c.race === "halforc" && o.weapon) dmg += roll("1" + o.dice.replace(/^\d*/, "").replace(/[+-].*$/, "")).total;
     if (t.cond.mark === a.uid) dmg += roll(crit ? "2d6" : "1d6").total;
-    if (c.cls === "rogue" && o.weapon && (o.finesse || o.ranged) && !a.sneakUsed && (!dis || adv) && (adv || allyNear(t, a))) { a.sneakUsed = 1; const n = Math.ceil(c.lvl / 2) * (crit ? 2 : 1); dmg += roll(n + "d6").total; logL(tr(FEATS.sneak) + "!"); }
-    if (hasF(c, "colossus") && o.weapon && !a.colUsed && t.hp < t.maxhp) { a.colUsed = 1; dmg += rnd(8); }
+    if (c.cls === "rogue" && o.weapon && (o.finesse || o.ranged) && !a.sneakUsed && (!dis || adv) && (adv || allyNear(t, a))) { a.sneakUsed = 1; const n = sneakN(c) * (crit ? 2 : 1); dmg += roll(n + "d" + sneakD(c)).total; logL(tr(FEATS.sneak) + "!"); }
+    if (hasF(c, "colossus") && o.weapon && (a.colUsed || 0) < (hasF(c, "hordebreaker") ? 2 : 1) && t.hp < t.maxhp) { a.colUsed = (a.colUsed || 0) + 1; dmg += rnd(8); }
+    dmg += subDmg(a, t, o, crit);
     if (hasF(c, "favored") && und) dmg += 2;
     if (o.weapon && !o.ranged && a.cond.smite) { const i = slotFor(c, 1); if (i >= 0) { c.slots[i]--; delete a.cond.smite; dmg += roll(((und ? 3 : 2) * (crit ? 2 : 1)) + "d8").total; logL(tr(FEATS.smite) + "!"); } }
     if (c.id === "pc" && has("took_flame")) dmg += rnd(4);
@@ -3254,7 +3337,7 @@ async function applyDmg(t, amt, type, src) {
 function heal(t, amt) { if (t.side !== "p") return; amt = Math.max(1, amt); t.hp = Math.min(t.maxhp, t.hp + amt); if (t.down && t.hp > 0) t.down = false; floatAt(t, "+" + amt, "#9be0a6"); fxHeal(t); logL(`${t.name} ${T_("heals")} ${amt} ${T_("hp")}`); placeTokens(); }
 const inArea = (c, rad) => CB.units.filter(o => dist(o, c) <= rad && (o.side === "p" || o.hp > 0));
 
-function useAttack(u) { if (u.atkLeft > 0) u.atkLeft--; else { u.act--; u.atkLeft = (hasF(u.ref, "extra") ? 2 : 1) - 1; } }
+function useAttack(u) { if (u.atkLeft > 0) u.atkLeft--; else { u.act--; u.atkLeft = attacksN(u.ref) - 1; } }
 const powerOK = (c, ranged) => ranged ? hasFeat(c, "sharpshooter") : hasFeat(c, "gwm");
 async function weaponAttack(u, t, i) {
   const c = u.ref, p = weapProfile(c, weaponsOf(c)[i]); useAttack(u);
@@ -3269,8 +3352,8 @@ async function castSpell(u, key, target) {
   if (sp.lv > 0) { const i = slotFor(c, sp.lv); if (i >= 0) c.slots[i]--; }
   logL(`${u.name}: ${tr(sp.n)}`);
   switch (key) {
-    case "firebolt": await attackRoll(u, target, {hit: atk, dice: c.lvl >= 5 ? "2d10" : "1d10", type: "fire", ranged: 1}); break;
-    case "sacredflame": await fxColumn(target, "radiant"); if (!saveRoll(target, "dex", dc)) await applyDmg(target, roll(c.lvl >= 5 ? "2d8" : "1d8").total, "radiant", u); else floatAt(target, T_("saveOk"), "#bdb3a4"); break;
+    case "firebolt": await attackRoll(u, target, {hit: atk, dice: cantripN(c) + "d10", type: "fire", ranged: 1}); break;
+    case "sacredflame": await fxColumn(target, "radiant"); if (!saveRoll(target, "dex", dc)) await applyDmg(target, roll(cantripN(c) + "d8").total, "radiant", u); else floatAt(target, T_("saveOk"), "#bdb3a4"); break;
     case "magicmissile": await fxProjectile(u, target, "force"); await applyDmg(target, roll("3d4+3").total, "force", u); break;
     case "sleep": { await fxArea(target, 1, "sleep"); let pool = roll("5d8").total; const ts = inArea(target, 1).filter(t => t.side === "e" && !t.def.undead && !t.def.construct && !t.cond.asleep).sort((a, b) => a.hp - b.hp);
       for (const t of ts) { if (t.hp <= pool) { pool -= t.hp; t.cond.asleep = 10; logL(`${t.name} ${T_("sleeps")}`); floatAt(t, "Zz", "#86a4da"); } else break; } placeTokens(); await sleep(300); break; }
@@ -5513,6 +5596,405 @@ Object.assign(ENC.seraphine, {phase: {foe: "seraphine", at: .5, spawn: ["shade",
 
 TIPS.push(["burst", ["Scontri tattici", "Tactical fights", "Combates tácticos"], ["Alcuni scontri hanno regole proprie, descritte nel riquadro in alto sulla mappa: bracieri che proteggono il capo, riti a tempo, rinforzi, boss con una seconda fase. Quando un nemico prepara un colpo, gli esagoni rossi mostrano dove cadrà al suo prossimo turno: spostati.", "Some fights have their own rules, shown in the box at the top of the map: braziers warding the leader, timed rites, reinforcements, bosses with a second phase. When an enemy charges a strike, the red hexes show where it will land on its next turn: move.", "Algunos combates tienen reglas propias, descritas en el recuadro de arriba del mapa: braseros que protegen al jefe, ritos con tiempo, refuerzos, jefes con segunda fase. Cuando un enemigo prepara un golpe, los hexágonos rojos muestran dónde caerá en su próximo turno: muévete."]]);
 
+/* ===== 78_ui_clarity.js ===== */
+/* =================== UI CLARITY: HP BARS, COMPACT SHEET, COMBAT PANEL =================== */
+
+/* ---------- 1. health bars on the miniatures ---------- */
+// A plain horizontal bar under every miniature (the old ring around the base was hidden by the minis).
+const _placeTokensHP = placeTokens;
+placeTokens = function () {
+  _placeTokensHP(); if (!CB) return;
+  CB.units.forEach(u => { const t = $("#t_" + u.uid); if (!t) return; const inr = t.querySelector(".in"); if (!inr) return;
+    let b = inr.querySelector(".hpb"); if (!b) { inr.insertAdjacentHTML("beforeend", `<div class="hpb"><i></i><span></span></div>`); b = inr.querySelector(".hpb"); }
+    const f = Math.max(0, Math.min(1, u.hp / u.maxhp)), gone = u.side === "e" ? u.hp <= 0 : u.down;
+    b.style.display = gone ? "none" : "";
+    const i = b.querySelector("i"); i.style.width = (f * 100) + "%";
+    b.className = "hpb " + u.side + (u.obj ? " obj" : "") + (u.side === "p" ? (f < .35 ? " lo" : f < .65 ? " mid" : "") : "");
+    // numbers on our characters, and on any enemy being looked at or targeted
+    const showN = u.side === "p" || CB.inspect === u || t.classList.contains("tg");
+    b.querySelector("span").textContent = showN ? Math.max(0, u.hp) : "";
+  });
+};
+
+/* ---------- 2. compact character sheet ---------- */
+const FEAT_D = {
+  secondwind: ["Azione bonus: recuperi 1d10 + livello PF, una volta per riposo.", "Bonus action: regain 1d10 + level HP, once per rest.", "Acción adicional: recuperas 1d10 + nivel PG, una vez por descanso."],
+  dueling: ["+2 ai danni con un'arma da mischia a una mano.", "+2 damage with a one-handed melee weapon.", "+2 al daño con un arma cuerpo a cuerpo a una mano."],
+  actionsurge: ["Un'azione in più nel turno, una volta per riposo.", "One extra action on your turn, once per rest.", "Una acción más en tu turno, una vez por descanso."],
+  impcrit: ["Colpo critico con 19 e 20.", "Critical hit on 19 and 20.", "Crítico con 19 y 20."],
+  extra: ["Due attacchi per azione.", "Two attacks per action.", "Dos ataques por acción."],
+  lay: ["Cura al tocco con una riserva di PF che si ricarica col riposo lungo.", "Healing touch from a pool of HP that refills on a long rest.", "Curación al tacto con una reserva de PG que se recarga con el descanso largo."],
+  smite: ["Dopo un colpo in mischia spendi uno slot: +2d8 radiosi (3d8 ai non morti).", "After a melee hit spend a slot: +2d8 radiant (3d8 vs undead).", "Tras un golpe cuerpo a cuerpo gasta un espacio: +2d8 radiante (3d8 contra muertos vivientes)."],
+  aura: ["Tu e gli alleati aggiungete il tuo Carisma ai tiri salvezza.", "You and your allies add your Charisma to saving throws.", "Tú y tus aliados sumáis tu Carisma a las salvaciones."],
+  sneak: ["+dadi extra una volta per turno se hai vantaggio o un alleato vicino al bersaglio.", "Extra dice once per turn with advantage or an ally next to the target.", "Dados extra una vez por turno con ventaja o un aliado junto al objetivo."],
+  cunning: ["Scatto o Disimpegno come azione bonus.", "Dash or Disengage as a bonus action.", "Correr o Retirada como acción adicional."],
+  uncanny: ["Dimezzi i danni del primo colpo che ti arriva nel round.", "Halve the damage of the first hit you take each round.", "Reduces a la mitad el daño del primer golpe que recibes en la ronda."],
+  favored: ["+2 ai danni contro i non morti.", "+2 damage against the undead.", "+2 al daño contra muertos vivientes."],
+  archery: ["+2 a colpire con le armi a distanza.", "+2 to hit with ranged weapons.", "+2 al ataque con armas a distancia."],
+  colossus: ["+1d8 danni una volta per turno a un nemico già ferito.", "+1d8 damage once per turn to a wounded enemy.", "+1d8 de daño una vez por turno a un enemigo ya herido."],
+  turn: ["I non morti vicini fanno un TS o restano paralizzati.", "Nearby undead make a save or are stunned.", "Los muertos vivientes cercanos hacen una salvación o quedan paralizados."],
+  arcane: ["La tua CA base è 13 + Destrezza.", "Your base AC is 13 + Dexterity.", "Tu CA base es 13 + Destreza."],
+};
+function sheetCompact(c) {
+  const feats = featsOf(c).filter(f => f !== "asi"), sp = spellsOf(c), sm = slotsMax(c), f = Math.max(0, c.hp / c.maxhp);
+  const sk = Object.keys(SKILLS).filter(k => c.skills.includes(k)), saves = CL(c).saves || [];
+  const init = abm(c, "dex") + (hasFeat(c, "alert") ? 5 : 0) + subInit(c), xpNext = S.level < MAXLV ? XPT[S.level + 1] : null, xpPrev = XPT[S.level] || 0;
+  const xpf = xpNext ? Math.max(0, Math.min(1, (S.xp - xpPrev) / (xpNext - xpPrev))) : 1;
+  const det = (title, n, body) => `<details class="cs-d"><summary>${title}<b>${n}</b></summary>${body}</details>`;
+  return `<div class="cs">
+  <div class="cs-head">${medHTML(CL(c).icon, "on")}<div class="cs-id"><b>${esc(c.name)}</b><span>${tr(CL(c).n)} ${c.lvl}${subOf(c) ? " · " + subName(c) : ""} · ${tr(RACES[c.race].n)}${c.bg ? " · " + tr(BGS[c.bg].n) : ""}</span>
+    <div class="cs-hp ${f < .35 ? "lo" : f < .65 ? "mid" : ""}"><i style="width:${f * 100}%"></i><span>${T_("hp")} ${c.hp} / ${c.maxhp}</span></div></div></div>
+  <div class="cs-pills"><span><b>${acOf(c)}</b>${T_("ac")}</span><span><b>${speedOf(c)}</b>${T_("spd")}</span><span><b>${sgn(init)}</b>${tr(["Iniz.", "Init.", "Inic."])}</span><span><b>+${prof(c)}</b>${tr(["Comp.", "Prof.", "Comp."])}</span><span><b>${c.hdLeft ?? c.lvl}/${c.lvl}</b>d${CL(c).hd}</span></div>
+  <div class="cs-ab">${AB.map(k => `<div class="${saves.includes(k) ? "sv" : ""}"><span>${abS(k)}</span><b>${sgn(abm(c, k))}</b><small>${abEff(c, k)}</small><em title="${T_("saves")}">TS ${sgn(saveBonus(c, k))}</em></div>`).join("")}</div>
+  <div class="cs-sec">${tr(["Attacchi", "Attacks", "Ataques"])}</div>
+  ${weaponsOf(c).map(w => { const p = weapProfile(c, w), m = typeof masteryOf === "function" ? masteryOf(c, p) : null;
+    return `<div class="cs-w">${icon(WEAP_IC[w] || "sword")}<b>${p.name}</b><span>${sgn(p.hit)}</span><span>${p.dice}${sgn(p.flat)}</span><small>${p.ranged ? `${tr(["gittata", "range", "alcance"])} ${p.r}` : tr(["mischia", "melee", "cuerpo a cuerpo"])}${m ? ` · ${tr(MASTERY[m].n)}` : ""}</small></div>`; }).join("")}
+  <div class="cs-sec">${T_("skills")}</div><div class="taglist">${sk.map(k => `<span>${tr(SKILLS[k][0])} <b>${sgn(skillBonus(c, k))}</b></span>`).join("")}</div>
+  ${feats.length || (c.feats || []).length ? det(T_("feats"), feats.length + (c.feats || []).length, feats.map(x => `<p><b>${tr(FEATS[x])}</b>${FEAT_D[x] ? ` — ${tr(FEAT_D[x])}` : ""}</p>`).join("") + (c.feats || []).map(x => `<p class="ft"><b>${tr(FEATLIST[x].n)}</b> — ${tr(FEATLIST[x].d)}</p>`).join("")) : ""}
+  ${sp.length ? det(`${T_("spells")}${sm.some(Boolean) ? ` <span class="cs-slots">${sm.map((n, i) => n ? `${["I", "II", "III", "IV"][i]} ${"◆".repeat(c.slots[i])}${"◇".repeat(Math.max(0, n - c.slots[i]))}` : "").filter(Boolean).join("  ")}</span>` : ""}`, sp.length, sp.map(k => `<p><b>${tr(SPELLS[k].n)}</b>${SPELLS[k].lv ? ` <small>${["", "I", "II", "III", "IV"][SPELLS[k].lv]}</small>` : ` <small>${tr(["trucchetto", "cantrip", "truco"])}</small>`} — ${tr(SPELLS[k].d)}</p>`).join("")) : ""}
+  ${c.wplus || c.aplus || c.trinket ? `<div class="cs-sec">${tr(["Equipaggiamento", "Equipment", "Equipo"])}</div><div class="taglist">${c.wplus ? `<span>${T_("bonusW")} +${c.wplus}</span>` : ""}${c.aplus ? `<span>${T_("bonusA")} +${c.aplus}</span>` : ""}${c.trinket ? `<span class="tk">${tr(ITEMS[c.trinket].n)}</span>` : ""}</div>` : ""}
+  <div class="cs-xp"><span>${T_("xp")} ${S.xp}${xpNext ? ` / ${xpNext}` : ""}</span><div><i style="width:${xpf * 100}%"></i></div></div>
+  </div>`;
+}
+
+/* ---------- 3. combat panel: action tabs, readable costs ---------- */
+const GRP_N = [["Armi", "Weapons", "Armas"], ["Incantesimi", "Spells", "Conjuros"], ["Azioni", "Actions", "Acciones"], ["Oggetti", "Items", "Objetos"]];
+const GRP_IC = ["swords", "star", "wind", "potion"];
+const _renderCombatUI = renderCombat;
+renderCombat = function () {
+  _renderCombatUI(); if (!CB || !$("#board")) return;
+  const u = cur(), mine = u && u.side === "p" && !CB.busy && !CB.ended && !CB.deploy;
+  // explicit action economy: what you still have this turn
+  const econ = document.querySelector("#cbp .econ");
+  if (econ && mine) econ.innerHTML = `<span class="ec a ${u.act > 0 || u.atkLeft > 0 ? "on" : ""}">◆ ${T_("action")}</span><span class="ec b ${u.bon > 0 ? "on" : ""}">▲ ${T_("bonus")}</span><span class="ec m ${u.mv > 0 ? "on" : ""}">${icon("wind")} ${u.mv}</span>`;
+  const hot = $("#hot"); if (!hot || !mine) { const t = $("#grptabs"); if (t) t.remove(); return; }
+  const acts = actionsOf(u), groups = [...new Set(acts.map(a => a.grp))].sort();
+  const selA = acts.find(a => sameSel(a.s, CB.sel));
+  if (CB.grp == null || !groups.includes(CB.grp) || CB.grpFor !== u.uid) { CB.grp = selA ? selA.grp : groups[0]; CB.grpFor = u.uid; }
+  hot.querySelectorAll("[data-a]").forEach(b => { const a = acts[+b.dataset.a]; b.hidden = a.grp !== CB.grp; b.querySelector("i.cost") && (b.querySelector("i.cost").className = "cost " + a.cost); });
+  hot.querySelectorAll(".sep").forEach(s => s.remove());
+  let tabs = $("#grptabs");
+  if (!tabs) { hot.parentElement.insertAdjacentHTML("beforebegin", `<div class="grptabs" id="grptabs"></div>`); tabs = $("#grptabs"); }
+  tabs.innerHTML = groups.map(g => { const n = acts.filter(a => a.grp === g && canUse(u, a.s)).length, has = acts.some(a => a.grp === g && sameSel(a.s, CB.sel));
+    return `<button data-g="${g}" aria-pressed="${g === CB.grp}" class="${has ? "hassel" : ""}">${icon(GRP_IC[g] || "star")}<span>${tr(GRP_N[g] || ["?", "?", "?"])}</span>${n ? `<b>${n}</b>` : ""}</button>`; }).join("");
+  tabs.querySelectorAll("[data-g]").forEach(b => b.onclick = () => { CB.grp = +b.dataset.g; renderCombat(); });
+};
+const _nextTurnUI = nextTurn;
+nextTurn = async function () { if (CB) CB.grp = null; return _nextTurnUI(); };
+
+/* ===== 79_progression.js ===== */
+/* =================== PROGRESSION TO LEVEL 50 & SUBCLASSES =================== */
+// Levels 1–20 follow 5e; 21–50 are "epic" levels: proficiency keeps rising slowly,
+// ability scores can go up to 24, spell slots and spell power keep growing.
+// Each class has two subclasses, chosen at level 3, with features at 3, 7 and 11.
+
+/* ---------- tables ---------- */
+for (let L = XPT.length; L <= 50; L++) XPT[L] = XPT[L - 1] + 1000 * (L - 4);
+const MAX_LEVEL = 50;
+const abCap = c => c.lvl > 20 ? 24 : 20;
+(function extendSlots() {
+  const rr = (s, n) => { for (let k = 0; k < n; k++) s[k % 4]++; return s; };
+  FULL[8] = [4, 3, 3, 2]; FULL[9] = [4, 3, 3, 3];
+  for (let L = 10; L <= 50; L++) FULL[L] = rr([4, 3, 3, 3], Math.floor((L - 9) / 5));
+  const H = {8: [4, 3, 0, 0], 9: [4, 3, 2, 0], 10: [4, 3, 2, 0], 11: [4, 3, 3, 0], 12: [4, 3, 3, 0], 13: [4, 3, 3, 1], 14: [4, 3, 3, 1], 15: [4, 3, 3, 2], 16: [4, 3, 3, 2]};
+  for (let L = 8; L <= 50; L++) HALF[L] = H[L] ? H[L].slice() : rr([4, 3, 3, 3], Math.floor((L - 17) / 6));
+})();
+(function extendFeats() {
+  const add = (cls, l, f) => { const t = CLASS_FEATS[cls]; t[l] = t[l] || []; if (!t[l].includes(f)) t[l].push(f); };
+  const drop = (cls, l, f) => { const t = CLASS_FEATS[cls]; if (t[l]) t[l] = t[l].filter(x => x !== f); };
+  drop("fighter", 3, "impcrit"); drop("ranger", 3, "colossus");   // now subclass features
+  Object.keys(CLASS_FEATS).forEach(cls => [4, 8, 12, 16, 19, 24, 28, 32, 36, 40, 44, 48].forEach(l => add(cls, l, "asi")));
+  add("fighter", 14, "asi"); add("rogue", 10, "asi");
+  add("fighter", 9, "indomitable"); add("fighter", 11, "extra2"); add("fighter", 20, "extra3");
+  add("paladin", 11, "radiant"); add("paladin", 24, "extra2");
+  add("rogue", 7, "evasion"); add("rogue", 11, "elusive");
+  add("ranger", 9, "landstride"); add("ranger", 24, "extra2");
+})();
+Object.assign(FEATS, {
+  indomitable: ["Indomito", "Indomitable", "Indomable"], extra2: ["Attacco extra (3)", "Extra Attack (3)", "Ataque extra (3)"], extra3: ["Attacco extra (4)", "Extra Attack (4)", "Ataque extra (4)"],
+  radiant: ["Colpi radiosi", "Radiant Strikes", "Golpes radiantes"], evasion: ["Elusione", "Evasion", "Evasión"], elusive: ["Inafferrabile", "Elusive", "Escurridizo"], landstride: ["Passo sicuro", "Land's Stride", "Zancada firme"],
+  survivor: ["Sopravvissuto", "Survivor", "Superviviente"], supcrit: ["Critico superiore (18–20)", "Superior Critical (18–20)", "Crítico superior (18–20)"],
+  superiority: ["Superiorità in combattimento", "Combat Superiority", "Superioridad en combate"], relentless: ["Instancabile", "Relentless", "Incansable"], warlord: ["Signore della guerra", "Warlord", "Señor de la guerra"],
+  sacredweapon: ["Arma sacra", "Sacred Weapon", "Arma sagrada"], devaura: ["Aura di devozione", "Aura of Devotion", "Aura de devoción"], nimbus: ["Nimbo sacro", "Holy Nimbus", "Nimbo sagrado"],
+  vow: ["Voto di inimicizia", "Vow of Enmity", "Voto de enemistad"], avenger: ["Vendicatore implacabile", "Relentless Avenger", "Vengador implacable"], soulavenger: ["Anima vendicatrice", "Soul of Vengeance", "Alma de venganza"],
+  assassinate: ["Assassinare", "Assassinate", "Asesinar"], deadly: ["Lama letale", "Deadly Blade", "Hoja letal"], cutthroat: ["Tagliagole", "Cutthroat", "Degollador"],
+  fasthands: ["Mani veloci", "Fast Hands", "Manos rápidas"], supreme: ["Furtività suprema", "Supreme Sneak", "Sigilo supremo"], thiefref: ["Riflessi da furfante", "Thief's Reflexes", "Reflejos de ladrón"],
+  multidef: ["Tattiche difensive", "Defensive Tactics", "Tácticas defensivas"], hordebreaker: ["Spezzaorde", "Horde Breaker", "Rompehordas"],
+  dread: ["Imboscata del terrore", "Dread Ambusher", "Emboscador terrible"], ironmind: ["Mente di ferro", "Iron Mind", "Mente de hierro"], flurry: ["Raffica del cacciatore", "Stalker's Flurry", "Ráfaga del acechador"],
+  sculpt: ["Plasmare incantesimi", "Sculpt Spells", "Esculpir conjuros"], empowered: ["Invocazione potenziata", "Empowered Evocation", "Evocación potenciada"], overchannel: ["Sovraccarico", "Overchannel", "Sobrecarga"],
+  arcaneward: ["Protezione arcana", "Arcane Ward", "Custodia arcana"], wardrecharge: ["Protezione rinnovata", "Renewed Ward", "Custodia renovada"], spellres: ["Resistenza agli incantesimi", "Spell Resistance", "Resistencia a conjuros"],
+  disciple: ["Discepolo della vita", "Disciple of Life", "Discípulo de la vida"], blessedheal: ["Guaritore benedetto", "Blessed Healer", "Sanador bendito"], supremeheal: ["Guarigione suprema", "Supreme Healing", "Curación suprema"],
+  warpriest: ["Sacerdote di guerra", "War Priest", "Sacerdote de guerra"], divinestrike: ["Colpo divino", "Divine Strike", "Golpe divino"], battleavatar: ["Avatar della battaglia", "Avatar of Battle", "Avatar de batalla"],
+});
+Object.assign(FEAT_D, {
+  indomitable: ["Una volta per riposo ritenti un tiro salvezza fallito.", "Once per rest, reroll a failed saving throw.", "Una vez por descanso repites una salvación fallida."],
+  extra2: ["Tre attacchi per azione.", "Three attacks per action.", "Tres ataques por acción."], extra3: ["Quattro attacchi per azione.", "Four attacks per action.", "Cuatro ataques por acción."],
+  radiant: ["+1d8 radiosi a ogni colpo in mischia.", "+1d8 radiant on every melee hit.", "+1d8 radiante en cada golpe cuerpo a cuerpo."],
+  evasion: ["Vantaggio ai tiri salvezza su Destrezza.", "Advantage on Dexterity saving throws.", "Ventaja en las salvaciones de Destreza."],
+  elusive: ["Gli attacchi contro di te non hanno mai vantaggio.", "Attacks against you never have advantage.", "Los ataques contra ti nunca tienen ventaja."],
+  landstride: ["+1 alla velocità.", "+1 speed.", "+1 a la velocidad."],
+  survivor: ["A inizio turno, se sei sotto metà PF, recuperi 5 + Costituzione PF.", "At the start of your turn, below half HP, regain 5 + Constitution HP.", "Al inicio de tu turno, por debajo de la mitad de PG, recuperas 5 + Constitución PG."],
+  supcrit: ["Colpo critico con 18, 19 e 20.", "Critical hit on 18, 19 and 20.", "Crítico con 18, 19 y 20."],
+  superiority: ["4 dadi di superiorità (d8) per riposo. «Manovra»: il prossimo colpo con l'arma aggiunge il dado ai danni e il bersaglio fa un TS Forza o cade a terra.", "4 superiority dice (d8) per rest. 'Maneuver': your next weapon hit adds the die to damage and the target makes a STR save or falls prone.", "4 dados de superioridad (d8) por descanso. «Maniobra»: tu siguiente golpe con arma suma el dado al daño y el objetivo hace una salvación de FUE o cae derribado."],
+  relentless: ["Dadi di superiorità d10, uno in più.", "Superiority dice become d10, one more.", "Los dados de superioridad pasan a d10, uno más."],
+  warlord: ["Dadi di superiorità d12, uno in più.", "Superiority dice become d12, one more.", "Los dados de superioridad pasan a d12, uno más."],
+  sacredweapon: ["Azione bonus, una volta per riposo: per tutto lo scontro aggiungi il Carisma ai tiri per colpire con le armi.", "Bonus action, once per rest: for the whole fight add Charisma to weapon attack rolls.", "Acción adicional, una vez por descanso: durante todo el combate sumas Carisma a las tiradas de ataque con armas."],
+  devaura: ["Gli alleati entro 2 esagoni da te hanno +1 CA.", "Allies within 2 hexes of you get +1 AC.", "Los aliados a 2 hexágonos de ti tienen +1 CA."],
+  nimbus: ["A inizio turno i nemici adiacenti subiscono radiosi pari a Carisma + competenza.", "At the start of your turn adjacent enemies take radiant damage equal to Charisma + proficiency.", "Al inicio de tu turno los enemigos adyacentes reciben daño radiante igual a Carisma + competencia."],
+  vow: ["Azione bonus, una volta per riposo: vantaggio a tutti i tuoi attacchi contro un nemico.", "Bonus action, once per rest: advantage on all your attacks against one enemy.", "Acción adicional, una vez por descanso: ventaja en todos tus ataques contra un enemigo."],
+  avenger: ["+2 alla velocità.", "+2 speed.", "+2 a la velocidad."],
+  soulavenger: ["+Carisma ai danni contro il nemico del Voto.", "+Charisma damage against your Vow target.", "+Carisma al daño contra el enemigo del Voto."],
+  assassinate: ["Nel primo round hai vantaggio a tutti gli attacchi.", "Advantage on all attacks in the first round.", "Ventaja en todos los ataques en la primera ronda."],
+  deadly: ["I dadi dell'Attacco furtivo diventano d8.", "Sneak Attack dice become d8.", "Los dados de Ataque furtivo pasan a d8."],
+  cutthroat: ["+2 dadi di Attacco furtivo.", "+2 Sneak Attack dice.", "+2 dados de Ataque furtivo."],
+  fasthands: ["Usi pozioni, bombe e pergamene come azione bonus.", "Use potions, bombs and scrolls as a bonus action.", "Usas pociones, bombas y pergaminos como acción adicional."],
+  supreme: ["+2 alla velocità.", "+2 speed.", "+2 a la velocidad."],
+  thiefref: ["+1 CA e +3 all'iniziativa.", "+1 AC and +3 initiative.", "+1 CA y +3 a la iniciativa."],
+  multidef: ["+1 CA.", "+1 AC.", "+1 CA."],
+  hordebreaker: ["Uccisore di colossi funziona due volte per turno.", "Colossus Slayer works twice per turn.", "Asesino de colosos funciona dos veces por turno."],
+  dread: ["Aggiungi la Saggezza all'iniziativa; nel primo round il primo colpo con l'arma fa +1d8.", "Add Wisdom to initiative; in the first round your first weapon hit deals +1d8.", "Sumas Sabiduría a la iniciativa; en la primera ronda tu primer golpe con arma hace +1d8."],
+  ironmind: ["Competenza nei tiri salvezza su Saggezza.", "Proficiency in Wisdom saving throws.", "Competencia en salvaciones de Sabiduría."],
+  flurry: ["Una volta per turno, se manchi con un'arma, ritenti l'attacco.", "Once per turn, when you miss with a weapon, attack again.", "Una vez por turno, si fallas con un arma, repites el ataque."],
+  sculpt: ["I tuoi incantesimi non danneggiano gli alleati.", "Your spells don't harm allies.", "Tus conjuros no dañan a los aliados."],
+  empowered: ["+Intelligenza ai danni dei tuoi incantesimi.", "+Intelligence to your spell damage.", "+Inteligencia al daño de tus conjuros."],
+  overchannel: ["+25% ai danni dei tuoi incantesimi.", "+25% spell damage.", "+25% al daño de tus conjuros."],
+  arcaneward: ["In ogni scontro una barriera assorbe danni pari a 2 × livello + Intelligenza.", "In every fight a barrier absorbs damage equal to 2 × level + Intelligence.", "En cada combate una barrera absorbe daño igual a 2 × nivel + Inteligencia."],
+  wardrecharge: ["Ogni incantesimo con slot ricarica la barriera di 2 + 2 × livello dell'incantesimo.", "Every slotted spell recharges the barrier by 2 + 2 × spell level.", "Cada conjuro con espacio recarga la barrera en 2 + 2 × nivel del conjuro."],
+  spellres: ["+2 a tutti i tiri salvezza.", "+2 to all saving throws.", "+2 a todas las salvaciones."],
+  disciple: ["Le tue cure danno 2 + livello dell'incantesimo PF in più.", "Your healing spells restore 2 + spell level extra HP.", "Tus curaciones dan 2 + nivel del conjuro PG extra."],
+  blessedheal: ["Quando curi un alleato recuperi anche tu 2 + livello dell'incantesimo PF.", "When you heal an ally you also regain 2 + spell level HP.", "Cuando curas a un aliado tú también recuperas 2 + nivel del conjuro PG."],
+  supremeheal: ["Le tue cure danno metà del tuo livello in PF in più.", "Your healing restores half your level in extra HP.", "Tus curaciones dan la mitad de tu nivel en PG extra."],
+  warpriest: ["Azione bonus: un attacco con l'arma in più. Usi pari alla Saggezza (min. 1) per riposo lungo.", "Bonus action: one extra weapon attack. Uses equal to Wisdom (min. 1) per long rest.", "Acción adicional: un ataque con arma más. Usos iguales a Sabiduría (mín. 1) por descanso largo."],
+  divinestrike: ["Una volta per turno, +1d8 ai danni con l'arma.", "Once per turn, +1d8 weapon damage.", "Una vez por turno, +1d8 al daño con arma."],
+  battleavatar: ["−3 ai danni taglienti, perforanti e contundenti che subisci.", "−3 to slashing, piercing and bludgeoning damage you take.", "−3 al daño cortante, perforante y contundente que recibes."],
+});
+
+/* ---------- subclasses ---------- */
+const SUBCLASSES = {
+  fighter: {
+    champion: {n: ["Campione", "Champion", "Campeón"], ic: "sword", d: ["Forza bruta e critici frequenti. Resiste quando è ferito.", "Raw might and frequent criticals. Holds on when wounded.", "Fuerza bruta y críticos frecuentes. Aguanta cuando está herido."], f: {3: ["impcrit"], 7: ["survivor"], 11: ["supcrit"]}},
+    battlemaster: {n: ["Maestro di battaglia", "Battle Master", "Maestro de batalla"], ic: "burst", d: ["Tattico: dadi di superiorità per colpi extra che atterrano i nemici.", "Tactician: superiority dice for extra damage that knocks foes prone.", "Táctico: dados de superioridad para golpes que derriban enemigos."], f: {3: ["superiority"], 7: ["relentless"], 11: ["warlord"]}},
+  },
+  paladin: {
+    devotion: {n: ["Giuramento di devozione", "Oath of Devotion", "Juramento de devoción"], ic: "sun", d: ["Il cavaliere luminoso: arma sacra e un'aura che protegge gli alleati.", "The shining knight: a sacred weapon and an aura that shields allies.", "El caballero luminoso: arma sagrada y un aura que protege a los aliados."], f: {3: ["sacredweapon"], 7: ["devaura"], 11: ["nimbus"]}},
+    vengeance: {n: ["Giuramento di vendetta", "Oath of Vengeance", "Juramento de venganza"], ic: "eye", d: ["Il cacciatore implacabile: giura la fine di un nemico e lo insegue.", "The relentless hunter: swears an enemy's end and runs it down.", "El cazador implacable: jura el fin de un enemigo y lo persigue."], f: {3: ["vow"], 7: ["avenger"], 11: ["soulavenger"]}},
+  },
+  rogue: {
+    assassin: {n: ["Assassino", "Assassin", "Asesino"], ic: "dagger", d: ["Colpisce per primo e fa male: vantaggio nel primo round, furtivo più letale.", "Strikes first and hard: advantage in round one, deadlier sneak attacks.", "Golpea primero y fuerte: ventaja en la primera ronda, furtivo más letal."], f: {3: ["assassinate"], 7: ["deadly"], 11: ["cutthroat"]}},
+    thief: {n: ["Furfante", "Thief", "Ladrón"], ic: "wind", d: ["Mani rapide e piedi più rapidi: oggetti come azione bonus, più velocità.", "Quick hands, quicker feet: items as a bonus action, more speed.", "Manos rápidas y pies aún más: objetos como acción adicional, más velocidad."], f: {3: ["fasthands"], 7: ["supreme"], 11: ["thiefref"]}},
+  },
+  ranger: {
+    hunter: {n: ["Cacciatore", "Hunter", "Cazador"], ic: "bow", d: ["Abbatte le prede ferite e regge gli scontri lunghi.", "Finishes wounded prey and lasts in long fights.", "Remata a las presas heridas y aguanta en combates largos."], f: {3: ["colossus"], 7: ["multidef"], 11: ["hordebreaker"]}},
+    gloom: {n: ["Viandante delle tenebre", "Gloom Stalker", "Acechador sombrío"], ic: "eye", d: ["Agisce prima di tutti e colpisce dall'ombra nel primo round.", "Acts before everyone and strikes from the dark in round one.", "Actúa antes que nadie y golpea desde la sombra en la primera ronda."], f: {3: ["dread"], 7: ["ironmind"], 11: ["flurry"]}},
+  },
+  wizard: {
+    evocation: {n: ["Scuola di invocazione", "School of Evocation", "Escuela de evocación"], ic: "flame", d: ["Fuoco e forza: incantesimi più potenti che risparmiano gli alleati.", "Fire and force: stronger spells that spare your allies.", "Fuego y fuerza: conjuros más potentes que no dañan a los aliados."], f: {3: ["sculpt"], 7: ["empowered"], 11: ["overchannel"]}},
+    abjuration: {n: ["Scuola di abiurazione", "School of Abjuration", "Escuela de abjuración"], ic: "shield", d: ["Barriere arcane: assorbe i colpi e resiste alla magia.", "Arcane barriers: soaks blows and resists magic.", "Barreras arcanas: absorbe golpes y resiste la magia."], f: {3: ["arcaneward"], 7: ["wardrecharge"], 11: ["spellres"]}},
+  },
+  cleric: {
+    life: {n: ["Dominio della vita", "Life Domain", "Dominio de la vida"], ic: "heart", d: ["Il guaritore: cure molto più forti.", "The healer: much stronger healing.", "El sanador: curaciones mucho más fuertes."], f: {3: ["disciple"], 7: ["blessedheal"], 11: ["supremeheal"]}},
+    war: {n: ["Dominio della guerra", "War Domain", "Dominio de la guerra"], ic: "sword", d: ["Il sacerdote guerriero: attacchi extra e colpi divini.", "The warrior priest: extra attacks and divine strikes.", "El sacerdote guerrero: ataques extra y golpes divinos."], f: {3: ["warpriest"], 7: ["divinestrike"], 11: ["battleavatar"]}},
+  },
+};
+const COMP_SUB = {brenna: "life", kael: "thief", ilyra: "evocation", fenn: "hunter", mira: "battlemaster", doran: "gloom", hrun: "devotion"};
+function subOf(c) {
+  const T = SUBCLASSES[c.cls]; if (!T || c.lvl < 3) return null;
+  if (!c.sub && c.id !== "pc") c.sub = T[COMP_SUB[c.id]] ? COMP_SUB[c.id] : Object.keys(T)[0];
+  return T[c.sub] || null;
+}
+const subName = c => { const s = subOf(c); return s ? tr(s.n) : ""; };
+featsOf = function (c) {
+  const out = [], add = t => { for (let l = 1; l <= c.lvl; l++) (t[l] || []).forEach(f => { if (!out.includes(f)) out.push(f); }); };
+  add(CLASS_FEATS[c.cls] || {}); const s = subOf(c); if (s) add(s.f); return out;
+};
+function newFeatsAt(c, L) { const s = subOf(c); return [...((CLASS_FEATS[c.cls] || {})[L] || []), ...(s && s.f[L] || [])].filter(f => f !== "asi"); }
+
+/* ---------- derived numbers ---------- */
+const attacksN = c => hasF(c, "extra3") ? 4 : hasF(c, "extra2") ? 3 : hasF(c, "extra") ? 2 : 1;
+const cantripN = c => 1 + (c.lvl >= 5) + (c.lvl >= 11) + (c.lvl >= 17) + Math.floor(Math.max(0, c.lvl - 20) / 10);
+const sneakN = c => (c.lvl <= 20 ? Math.ceil(c.lvl / 2) : 10 + Math.floor((c.lvl - 20) / 4)) + (hasF(c, "cutthroat") ? 2 : 0);
+const sneakD = c => hasF(c, "deadly") ? 8 : 6;
+const spellPow = c => 1 + Math.max(0, c.lvl - 10) * .03;
+const supN = c => hasF(c, "warlord") ? 6 : hasF(c, "relentless") ? 5 : hasF(c, "superiority") ? 4 : 0;
+const supD = c => hasF(c, "warlord") ? 12 : hasF(c, "relentless") ? 10 : 8;
+const wardMax = c => 2 * c.lvl + abm(c, "int");
+const subSpd = c => (hasF(c, "avenger") ? 2 : 0) + (hasF(c, "supreme") ? 2 : 0) + (hasF(c, "landstride") ? 1 : 0);
+const subInit = c => (hasF(c, "dread") ? Math.max(0, abm(c, "wis")) : 0) + (hasF(c, "thiefref") ? 3 : 0);
+const subSave = (c, ab) => (ab === "wis" && hasF(c, "ironmind") && !CL(c).saves.includes("wis") ? prof(c) : 0) + (hasF(c, "spellres") ? 2 : 0);
+const resOf = (c, k) => { c.res = c.res || {}; if (c.res[k] == null) c.res[k] = k === "sup" ? supN(c) : k === "wp" ? Math.max(1, abm(c, "wis")) : 1; return c.res[k]; };
+const _acOf = acOf; acOf = function (c) { return _acOf(c) + (hasF(c, "multidef") ? 1 : 0) + (hasF(c, "thiefref") ? 1 : 0); };
+const _resetRes = resetRes; resetRes = function (c) { _resetRes(c); c.res.sup = supN(c); c.res.wp = Math.max(1, abm(c, "wis")); c.res.ind = 1; };
+const _shortRest = shortRest; shortRest = function () { const r = _shortRest(); if (r) S.party.forEach(c => { if (c.res) { c.res.sup = supN(c); c.res.ind = 1; } }); return r; };
+
+/* ---------- combat hooks (called from 40_combat_rules) ---------- */
+function devAura(t) {
+  if (t.side !== "p" || !CB) return 0;
+  return CB.units.some(p => p.side === "p" && !p.down && p.hp > 0 && hasF(p.ref, "devaura") && dist(p, t) <= 2) ? 1 : 0;
+}
+function subAdv(a, t, o, res) {
+  if (a.side === "p") {
+    if (hasF(a.ref, "assassinate") && CB.round === 1 && !res.adv) { res.adv = true; res.why.push("assassin"); }
+    if (t.cond && t.cond.vowed === a.uid && !res.adv) { res.adv = true; res.why.push("vow"); }
+  }
+  if (t.side === "p" && hasF(t.ref, "elusive") && res.adv) res.adv = false;
+  return res;
+}
+function subDmg(a, t, o, crit) {
+  const c = a.ref; let x = 0; if (!o.weapon) return 0; const k = crit ? 2 : 1;
+  if (a.cond.man && resOf(c, "sup") > 0) { c.res.sup--; delete a.cond.man; x += rnd(supD(c)) * k; logL(`${a.name}: ${tr(ABIL.maneuver.n)}`);
+    if (!t.boss && !t.obj && !t.cond.prone && !saveRoll(t, "str", 8 + prof(c) + Math.max(abm(c, "str"), abm(c, "dex")))) { t.cond.prone = 1; floatAt(t, tr(["A terra!", "Prone!", "¡Derribado!"]), "#ffd38a", 1); } }
+  if (hasF(c, "dread") && CB.round === 1 && !a.dreadUsed) { a.dreadUsed = 1; x += roll(k + "d8").total; }
+  if (hasF(c, "divinestrike") && a.dsT !== CB.turnTok) { a.dsT = CB.turnTok; x += roll(k + "d8").total; }
+  if (hasF(c, "radiant") && !o.ranged) x += roll(k + "d8").total;
+  if (hasF(c, "soulavenger") && t.cond.vowed === a.uid) x += Math.max(1, abm(c, "cha"));
+  return x;
+}
+function subTurnStart(u) {
+  if (u.side !== "p" || u.down || u.hp <= 0) return; const c = u.ref;
+  if (hasF(c, "survivor") && u.hp < u.maxhp / 2) heal(u, 5 + Math.max(0, abm(c, "con")));
+}
+async function subNimbus(u) {
+  if (u.side !== "p" || u.down || !hasF(u.ref, "nimbus")) return;
+  const c = u.ref, n = Math.max(1, abm(c, "cha")) + prof(c);
+  for (const f of foes().filter(f => dist(f, u) <= 1)) { if (!CB || CB.ended) return; logL(`${tr(FEATS.nimbus)} → ${f.name}`); await applyDmg(f, n, "radiant", u); }
+}
+saveRoll = function (t, ab, dc, cov = 0) {
+  let b; if (t.side === "p") { b = saveBonus(t.ref, ab); if (t.cond.bless) b += rnd(4); } else { b = (t.def.sv || 0) + (S.diff === 2 ? 1 : 0); }
+  b += cov || 0;
+  const d20 = () => { let r = rnd(20); if (t.side === "p" && t.ref.race === "halfling" && r === 1) r = rnd(20); return r; };
+  let r = d20(); if (t.side === "p" && ab === "dex" && hasF(t.ref, "evasion")) r = Math.max(r, d20());
+  let ok = r + b >= dc; logL(`${t.name}: ${abS(ab)} ${r}${sgn(b)}=${r + b} vs ${dc} — ${ok ? T_("saveOk") : T_("saveKo")}`);
+  if (!ok && t.side === "p" && hasF(t.ref, "indomitable") && resOf(t.ref, "ind") > 0) {
+    t.ref.res.ind--; r = d20(); ok = r + b >= dc; floatAt(t, tr(FEATS.indomitable), "#ffd38a", 1);
+    logL(`${t.name}: ${tr(FEATS.indomitable)} ${r}${sgn(b)}=${r + b} — ${ok ? T_("saveOk") : T_("saveKo")}`);
+  }
+  return ok;
+};
+const _attackRoll = attackRoll;
+attackRoll = async function (a, t, o) {
+  if (!o) return _attackRoll(a, t, o);
+  let oo = o;
+  if (a.side === "p" && o.weapon) { const c = a.ref; oo = Object.assign({}, o);
+    if (hasF(c, "supcrit")) oo.crit = Math.min(oo.crit || 20, 18);
+    if (a.cond.sacred) oo.hit = (oo.hit || 0) + Math.max(1, abm(c, "cha")); }
+  const once = async () => { const b = devAura(t); t.ac += b; try { return await _attackRoll(a, t, oo); } finally { t.ac -= b; } };
+  let d = await once();
+  if (!d && a.side === "p" && o.weapon && hasF(a.ref, "flurry") && CB && !CB.ended && a.flT !== CB.turnTok && t.hp > 0) {
+    a.flT = CB.turnTok; floatAt(a, tr(FEATS.flurry), "#9fd0ff", 1); await sleep(200); d = await once();
+  }
+  return d;
+};
+const _applyDmgP = applyDmg;
+applyDmg = async function (t, amt, type, src) {
+  if (src && src.side === "p" && src.casting && t !== src) { const c = src.ref;
+    if (t.side === "p" && hasF(c, "sculpt")) return;
+    if (t.side === "e") { amt *= spellPow(c); if (hasF(c, "empowered")) amt += Math.max(0, abm(c, "int")); if (hasF(c, "overchannel")) amt *= 1.25; } }
+  if (t.side === "p" && amt > 0) { const c = t.ref;
+    if (hasF(c, "battleavatar") && ["slash", "pierce", "blunt"].includes(type)) amt = Math.max(0, amt - 3);
+    if (hasF(c, "arcaneward")) { if (t.ward == null) t.ward = wardMax(c);
+      if (t.ward > 0) { const ab = Math.min(t.ward, Math.round(amt)); t.ward -= ab; amt -= ab; if (ab) { floatAt(t, "◈ −" + ab, "#9fc4ff"); logL(`${t.name}: ${tr(FEATS.arcaneward)} −${ab}`); } }
+      if (amt <= 0) { placeTokens(); return; } } }
+  return _applyDmgP(t, amt, type, src);
+};
+const _castSpell = castSpell;
+castSpell = async function (u, key, target) {
+  const sp = SPELLS[key]; u.casting = 1; if (CB) CB.healCtx = {u, lv: sp.lv};
+  try { await _castSpell(u, key, target); } finally { u.casting = 0; if (CB) CB.healCtx = null; }
+  if (sp.lv > 0 && hasF(u.ref, "wardrecharge")) { const m = wardMax(u.ref); if (u.ward == null) u.ward = m; u.ward = Math.min(m, u.ward + 2 + 2 * sp.lv); floatAt(u, "◈ " + u.ward, "#9fc4ff"); }
+};
+const _heal = heal;
+heal = function (t, amt) {
+  const x = CB && CB.healCtx;
+  if (!x || t.side !== "p" || x.inH) return _heal(t, amt);
+  const c = x.u.ref;
+  if (hasF(c, "disciple")) amt += 2 + x.lv;
+  if (hasF(c, "supremeheal")) amt += Math.floor(c.lvl / 2);
+  _heal(t, amt);
+  if (hasF(c, "blessedheal") && t !== x.u && !x.bh && !x.u.down) { x.bh = x.inH = 1; _heal(x.u, 2 + x.lv); x.inH = 0; }
+};
+
+/* ---------- new abilities ---------- */
+Object.assign(ABIL, {
+  maneuver: {n: ["Manovra", "Maneuver", "Maniobra"], d: ["Gratis: il prossimo colpo con l'arma spende un dado di superiorità: lo aggiunge ai danni e il bersaglio fa un TS Forza o cade a terra.", "Free: your next weapon hit spends a superiority die: add it to damage, and the target makes a STR save or falls prone.", "Gratis: tu siguiente golpe con arma gasta un dado de superioridad: lo sumas al daño y el objetivo hace una salvación de FUE o cae derribado."], cost: "free"},
+  sacredweapon: {n: FEATS.sacredweapon, d: FEAT_D.sacredweapon, cost: "bon"},
+  vow: {n: FEATS.vow, d: FEAT_D.vow, cost: "bon", tgt: "enemy", r: 12},
+  warpriest: {n: FEATS.warpriest, d: FEAT_D.warpriest, cost: "bon"},
+});
+Object.assign(ABIL_IC, {maneuver: "burst", sacredweapon: "sun", vow: "eye", warpriest: "sword"});
+const _abilitiesOf = abilitiesOf;
+abilitiesOf = function (u) {
+  const L = _abilitiesOf(u), c = u.ref;
+  if (hasF(c, "superiority")) L.push("maneuver"); if (hasF(c, "sacredweapon")) L.push("sacredweapon");
+  if (hasF(c, "vow")) L.push("vow"); if (hasF(c, "warpriest")) L.push("warpriest");
+  return L;
+};
+const _canUse = canUse;
+canUse = function (u, s) {
+  const c = u.ref;
+  if (s && s.k === "it" && !isOil(s.key) && hasF(c, "fasthands") && u.bon > 0 && (S.inv[s.key] || 0) > 0) return true;
+  if (s && s.k === "ab") {
+    if (s.key === "maneuver") return !u.cond.man && resOf(c, "sup") > 0;
+    if (s.key === "sacredweapon") return u.bon > 0 && !u.cond.sacred && resOf(c, "ch") > 0;
+    if (s.key === "vow") return u.bon > 0 && resOf(c, "ch") > 0;
+    if (s.key === "warpriest") return u.bon > 0 && resOf(c, "wp") > 0;
+  }
+  return _canUse(u, s);
+};
+const _useAbility = useAbility;
+useAbility = async function (u, key, target) {
+  const c = u.ref;
+  switch (key) {
+    case "maneuver": u.cond.man = 1; floatAt(u, tr(ABIL.maneuver.n), "#ffd38a", 1); placeTokens(); return;
+    case "sacredweapon": u.bon--; c.res.ch--; u.cond.sacred = 1; fxHeal(u, "#ffd38a"); floatAt(u, tr(FEATS.sacredweapon), "#ffd38a", 1); logL(`${u.name}: ${tr(FEATS.sacredweapon)}`); placeTokens(); return;
+    case "vow": u.bon--; c.res.ch--; foes().forEach(f => { if (f.cond.vowed === u.uid) delete f.cond.vowed; }); target.cond.vowed = u.uid; fxImpact(target, "mark", false); floatAt(target, tr(FEATS.vow), "#ff8f6a", 1); logL(`${u.name}: ${tr(FEATS.vow)} → ${target.name}`); placeTokens(); return;
+    case "warpriest": u.bon--; c.res.wp--; u.atkLeft++; floatAt(u, tr(FEATS.warpriest), "#ffd38a", 1); logL(`${u.name}: ${tr(FEATS.warpriest)}`); placeTokens(); return;
+  }
+  return _useAbility(u, key, target);
+};
+const _useItemC = useItemC;
+useItemC = async function (u, key, target) {
+  if (!isOil(key) && hasF(u.ref, "fasthands") && u.bon > 0) { u.bon--; u.act++; }
+  return _useItemC(u, key, target);
+};
+const _actionsOf = actionsOf;
+actionsOf = function (u) {
+  const L = _actionsOf(u), c = u.ref;
+  L.forEach(a => {
+    if (a.s.k === "ab" && a.s.key === "maneuver") a.cnt = resOf(c, "sup");
+    if (a.s.k === "ab" && (a.s.key === "sacredweapon" || a.s.key === "vow")) a.cnt = resOf(c, "ch");
+    if (a.s.k === "ab" && a.s.key === "warpriest") a.cnt = resOf(c, "wp");
+    if (a.s.k === "it" && hasF(c, "fasthands") && !isOil(a.s.key)) a.cost = "b";
+  });
+  return L;
+};
+
+/* ---------- subclass choice ---------- */
+function showSubPick(after) {
+  const p = pc(), T = SUBCLASSES[p.cls]; if (!T) return after && after();
+  const lv = l => `<small class="sub-lv">${tr(["Liv.", "Lv.", "Niv."])} ${l}</small>`;
+  const m = modal(`<h2>${tr(["Scegli la sottoclasse", "Choose your subclass", "Elige tu subclase"])}</h2>
+    <p style="color:var(--muted);margin-top:-4px">${tr(["La scelta è definitiva e dà nuovi privilegi ai livelli 3, 7 e 11.", "The choice is permanent and grants new features at levels 3, 7 and 11.", "La elección es definitiva y da nuevos rasgos en los niveles 3, 7 y 11."])}</p>
+    <div class="opts">${Object.keys(T).map(k => { const s = T[k];
+      return `<button class="opt sub-opt" data-sub="${k}">${medHTML(s.ic)}<span style="min-width:0"><b>${tr(s.n)}</b><span>${tr(s.d)}</span>
+        <span class="sub-f">${Object.keys(s.f).map(l => s.f[l].map(f => `<i>${lv(l)} <b>${tr(FEATS[f])}</b> — ${tr(FEAT_D[f] || ["", "", ""])}</i>`).join("")).join("")}</span></span></button>`; }).join("")}</div>`, {center: 1, locked: 1});
+  m.querySelectorAll("[data-sub]").forEach(b => b.onclick = () => {
+    p.sub = b.dataset.sub; p.res = p.res || {}; p.res.sup = supN(p); recalc(p);
+    toast(tr(T[p.sub].n)); closeModal(); saveGame(true); if (after) after();
+  });
+}
+const _showLevelUp = showLevelUp;
+showLevelUp = function () {
+  const p = pc();
+  if (p && p.lvl >= 3 && !p.sub && SUBCLASSES[p.cls]) return showSubPick(() => _showLevelUp());
+  return _showLevelUp();
+};
+const _renderStoryP = renderStory;
+renderStory = function () {
+  _renderStoryP.apply(this, arguments);
+  const p = S && pc();
+  if (p && p.lvl >= 3 && !p.sub && SUBCLASSES[p.cls] && !document.querySelector(".modal")) showSubPick(() => renderStory());
+};
+
 /* ===== 80_meta.js ===== */
 /* =================== META: save slots, export/import, bestiary, achievements, options =================== */
 Object.assign(ICONS, {
@@ -5742,6 +6224,6 @@ window.claude?.hot?.snapshot?.(() => ({S: CB ? (CBSNAP ? JSON.parse(CBSNAP) : S)
 window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
 
 </script>
-<script>window.ddcBack=function(){var m=document.querySelectorAll(".modal");if(m.length&&!m[m.length-1].querySelector("#dgo,#vOk,#lRetry,#lvOk,[data-asi]")){m.forEach(function(x){x.remove()});if(typeof SCREEN!=="undefined"&&SCREEN==="story"&&typeof renderStory==="function")renderStory();return true}return false};</script>
+<script>window.ddcBack=function(){var m=document.querySelectorAll(".modal");if(m.length&&!m[m.length-1].querySelector("#dgo,#vOk,#lRetry,#lvOk,[data-asi],[data-sub]")){m.forEach(function(x){x.remove()});if(typeof SCREEN!=="undefined"&&SCREEN==="story"&&typeof renderStory==="function")renderStory();return true}return false};</script>
 </body>
 </html>

@@ -74,7 +74,7 @@ function startCombat(key, win, surprise) {
   });
   tacSetup(enc);
   if (enc.lead) { const L = CB.units.find(u => u.foe === enc.lead); if (L && CB.units.some(u => u.side === "e" && u !== L)) { CB.lead = L.uid; L.leader = 1; } }
-  CB.units.forEach(u => u.init = rnd(20) + (u.side === "p" ? abm(u.ref, "dex") + (hasFeat(u.ref, "alert") ? 5 : 0) : (u.def.sv || 0)) + Math.random() * .1);
+  CB.units.forEach(u => u.init = rnd(20) + (u.side === "p" ? abm(u.ref, "dex") + (hasFeat(u.ref, "alert") ? 5 : 0) + subInit(u.ref) : (u.def.sv || 0)) + Math.random() * .1);
   CB.order = CB.units.filter(u => !u.obj).sort((a, b) => b.init - a.init);
   showScreen("combat"); buildCombat();
   logL(tr(["Tiro per l'iniziativa…","Rolling initiative…","Tirando iniciativa…"]));
@@ -136,7 +136,7 @@ function meleeOf(o) {
 function owProfile(o) {
   if (o.side === "p") { const c = o.ref, ws = weaponsOf(c), i = ws.findIndex(w => WEAP[w].ranged);
     if (i >= 0) { const p = weapProfile(c, ws[i]); return {hit: p.hit, dice: p.dice, flat: p.flat, type: p.t, ranged: 1, weapon: 1, r: p.r}; }
-    if (spellsOf(c).includes("firebolt")) return {hit: spellAtk(c), dice: c.lvl >= 5 ? "2d10" : "1d10", type: "fire", ranged: 1, r: 10};
+    if (spellsOf(c).includes("firebolt")) return {hit: spellAtk(c), dice: cantripN(c) + "d10", type: "fire", ranged: 1, r: 10};
     const m = meleeOf(o); return m && Object.assign({r: 1}, m); }
   const a = o.def.atk[0]; return {hit: a.b + (S.diff === 0 ? -1 : S.diff === 2 ? 1 : 0), dice: a.d, type: a.t, ranged: !!a.ranged, r: a.r};
 }
@@ -182,7 +182,7 @@ async function nextTurn() {
   const u = cur(); u.mv = u.spd; u.act = 1; u.bon = 1; u.atkLeft = 0; u.sneakUsed = 0; u.colUsed = 0; u.react = 1; delete u.cond.dodge; delete u.cond.dis; delete u.cond.ow; delete u.cond.power;
   if (u.cond.prone && !u.cond.asleep && !u.cond.stun) { delete u.cond.prone; u.mv = Math.floor(u.spd / 2); logL(`${u.name}: ${tr(["si rialza","stands up","se levanta"])}`); }
   if (u.side === "e" && u.def.gob) u.cond.dis = 1;
-  masteryTurnStart(u);
+  masteryTurnStart(u); subTurnStart(u);
   if (u.side === "p" && u.ref.trinket === "periapt" && u.hp < u.maxhp / 2) heal(u, 2);
   CB.sel = null; CB.pend = null; CB.inspect = null; CB.mvp = null; CB.tileInfo = null;
   const tok = CB.turnTok = (CB.turnTok || 0) + 1;
@@ -191,6 +191,7 @@ async function nextTurn() {
   if (!CB.introDone) { CB.introDone = true; await leaderIntro(); if (!CB || CB.turnTok !== tok) return; }
   if (await tacTurnStart(u)) { if (!CB) return; if (!checkEnd()) setTimeout(nextTurn, 250); return; }
   if (await terrainTurnStart(u)) { if (!CB) return; if (!checkEnd()) setTimeout(nextTurn, 250); return; }
+  await subNimbus(u); if (!CB || checkEnd()) return;
   if (u.side === "e") {
     // spirit guardians
     for (const p of allies()) if (!p.down && p.cond.sg && dist(p, u) <= 2 && u.hp > 0) { const ok = saveRoll(u, "wis", spellDC(p.ref)); const dmg = roll("3d8").total; logL(`${tr(SPELLS.spiritguardians.n)} → ${u.name}`); await applyDmg(u, ok ? Math.floor(dmg / 2) : dmg, "radiant", p); }
@@ -326,7 +327,7 @@ function advInfo(a, t, o) {
   if (a.cond.prone) { dis = true; why.push("selfprone"); }
   if (o.ranged && adjEnemies(a).length) { dis = true; why.push("closerange"); }
   if (t.side === "p" && t.ref.trinket === "cloak_displ" && t.dispR !== CB.round) { dis = true; why.push("displace"); }
-  return {adv, dis, why};
+  return subAdv(a, t, o, {adv, dis, why});
 }
 function coverFor(a, t, o) { if (!(o.ranged || dist(a, t) > 1)) return 0; if (a.side === "p" && o.ranged && hasFeat(a.ref, "sharpshooter")) return 0; return coverOf(a, t); }
 async function attackRoll(a, t, o) {
@@ -351,8 +352,9 @@ async function attackRoll(a, t, o) {
     const c = a.ref, und = t.def && t.def.undead;
     if (crit && c.race === "halforc" && o.weapon) dmg += roll("1" + o.dice.replace(/^\d*/, "").replace(/[+-].*$/, "")).total;
     if (t.cond.mark === a.uid) dmg += roll(crit ? "2d6" : "1d6").total;
-    if (c.cls === "rogue" && o.weapon && (o.finesse || o.ranged) && !a.sneakUsed && (!dis || adv) && (adv || allyNear(t, a))) { a.sneakUsed = 1; const n = Math.ceil(c.lvl / 2) * (crit ? 2 : 1); dmg += roll(n + "d6").total; logL(tr(FEATS.sneak) + "!"); }
-    if (hasF(c, "colossus") && o.weapon && !a.colUsed && t.hp < t.maxhp) { a.colUsed = 1; dmg += rnd(8); }
+    if (c.cls === "rogue" && o.weapon && (o.finesse || o.ranged) && !a.sneakUsed && (!dis || adv) && (adv || allyNear(t, a))) { a.sneakUsed = 1; const n = sneakN(c) * (crit ? 2 : 1); dmg += roll(n + "d" + sneakD(c)).total; logL(tr(FEATS.sneak) + "!"); }
+    if (hasF(c, "colossus") && o.weapon && (a.colUsed || 0) < (hasF(c, "hordebreaker") ? 2 : 1) && t.hp < t.maxhp) { a.colUsed = (a.colUsed || 0) + 1; dmg += rnd(8); }
+    dmg += subDmg(a, t, o, crit);
     if (hasF(c, "favored") && und) dmg += 2;
     if (o.weapon && !o.ranged && a.cond.smite) { const i = slotFor(c, 1); if (i >= 0) { c.slots[i]--; delete a.cond.smite; dmg += roll(((und ? 3 : 2) * (crit ? 2 : 1)) + "d8").total; logL(tr(FEATS.smite) + "!"); } }
     if (c.id === "pc" && has("took_flame")) dmg += rnd(4);
@@ -384,7 +386,7 @@ async function applyDmg(t, amt, type, src) {
 function heal(t, amt) { if (t.side !== "p") return; amt = Math.max(1, amt); t.hp = Math.min(t.maxhp, t.hp + amt); if (t.down && t.hp > 0) t.down = false; floatAt(t, "+" + amt, "#9be0a6"); fxHeal(t); logL(`${t.name} ${T_("heals")} ${amt} ${T_("hp")}`); placeTokens(); }
 const inArea = (c, rad) => CB.units.filter(o => dist(o, c) <= rad && (o.side === "p" || o.hp > 0));
 
-function useAttack(u) { if (u.atkLeft > 0) u.atkLeft--; else { u.act--; u.atkLeft = (hasF(u.ref, "extra") ? 2 : 1) - 1; } }
+function useAttack(u) { if (u.atkLeft > 0) u.atkLeft--; else { u.act--; u.atkLeft = attacksN(u.ref) - 1; } }
 const powerOK = (c, ranged) => ranged ? hasFeat(c, "sharpshooter") : hasFeat(c, "gwm");
 async function weaponAttack(u, t, i) {
   const c = u.ref, p = weapProfile(c, weaponsOf(c)[i]); useAttack(u);
@@ -399,8 +401,8 @@ async function castSpell(u, key, target) {
   if (sp.lv > 0) { const i = slotFor(c, sp.lv); if (i >= 0) c.slots[i]--; }
   logL(`${u.name}: ${tr(sp.n)}`);
   switch (key) {
-    case "firebolt": await attackRoll(u, target, {hit: atk, dice: c.lvl >= 5 ? "2d10" : "1d10", type: "fire", ranged: 1}); break;
-    case "sacredflame": await fxColumn(target, "radiant"); if (!saveRoll(target, "dex", dc)) await applyDmg(target, roll(c.lvl >= 5 ? "2d8" : "1d8").total, "radiant", u); else floatAt(target, T_("saveOk"), "#bdb3a4"); break;
+    case "firebolt": await attackRoll(u, target, {hit: atk, dice: cantripN(c) + "d10", type: "fire", ranged: 1}); break;
+    case "sacredflame": await fxColumn(target, "radiant"); if (!saveRoll(target, "dex", dc)) await applyDmg(target, roll(cantripN(c) + "d8").total, "radiant", u); else floatAt(target, T_("saveOk"), "#bdb3a4"); break;
     case "magicmissile": await fxProjectile(u, target, "force"); await applyDmg(target, roll("3d4+3").total, "force", u); break;
     case "sleep": { await fxArea(target, 1, "sleep"); let pool = roll("5d8").total; const ts = inArea(target, 1).filter(t => t.side === "e" && !t.def.undead && !t.def.construct && !t.cond.asleep).sort((a, b) => a.hp - b.hp);
       for (const t of ts) { if (t.hp <= pool) { pool -= t.hp; t.cond.asleep = 10; logL(`${t.name} ${T_("sleeps")}`); floatAt(t, "Zz", "#86a4da"); } else break; } placeTokens(); await sleep(300); break; }

@@ -52,7 +52,31 @@ I capitoli successivi riprendono la stessa partita: gruppo, livello, oggetti e f
 - **Classi:** Guerriero, Paladino, Ladro, Ranger, Mago, Chierico. Ognuna ha i suoi dadi vita, armature, competenze, privilegi e incantesimi (incantatori completi e mezzi incantatori).
 - **Background:** Soldato, Accolito, Criminale, Sapiente, Nobile, Viandante. Ognuno dà abilità e qualche reazione specifica nella storia.
 - **Caratteristiche:** acquisto a punti con 27 punti, oppure i valori consigliati per la classe.
-- **Progressione:** tabella dei punti esperienza della 5e. Livello massimo 7 nel Capitolo I; la tabella arriva fino al 12 per i capitoli futuri. Ai livelli 4 e 8 si sceglie un aumento delle caratteristiche oppure un talento (Tiratore scelto, Maestro d'armi, Robusto, Allerta, Mobile, Sentinella).
+- **Progressione fino al livello 50:**
+  - livelli 1–20 come nella 5e; dal 21 al 50 sono livelli "epici";
+  - bonus di competenza da +2 a +6 entro il 20°, poi +1 ogni 8 livelli (+10 al 50°);
+  - aumento delle caratteristiche oppure un talento ai livelli 4, 8, 12, 16, 19 e poi ogni 4 livelli dal 24 (il guerriero anche al 6 e al 14, il ladro al 10); oltre il 20° le caratteristiche salgono fino a 24;
+  - slot degli incantesimi fino al IV livello, che continuano a crescere; oltre il 10° i danni degli incantesimi crescono del 3% a livello; i trucchetti salgono ai livelli 5, 11, 17 e poi ogni 10;
+  - privilegi di classe aggiuntivi: Indomito (guerriero 9), terzo e quarto attacco (guerriero 11 e 20), Colpi radiosi (paladino 11), Elusione e Inafferrabile (ladro 7 e 11), Passo sicuro (ranger 9), terzo attacco per paladino e ranger al 24.
+  - Il Capitolo I si ferma al livello 7; i capitoli successivi alzano il tetto (piano della saga: II fino al 16, III al 26, IV al 38, V al 50).
+- **Sottoclassi** (scelta definitiva al livello 3, privilegi ai livelli 3, 7 e 11):
+
+  | Classe | Sottoclasse | 3° | 7° | 11° |
+  |---|---|---|---|---|
+  | Guerriero | Campione | Critico 19–20 | Sopravvissuto | Critico 18–20 |
+  | Guerriero | Maestro di battaglia | Dadi di superiorità (Manovra) | d10, +1 dado | d12, +1 dado |
+  | Paladino | Devozione | Arma sacra | Aura di devozione (+1 CA) | Nimbo sacro |
+  | Paladino | Vendetta | Voto di inimicizia | +2 velocità | +Carisma ai danni sul bersaglio del Voto |
+  | Ladro | Assassino | Vantaggio nel primo round | Furtivo con d8 | +2 dadi di furtivo |
+  | Ladro | Furfante | Oggetti come azione bonus | +2 velocità | +1 CA, +3 iniziativa |
+  | Ranger | Cacciatore | Uccisore di colossi | +1 CA | Uccisore di colossi due volte |
+  | Ranger | Viandante delle tenebre | Saggezza all'iniziativa, +1d8 nel primo round | TS Saggezza | Ritenta un attacco mancato |
+  | Mago | Invocazione | Incantesimi che risparmiano gli alleati | +Intelligenza ai danni | +25% ai danni |
+  | Mago | Abiurazione | Barriera arcana | La barriera si ricarica | +2 ai tiri salvezza |
+  | Chierico | Vita | Cure potenziate | Guaritore benedetto | Guarigione suprema |
+  | Chierico | Guerra | Attacco bonus | Colpo divino | −3 ai danni fisici subiti |
+
+  Il protagonista sceglie al livello 3 (anche nelle partite salvate già oltre il 3); i compagni hanno una sottoclasse adatta al personaggio: Brenna Vita, Kael Furfante, Ilyra Invocazione, Fenn e Doran Cacciatore e Viandante, Mira Maestra di battaglia, Hrun Devozione.
 - **Riposi:**
   - due riposi brevi tra un riposo lungo e l'altro, in cui si spendono i dadi vita e si recuperano alcune risorse;
   - il riposo lungo, nei luoghi sicuri, ripristina tutto.

@@ -31,6 +31,8 @@ logL=function(s){ CB.log.push(s); }; PREF.quickMove=1; bark=function(){}; PREF.t
 function bestArea(u,r,rad){ let best=null; for(let x=0;x<7;x++)for(let y=0;y<9;y++){ if(dist(u,{x,y})>r) continue; const inA=inArea({x,y},rad); const e=inA.filter(o=>o.side==='e'&&o.hp>0).length, p=inA.filter(o=>o.side==='p'&&o!==u).length; const sc=e-2*p; if(!best||sc>best.sc) best={x,y,sc,e}; } return best; }
 async function botTurn(u){
   const c=u.ref; let guard=0;
+  for(const k of ['sacredweapon','maneuver','warpriest']) if(abilitiesOf(u).includes(k)&&canUse(u,{k:'ab',key:k})) await useAbility(u,k);
+  if(abilitiesOf(u).includes('vow')&&canUse(u,{k:'ab',key:'vow'})){ const f=foes().sort((a,b)=>b.maxhp-a.maxhp)[0]; if(f) await useAbility(u,'vow',f); }
   const sp=spellsOf(c);
   const want=k=>sp.includes(k)&&canUse(u,{k:'sp',key:k});
   const hurt=allies().filter(a=>a.down||a.hp<a.maxhp*0.35).sort((a,b)=>a.hp-b.hp)[0];
@@ -77,6 +79,7 @@ globalThis.runAll=async function(plan,cls,diff){ const out={};
       S={v:1,lang:0,diff:diff,scene:'x',flags:{},seen:{},gold:0,xp:0,level:lvl,inv:{potion:2},party:[],dark:0};
       const pcc=newChar({id:'pc',name:'Pc',race:'human',cls:cls,bg:'soldier',ab:Object.fromEntries(AB.map(k=>[k,CLASSES[cls].rec[k]+1])),skills:CLASSES[cls].skills,lvl});
       if(lvl>=4){ const k=CLASSES[cls].prim; pcc.ab[k]=Math.min(20,pcc.ab[k]+2); recalc(pcc,true);} 
+      if(lvl>=3&&SUBCLASSES[cls]){ pcc.sub=Object.keys(SUBCLASSES[cls])[i%2]; resetRes(pcc); }
       pcc.wplus = lvl>=5?1:0;
       S.party=[pcc]; comps.forEach(id=>S.party.push(makeComp(id)));
       const r=await runFight(key); if(r.err) { out[key]='ERR'; break; } if(r.win){w++; hpl+=r.hp.reduce((a,b)=>a+b,0)/r.hp.length;} rs+=r.rounds; }

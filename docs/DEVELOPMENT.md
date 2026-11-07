@@ -182,3 +182,15 @@ In `ENC[chiave]` (configurati in `77_tactical.js`):
 - `reinf: [{r, foes, bark}]`: rinforzi all'inizio del round `r`.
 - `phase: {foe, at, spawn, bark, tele}`: seconda fase sotto la frazione `at` dei PF.
 - `tac: 1`: il simulatore applica la soglia ridotta.
+
+## Progressione e sottoclassi
+
+In `79_progression.js`:
+
+- la tabella `XPT` arriva al livello 50; `FULL` e `HALF` (slot) e `CLASS_FEATS` vengono estesi all'avvio;
+- `SUBCLASSES[classe][chiave] = {n, d, ic, f: {3: [...], 7: [...], 11: [...]}}`; `featsOf` unisce i privilegi della classe e quelli della sottoclasse; `COMP_SUB` assegna la sottoclasse ai compagni;
+- nomi dei privilegi in `FEATS`, descrizioni in `FEAT_D`; le nuove abilità attive (Manovra, Arma sacra, Voto di inimicizia, Sacerdote di guerra) sono in `ABIL`;
+- gli agganci al combattimento sono `subAdv`, `subDmg`, `subTurnStart`, `subNimbus`, `devAura`, più gli involucri di `attackRoll`, `applyDmg`, `castSpell`, `heal` e `saveRoll`.
+
+Per aggiungere privilegi ai livelli 15 o più basta aggiungere chiavi in `f` e i testi in `FEATS`/`FEAT_D`.
+

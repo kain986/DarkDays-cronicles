@@ -1,5 +1,32 @@
 # Cronologia delle versioni
 
+## 3.3 — 2026-11-07
+
+**Interfaccia più chiara**
+- Le barre dei punti ferita sono sotto ogni miniatura e restano sempre visibili: verde, gialla o rossa a seconda della salute. Per il gruppo, per il nemico che tocchi e per quello che stai mirando c'è anche il numero.
+- Le percentuali di colpire stanno sopra le miniature e non coprono più le barre.
+- **Scheda del personaggio compatta:** punti ferita, CA, velocità, iniziativa, competenza e dadi vita in una riga; caratteristiche con i tiri salvezza (quelli di competenza evidenziati); attacchi con la maestria; abilità. Privilegi e incantesimi si aprono a tendina, con una descrizione per ciascuno.
+- **Pannello di combattimento riordinato:**
+  - le azioni sono divise in schede (Armi, Incantesimi, Azioni, Oggetti);
+  - azione, azione bonus e movimento rimasti si vedono a colpo d'occhio;
+  - ogni pulsante mostra cosa costa.
+
+**Progressione fino al livello 50**
+- La tabella dei punti esperienza, il bonus di competenza, gli slot degli incantesimi e gli aumenti delle caratteristiche arrivano al **livello 50**. Oltre il 20° le caratteristiche salgono fino a 24 e gli incantesimi diventano più forti. Il Capitolo I resta fino al livello 7: i prossimi capitoli alzeranno il tetto.
+- Nuovi privilegi ai livelli alti: Indomito, terzo e quarto attacco, Colpi radiosi, Elusione, Inafferrabile, Passo sicuro.
+- I trucchetti salgono di potenza ai livelli 5, 11, 17 e poi ogni 10.
+
+**Sottoclassi**
+- Al livello 3 il protagonista sceglie una di **due sottoclassi**, con privilegi ai livelli 3, 7 e 11:
+  - Guerriero: Campione o Maestro di battaglia (nuova azione: **Manovra**);
+  - Paladino: Giuramento di devozione (**Arma sacra**) o di vendetta (**Voto di inimicizia**);
+  - Ladro: Assassino o Furfante;
+  - Ranger: Cacciatore o Viandante delle tenebre;
+  - Mago: Scuola di invocazione o di abiurazione;
+  - Chierico: Dominio della vita o della guerra (**Sacerdote di guerra**).
+- I compagni hanno una sottoclasse adatta al personaggio. Nelle partite già oltre il livello 3 la scelta compare alla prima occasione.
+- Critico migliorato (guerriero) e Uccisore di colossi (ranger) ora appartengono a Campione e Cacciatore.
+
 ## 3.2 — 2026-11-07
 
 **Scontri tattici.** Gli scontri chiave hanno regole proprie. Le annuncia un riquadro sopra la mappa, già durante lo schieramento.

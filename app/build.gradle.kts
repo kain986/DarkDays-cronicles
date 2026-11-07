@@ -10,8 +10,8 @@ android {
         applicationId = "com.darkdays.chronicles"
         minSdk = 26
         targetSdk = 34
-        versionCode = 13
-        versionName = "3.2"
+        versionCode = 14
+        versionName = "3.3"
     }
 
     // Fixed signing key, so every new APK installs over the previous one and keeps the saves.

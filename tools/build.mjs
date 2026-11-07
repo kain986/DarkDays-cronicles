@@ -42,7 +42,7 @@ const HEAD = `<!doctype html>
 </head>
 <body>
 `;
-const BACK = `<script>window.ddcBack=function(){var m=document.querySelectorAll(".modal");if(m.length&&!m[m.length-1].querySelector("#dgo,#vOk,#lRetry,#lvOk,[data-asi]")){m.forEach(function(x){x.remove()});if(typeof SCREEN!=="undefined"&&SCREEN==="story"&&typeof renderStory==="function")renderStory();return true}return false};</script>`;
+const BACK = `<script>window.ddcBack=function(){var m=document.querySelectorAll(".modal");if(m.length&&!m[m.length-1].querySelector("#dgo,#vOk,#lRetry,#lvOk,[data-asi],[data-sub]")){m.forEach(function(x){x.remove()});if(typeof SCREEN!=="undefined"&&SCREEN==="story"&&typeof renderStory==="function")renderStory();return true}return false};</script>`;
 
 async function inlineFonts(html) {
   const m = html.match(/<link rel="stylesheet" href="(https:\/\/fonts\.googleapis\.com\/[^"]+)">/);

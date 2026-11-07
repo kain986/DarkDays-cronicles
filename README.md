@@ -47,7 +47,8 @@ Il gioco funziona offline. Nell'app controlla da solo se è uscita una versione 
 - **Indovinelli, rompicapo e missioni segrete**, tra cui la caccia alle Tre Fiamme dei Custodi e l'enigma del ladro di ricordi.
 - **IA dei nemici "utility":** valuta ogni casella raggiungibile in base al danno atteso, alla copertura, alle alture, alla linea di vista, al fuoco e al rischio di subire attacchi di opportunità o la Guardia.
 - **Progressione alla Baldur's Gate:**
-  - livelli fino al 7 nel Capitolo I, talenti, dadi vita, riposi brevi e lunghi;
+  - progressione fino al **livello 50** (il Capitolo I arriva al 7), talenti, dadi vita, riposi brevi e lunghi;
+  - **due sottoclassi per classe**, scelte al livello 3, con nuovi privilegi ai livelli 3, 7 e 11;
   - oggetti magici, ninnoli, pergamene, negozi e bottino casuale.
 - **Grafica e audio:**
   - mappe a inchiostro e pennino generate al volo e miniature dipinte;
@@ -78,6 +79,8 @@ src/                      sorgenti del gioco (HTML/CSS/JS), concatenati in ordin
   75_crafting.js          materiali, ricette, fucina, mercato
   76_party.js             formazione del gruppo (attivi e accampamento)
   77_tactical.js          scontri tattici: oggetti, protezioni, riti, colpi telegrafati, rinforzi, fasi
+  78_ui_clarity.js        barre dei PF, scheda compatta, pannello azioni a schede
+  79_progression.js       progressione fino al livello 50 e sottoclassi
   80_meta.js              salvataggi, bestiario, obiettivi, opzioni, aggiornamenti
   99_boot.js              avvio
   chapters/ch1_il_sole_nero/   Capitolo I (definizione, tre atti, segreti e indovinelli)

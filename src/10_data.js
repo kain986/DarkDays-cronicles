@@ -164,7 +164,7 @@ const CLASSES = {
   ranger:{n:["Ranger","Ranger","Explorador"], icon:"bow", hd:10, armor:"medium", prim:"dex", cast:"wis", caster:"half", saves:["str","dex"], skills:["sur","per","ste"], weapons:["longbow","shortsword"],
     rec:{str:10,dex:15,con:14,int:8,wis:14,cha:10},
     spells:{2:["huntersmark","curewounds"]},
-    d:["Cacciatore dei confini. Nemico prescelto (non morti), Marchio del cacciatore, Uccisore di colossi.","Hunter of the borderlands. Favored enemy (undead), Hunter's Mark, Colossus Slayer.","Cazador de las fronteras. Enemigo predilecto (muertos vivientes), Marca del cazador, Asesino de colosos."]},
+    d:["Cacciatore dei confini. Nemico prescelto (non morti), Marchio del cacciatore, Attacco extra.","Hunter of the borderlands. Favored enemy (undead), Hunter's Mark, Extra Attack.","Cazador de las fronteras. Enemigo predilecto (muertos vivientes), Marca del cazador, Ataque extra."]},
   wizard:{n:["Mago","Wizard","Mago"], icon:"star", hd:6, armor:"mage", prim:"int", cast:"int", caster:"full", saves:["int","wis"], skills:["arc","inv","his"], weapons:["quarterstaff"],
     rec:{str:8,dex:14,con:14,int:15,wis:12,cha:8},
     spells:{1:["firebolt","magicmissile","sleep","burninghands"],3:["scorchingray","mistystep"],5:["fireball"],7:["icestorm"]},

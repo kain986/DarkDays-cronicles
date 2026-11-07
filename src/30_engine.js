@@ -28,13 +28,13 @@ function saveGame(silent) { if (!S) return; const ok = store(SAVE_KEY, S); if (!
 
 /* =================== CHARACTER RULES =================== */
 const CL = c => CLASSES[c.cls];
-const prof = c => c.lvl >= 5 ? 3 : 2;
+const prof = c => c.lvl <= 20 ? 2 + Math.floor((c.lvl - 1) / 4) : 6 + Math.ceil((c.lvl - 20) / 8);
 const abEff = (c, k) => { const v = c.ab[k], t = c.trinket && ITEMS[c.trinket]; return t && t.setAb && t.setAb[0] === k ? Math.max(v, t.setAb[1]) : v; };
 const abm = (c, k) => mod(abEff(c, k));
 const hasFeat = (c, f) => !!(c && c.feats && c.feats.includes(f));
 function maxHP(c) { const h = CL(c).hd, con = abm(c, "con"); let hp = h + con + (c.lvl - 1) * (h / 2 + 1 + con); if (c.race === "dwarf") hp += c.lvl; if (hasFeat(c, "tough")) hp += 2 * c.lvl; return Math.max(1, hp); }
 function acOf(c) { const dex = abm(c, "dex"); const a = CL(c).armor; let ac = a === "heavy" ? 16 : a === "medium" ? 14 + Math.min(dex, 2) : a === "light" ? 11 + dex : 13 + dex; if (CL(c).shield) ac += 2; return ac + (c.aplus || 0) + (c.trinket === "ring_prot" || c.trinket === "sunlantern" ? 1 : 0); }
-const speedOf = c => RACES[c.race].spd + (c.trinket === "boots_wind" ? 2 : 0) + (hasFeat(c, "mobile") ? 2 : 0);
+const speedOf = c => RACES[c.race].spd + (c.trinket === "boots_wind" ? 2 : 0) + (hasFeat(c, "mobile") ? 2 : 0) + subSpd(c);
 function slotsMax(c) { const t = CL(c).caster; const tab = t === "full" ? FULL : t === "half" ? HALF : null; const s = tab ? tab[c.lvl].slice() : [0,0,0,0]; if (tab && c.trinket === "pearl_power") s[c.lvl >= 3 ? 1 : 0]++; return s; }
 const castMod = c => CL(c).cast ? abm(c, CL(c).cast) : 0;
 const spellDC = c => 8 + prof(c) + castMod(c);
@@ -45,7 +45,7 @@ function spellsOf(c) { const t = CL(c).spells || {}, out = []; Object.keys(t).fo
 const weaponsOf = c => c.weapons || CL(c).weapons;
 const skillBonus = (c, sk) => abm(c, SKILLS[sk][1]) + (c.skills.includes(sk) ? prof(c) : 0);
 function auraBonus() { if (!S) return 0; const p = S.party.find(c => c.cls === "paladin" && c.lvl >= 6 && c.hp > 0); return p ? Math.max(1, abm(p, "cha")) : 0; }
-const saveBonus = (c, ab) => abm(c, ab) + (CL(c).saves.includes(ab) ? prof(c) : 0) + auraBonus() + (c.trinket === "ring_prot" || c.trinket === "sunlantern" ? 1 : 0);
+const saveBonus = (c, ab) => abm(c, ab) + (CL(c).saves.includes(ab) ? prof(c) : 0) + auraBonus() + (c.trinket === "ring_prot" || c.trinket === "sunlantern" ? 1 : 0) + subSave(c, ab);
 function resetRes(c) { c.res = {sw: 1, as: 1, lay: 5 * c.lvl, ch: 1, arc: 1}; c.hdLeft = c.lvl; }
 function recalc(c, full) {
   const m = maxHP(c);
@@ -56,7 +56,7 @@ function recalc(c, full) {
 function asiLevels(c) { const t = CLASS_FEATS[c.cls] || {}; return Object.keys(t).filter(l => t[l].includes("asi")).map(Number); }
 function autoASI(c) {
   c.asiDone = c.asiDone || [];
-  asiLevels(c).forEach(l => { if (c.lvl >= l && !c.asiDone.includes(l)) { c.feats = c.feats || []; if (l === 4 && COMP_FEAT[c.id] && !c.feats.includes(COMP_FEAT[c.id])) { c.feats.push(COMP_FEAT[c.id]); c.asiDone.push(l); recalc(c); return; } const k = c.ab[CL(c).prim] >= 19 ? "con" : CL(c).prim; c.ab[k] = Math.min(20, c.ab[k] + 2); c.asiDone.push(l); } });
+  asiLevels(c).forEach(l => { if (c.lvl >= l && !c.asiDone.includes(l)) { c.feats = c.feats || []; if (l === 4 && COMP_FEAT[c.id] && !c.feats.includes(COMP_FEAT[c.id])) { c.feats.push(COMP_FEAT[c.id]); c.asiDone.push(l); recalc(c); return; } const k = [CL(c).prim, "con", "dex", "wis", "str", "cha", "int"].find(a => c.ab[a] < abCap(c) - 1) || CL(c).prim; c.ab[k] = Math.min(abCap(c), c.ab[k] + 2); c.asiDone.push(l); } });
 }
 function weapProfile(c, wk) {
   const w = WEAP[wk]; const stat = w.st === "fin" ? (abm(c, "str") > abm(c, "dex") ? "str" : "dex") : w.st; const m = abm(c, stat);
@@ -440,9 +440,8 @@ let menuMember = 0;
 function openMenu(tab) {
   const tabs = [["party", T_("party")], ["inv", T_("inv")], ["journal", T_("journal")], ["opts", T_("settings")]];
   let body = "";
-  if (tab === "party") { const c = S.party[Math.min(menuMember, S.party.length - 1)]; body = `<div class="who" style="margin:0 0 10px">${S.party.map((p, i) => `<button data-mm="${i}" aria-pressed="${p === c}" style="${p === c ? "border-color:var(--brass);color:var(--brass)" : ""}">${esc(p.name.split(" ")[0])}</button>`).join("")}</div>${sheetHTML(c)}
-    <h3>${T_("xp")}</h3><p style="font-variant-numeric:tabular-nums">${S.xp} ${S.level < MAXLV ? `/ ${XPT[S.level + 1]} · ${T_("nextLv")}` : ""}</p>
-    ${SCREEN === "story" ? `<h3>${tr(["Riposo breve","Short rest","Descanso corto"])} · ${2 - (S.shortRests || 0)}/2</h3><p style="font-size:14px;color:var(--muted);margin:0 0 8px">${tr(["Un'ora di sosta: ogni personaggio spende dadi vita per curarsi e recupera Recupero, Impeto d'azione e Incanalare divinità. Il mago recupera alcuni slot. Si ricarica con il riposo lungo.","An hour's rest: each character spends hit dice to heal and regains Second Wind, Action Surge and Channel Divinity. The wizard recovers some slots. Recharges on a long rest.","Una hora de descanso: cada personaje gasta dados de golpe para curarse y recupera Nuevas energías, Oleada de acción y Canalizar divinidad. El mago recupera algunos espacios. Se recarga con un descanso largo."])}</p><button class="btn small" id="shortR" ${(S.shortRests || 0) >= 2 ? "disabled" : ""}>${tr(["Riposa un'ora","Rest for an hour","Descansar una hora"])}</button>` : ""}`; }
+  if (tab === "party") { const c = S.party[Math.min(menuMember, S.party.length - 1)]; body = `<div class="who" style="margin:0 0 10px">${S.party.map((p, i) => `<button data-mm="${i}" aria-pressed="${p === c}" style="${p === c ? "border-color:var(--brass);color:var(--brass)" : ""}">${esc(p.name.split(" ")[0])}</button>`).join("")}</div>${sheetCompact(c)}
+    ${SCREEN === "story" ? `<div class="cs-rest"><div><b>${tr(["Riposo breve","Short rest","Descanso corto"])} · ${2 - (S.shortRests || 0)}/2</b><small>${tr(["Spendi dadi vita per curarti e recuperi alcune capacità.","Spend hit dice to heal and regain some abilities.","Gasta dados de golpe para curarte y recuperas algunas capacidades."])}</small></div><button class="btn small" id="shortR" ${(S.shortRests || 0) >= 2 ? "disabled" : ""}>${tr(["Riposa un'ora","Rest for an hour","Descansar una hora"])}</button></div>` : ""}`; }
   if (tab === "inv") body = invHTML();
   if (tab === "journal") body = journalHTML();
   if (tab === "opts") body = `<h3>${T_("lang")}</h3>${langSeg()}<h3>${T_("diff")}</h3>${diffSeg(S.diff)}<h3>${tr(["Velocità combattimento","Combat speed","Velocidad de combate"])}</h3><div class="seg"><button data-fast="0" aria-pressed="${!PREF.fast}">${tr(["Normale","Normal","Normal"])}</button><button data-fast="1" aria-pressed="${!!PREF.fast}">${tr(["Veloce","Fast","Rápida"])}</button></div>${audioOptsHTML()}<div style="display:grid;gap:8px;margin-top:8px"><button class="btn small" id="oSave">${T_("save")}</button><button class="btn small" id="oTitle">${T_("toTitle")}</button></div><p style="font-size:14px;color:var(--muted);margin-top:14px">${T_("install")}</p>`;
@@ -503,13 +502,13 @@ function openShop(id) {
 function showLevelUp() {
   const L = S.pendingLv[0], p = pc();
   const needAsi = asiLevels(p).includes(L) && !(p.asiDone || []).includes(L);
-  const lines = S.party.map(c => { const nf = ((CLASS_FEATS[c.cls] || {})[L] || []).filter(f => f !== "asi").map(f => tr(FEATS[f])); const ns = ((CL(c).spells || {})[L] || []).map(k => tr(SPELLS[k].n));
+  const lines = S.party.map(c => { const nf = (L === 3 && subOf(c) ? [tr(subOf(c).n)] : []).concat(newFeatsAt(c, L).map(f => tr(FEATS[f]))); const ns = ((CL(c).spells || {})[L] || []).map(k => tr(SPELLS[k].n));
     return `<div class="row"><div class="t"><b>${esc(c.name)}</b> · ${T_("hp")} ${c.maxhp}<small>${[...nf, ...ns].join(", ") || "—"}</small></div></div>`; }).join("");
   const featOpts = Object.keys(FEATLIST).filter(f => !hasFeat(p, f));
   const m = modal(`<h2>${T_("levelUp")} ${T_("lvl")} ${L}</h2>${lines}${needAsi ? `<h3>${T_("asi")}</h3><div class="abgrid">${AB.map(k => `<button data-asi="${k}" style="background:var(--stone);border-radius:6px;padding:6px 2px"><span class="lbl" style="font-size:10px">${abS(k)}</span><b style="display:block;font-family:var(--f-display);font-size:18px">${p.ab[k]}</b></button>`).join("")}</div>
     <h3>${tr(["…oppure scegli un talento","…or choose a feat","…o elige una dote"])}</h3><div class="opts">${featOpts.map(f => `<button class="opt" data-feat="${f}">${medHTML(FEATLIST[f].ic)}<span style="min-width:0"><b>${tr(FEATLIST[f].n)}</b><span>${tr(FEATLIST[f].d)}</span></span></button>`).join("")}</div>` : `<button class="btn primary" id="lvOk" style="margin-top:12px">${T_("goOn")}</button>`}`, {center: 1, locked: 1});
   m.querySelectorAll("[data-feat]").forEach(b => b.onclick = () => { (p.feats = p.feats || []).push(b.dataset.feat); (p.asiDone = p.asiDone || []).push(L); recalc(p); done(); });
   const done = () => { S.pendingLv.shift(); closeModal(); saveGame(true); if (S.pendingLv.length) showLevelUp(); else if (SCREEN === "story") renderStory(); };
-  m.querySelectorAll("[data-asi]").forEach(b => b.onclick = () => { const k = b.dataset.asi; p.ab[k] = Math.min(20, p.ab[k] + 2); (p.asiDone = p.asiDone || []).push(L); recalc(p); done(); });
+  m.querySelectorAll("[data-asi]").forEach(b => b.onclick = () => { const k = b.dataset.asi; p.ab[k] = Math.min(abCap(p), p.ab[k] + 2); (p.asiDone = p.asiDone || []).push(L); recalc(p); done(); });
   const ok = m.querySelector("#lvOk"); if (ok) ok.onclick = done;
 }
