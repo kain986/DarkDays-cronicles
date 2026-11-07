@@ -215,6 +215,10 @@ const COMPS = {
   brenna:{name:"Brenna Ironvow", race:"dwarf", cls:"cleric", ab:{str:14,dex:10,con:16,int:10,wis:16,cha:10}, skills:["rel","ins","med","ath"], weapons:["warhammer"]},
   kael:{name:"Kael Varn", race:"human", cls:"rogue", ab:{str:10,dex:16,con:13,int:12,wis:11,cha:14}, skills:["ste","sle","dec","inv","per"], weapons:["rapier","shortbow"]},
   ilyra:{name:"Ilyra", race:"elf", cls:"wizard", ab:{str:8,dex:15,con:13,int:17,wis:12,cha:10}, skills:["arc","inv","his","per"], weapons:["quarterstaff"]},
+  fenn:{name:"Fenn Ashwood", race:"human", cls:"ranger", ab:{str:12,dex:16,con:14,int:10,wis:14,cha:8}, skills:["sur","per","ste","ath"], weapons:["longbow","shortsword"]},
+  mira:{name:"Mira Benda", race:"human", cls:"fighter", ab:{str:16,dex:12,con:15,int:10,wis:12,cha:12}, skills:["ath","inti","per"], weapons:["longsword","javelin"]},
+  doran:{name:"Doran Varn", race:"human", cls:"ranger", ab:{str:10,dex:16,con:13,int:12,wis:14,cha:10}, skills:["ste","per","sur","dec"], weapons:["longbow","shortsword"]},
+  hrun:{name:"Hrun", race:"dwarf", cls:"paladin", ab:{str:16,dex:8,con:16,int:10,wis:12,cha:14}, skills:["ath","his","rel"], weapons:["warhammer","javelin"]},
 };
 
 /* =================== WEAPONS =================== */
@@ -289,6 +293,7 @@ Object.assign(ITEMS, {
   oil:{n:["Olio infuocato","Fire oil","Aceite ígneo"], d:["Azione bonus in combattimento: per il resto dello scontro i tuoi colpi con l'arma infliggono +1d4 danni da fuoco.","Bonus action in combat: for the rest of the fight your weapon hits deal +1d4 fire damage.","Acción adicional en combate: durante el resto del combate tus golpes con arma causan +1d4 de daño de fuego."], price:30, use:"oil"},
   holywater:{n:["Acqua consacrata","Holy water","Agua bendita"], d:["Da lanciare entro 5 esagoni: 2d6 radiosi, 4d6 ai non morti.","Throw within 5 hexes: 2d6 radiant, 4d6 against the undead.","Para lanzar a 5 hexágonos: 2d6 radiante, 4d6 contra muertos vivientes."], price:25, use:"throw", dmg:"2d6", undead:"4d6", type:"radiant"},
   sunlantern:{n:["Lanterna dei Custodi","Sunwarden Lantern","Linterna de los Custodios"], d:["Accessorio leggendario: i tuoi colpi infliggono +1d6 radiosi ai non morti, e hai +1 a tutti i tiri salvezza.","Legendary trinket: your hits deal +1d6 radiant to the undead, and you get +1 to all saving throws.","Accesorio legendario: tus golpes causan +1d6 radiante a los muertos vivientes, y tienes +1 a todas las salvaciones."], price:900, use:"equip", slot:"t"},
+  woodsun:{n:["Sole di legno","Wooden sun","Sol de madera"], d:["Un sole di betulla intagliato da Fenn per Tam e Wren. È storto apposta.","A birchwood sun carved by Fenn for Tam and Wren. It's crooked on purpose.","Un sol de abedul tallado por Fenn para Tam y Wren. Está torcido a propósito."], use:"quest"},
   memvial:{n:["Fiala di ricordi","Vial of memories","Frasco de recuerdos"], d:["Una fiala opaca che contiene la voce di qualcuno. Va restituita.","An opaque vial holding someone's voice. It must be returned.","Un frasco opaco que contiene la voz de alguien. Hay que devolverlo."], use:"quest"},
 });
 ITEMS.flask.dmg = "2d6"; ITEMS.flask.type = "fire";
@@ -300,7 +305,7 @@ const FEATLIST = {
   mobile:{n:["Mobile","Mobile","Móvil"], d:["+2 alla velocità e non provochi mai attacchi d'opportunità.","+2 speed and you never provoke opportunity attacks.","+2 a la velocidad y nunca provocas ataques de oportunidad."], ic:"wind"},
   sentinel:{n:["Sentinella","Sentinel","Centinela"], d:["I tuoi attacchi d'opportunità funzionano anche contro chi si disimpegna, e se colpisci il nemico si ferma sul posto.","Your opportunity attacks work even against creatures that disengage, and a hit stops the enemy in its tracks.","Tus ataques de oportunidad funcionan incluso contra quien se retira, y si aciertas el enemigo se detiene."], ic:"shield"},
 };
-const COMP_FEAT = {brenna: "tough", kael: "mobile", ilyra: "alert"};
+const COMP_FEAT = {brenna: "tough", kael: "mobile", ilyra: "alert", fenn: "sharpshooter", mira: "sentinel", doran: "alert", hrun: "tough"};
 const LOOT = {
   mill:["eye_hawk"], cem:["sun_talisman"], varga:["periapt"], varga_small:["periapt"], bandits:["cloak_displ"], tower:["pearl_power"], doran:["boots_wind"],
   duke:["ring_prot"], vault_boss:["w2","scroll_fire"], vault_boss_hard:["w2","scroll_fire"], vault_guard:["greater"], keeper:["amulet_health"], ser_guards:["headband_int"], pass:["gauntlets_ogre"], jailers:["scroll_fire","scroll_heal"],

@@ -30,6 +30,20 @@ Ci sono tre finali (L'Alba, Il Crepuscolo libero, Il Re di Cenere), che dipendon
 
 Ognuno ha dialoghi propri e un talento personale.
 
+**Gruppo e roster**
+- Viaggiano e combattono al massimo **4 personaggi**. Gli altri compagni reclutati aspettano all'accampamento, fino a un roster di **8**. La formazione si cambia dal menu, fuori dal combattimento.
+- Le prove di abilità usano chi è nel gruppo attivo. I dialoghi, l'accampamento e l'epilogo considerano tutti i compagni reclutati.
+- Gli altri compagni reclutabili:
+
+| Compagno | Classe | Come si recluta |
+|---|---|---|
+| Fenn Ashwood | ranger | sempre, partendo per il Bosco Cavo (Atto I) |
+| Mira Benda | guerriera | se al ponte l'hai convinta a parole; caserma dei disertori a Vesperia |
+| Doran Varn | ranger | se Kael lo convince sulla Torre Campanaria |
+| Hrun | paladino | all'eremo sul fianco della Corona (Atto III) |
+
+- **La morte di Fenn:** quando Seraphine si rivela all'Archivio (fine dell'Atto II), uccide Fenn per vendicarsi dei bambini sottratti al culto. È la perdita a metà storia. Il suo equipaggiamento torna nello zaino, il posto libero nel gruppo viene preso da chi è all'accampamento, e il sole di legno (se Fenn te l'ha dato) torna nel finale.
+
 I capitoli successivi riprendono la stessa partita: gruppo, livello, oggetti e flag della storia passano al capitolo seguente.
 
 ## Personaggio

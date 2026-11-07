@@ -184,7 +184,7 @@ const FOE_LOOK = {
 function miniLook(u) {
   if (u.side === "p") { const c = u.ref, w = weaponsOf(c)[0];
     return Object.assign({skin: "#e0b48e"}, RACE_LOOK[c.race], CLASS_LOOK[c.cls], {weapon: WEAP_LOOK[w] || "sword"},
-      c.id === "brenna" ? {hair: "#b8562a", beard: 1, cloak: "#5a3a22"} : {}, c.id === "kael" ? {hair: "#16121a"} : {}, c.id === "ilyra" ? {hair: "#bdb8b0", hatc: "#3a3a4a", robe: "#4a4a5a", armor: "#4a4a5a"} : {},
+      c.id === "brenna" ? {hair: "#b8562a", beard: 1, cloak: "#5a3a22"} : {}, c.id === "kael" ? {hair: "#16121a"} : {}, c.id === "ilyra" ? {hair: "#bdb8b0", hatc: "#3a3a4a", robe: "#4a4a5a", armor: "#4a4a5a"} : {}, c.id === "fenn" ? {hair: "#8a5a2a", cloak: "#3e5a2e", beard: 1} : {}, c.id === "mira" ? {hair: "#2a1a12", cloak: "#6a1e22"} : {}, c.id === "doran" ? {hair: "#16121a", cloak: "#2a2430"} : {}, c.id === "hrun" ? {hair: "#6a6a6a", beard: 1, cloak: "#7a4a1a"} : {},
       {rim: "#caa650", key: "p_" + c.id + c.cls + c.race}); }
   return Object.assign({skin: "#d0b090", pants: "#2a2420"}, FOE_LOOK[u.foe] || FOE_LOOK.cultist, {rim: "#b8344d", key: "e_" + u.foe});
 }

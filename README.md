@@ -25,6 +25,7 @@ Il gioco funziona offline. Nell'app controlla da solo se è uscita una versione 
 ## Caratteristiche
 
 - **Storia a capitoli.** Il *Capitolo I — Il Sole Nero* ha tre atti, un dungeon opzionale (le Volte di Aurel), due missioni segrete, 179 scene, compagni reclutabili e tre finali. La durata è di circa 5–6 ore. Gruppo, oggetti, livello e scelte passano ai capitoli successivi.
+- **Gruppo di 4 su un roster di 8:** compagni reclutabili lungo la storia, formazione da cambiare all'accampamento e un compagno che non arriverà alla fine.
 - **Tre lingue:** italiano, inglese e spagnolo, cambiabili in qualsiasi momento.
 - **Creazione del personaggio in stile 5e:** 6 razze, 6 classi, background, acquisto a punti (27), abilità e competenze.
 - **Prove di abilità con il d20**, vantaggio e svantaggio, tiri salvezza e classi difficoltà visibili.
@@ -74,6 +75,7 @@ src/                      sorgenti del gioco (HTML/CSS/JS), concatenati in ordin
   73_terrain_leaders.js   terreni, linea di vista, fuoco, capi nemici, zone d'azione
   74_masteries_fx.js      maestrie delle armi, kill cam
   75_crafting.js          materiali, ricette, fucina, mercato
+  76_party.js             formazione del gruppo (attivi e accampamento)
   80_meta.js              salvataggi, bestiario, obiettivi, opzioni, aggiornamenti
   99_boot.js              avvio
   chapters/ch1_il_sole_nero/   Capitolo I (definizione, tre atti, segreti e indovinelli)

@@ -1,5 +1,18 @@
 # Cronologia delle versioni
 
+## 3.1 — 2026-11-07
+
+**Gruppo e compagni**
+- Il gruppo attivo è di **massimo 4 personaggi**. I compagni reclutati in più aspettano **all'accampamento**: si scambiano da Menu → Gruppo → Formazione, fuori dal combattimento.
+- Il roster arriva a **8 personaggi** (tu più 7 compagni). Chi è all'accampamento sale di livello insieme al gruppo.
+- **Quattro nuovi compagni:**
+  - **Fenn Ashwood**, ranger, fratello di Liesel. Si unisce quando parti per il Bosco Cavo.
+  - **Mira Benda**, guerriera, la disertrice del ponte. Solo se l'hai convinta a parole; la si trova alla caserma dei disertori di Vesperia.
+  - **Doran Varn**, ranger, fratello di Kael. Solo se Kael lo riporta dalla parte giusta.
+  - **Hrun**, paladino nano, l'ultimo fabbro dei Custodi, all'eremo nell'Atto III.
+- **Una perdita a metà storia:** al culmine dell'Atto II, quando Madre Seraphine si rivela, Fenn muore. Il suo sole di legno intagliato, i dialoghi all'ultimo accampamento e l'epilogo ne portano il ricordo.
+- Nuove conversazioni all'ultimo accampamento con Mira, Doran e Hrun, e nuove righe nell'epilogo.
+
 ## 3.0 — 2026-11-07
 
 **Griglia esagonale**

@@ -655,6 +655,14 @@ a.btn{text-decoration:none}
 .rcp.unk b{letter-spacing:.2em;color:var(--muted)}
 .shoptabs{margin:2px 0 10px}
 .tok .st .c-oil{color:#ffb070}
+/* ---------- party formation ---------- */
+.formation{margin-top:6px}
+.row.fm{align-items:center;gap:10px}
+.row.fm .fmi{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(202,166,80,.12);box-shadow:inset 0 0 0 1px rgba(202,166,80,.45);color:var(--brass)}
+.row.fm .fmi svg{width:18px;height:18px}
+.row.fm .swap{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end;max-width:52%}
+.row.fm .swap .btn{padding:5px 8px;font-size:13px}
+.formation .fallen{margin-top:10px;font-style:italic;color:#bfb2a0;font-size:14px}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 
@@ -669,7 +677,7 @@ a.btn{text-decoration:none}
 /* ===== 10_data.js ===== */
 "use strict";
 /* =================== LANGUAGE =================== */
-var GAME_VERSION = "3.0"; // replaced by tools/build.mjs
+var GAME_VERSION = "3.1"; // replaced by tools/build.mjs
 var IS_APP = true;      // true only in the Android build (enables the update check)
 let LG = 0; // 0 it, 1 en, 2 es
 const LANG_CODES = ["it","en","es"];
@@ -884,6 +892,10 @@ const COMPS = {
   brenna:{name:"Brenna Ironvow", race:"dwarf", cls:"cleric", ab:{str:14,dex:10,con:16,int:10,wis:16,cha:10}, skills:["rel","ins","med","ath"], weapons:["warhammer"]},
   kael:{name:"Kael Varn", race:"human", cls:"rogue", ab:{str:10,dex:16,con:13,int:12,wis:11,cha:14}, skills:["ste","sle","dec","inv","per"], weapons:["rapier","shortbow"]},
   ilyra:{name:"Ilyra", race:"elf", cls:"wizard", ab:{str:8,dex:15,con:13,int:17,wis:12,cha:10}, skills:["arc","inv","his","per"], weapons:["quarterstaff"]},
+  fenn:{name:"Fenn Ashwood", race:"human", cls:"ranger", ab:{str:12,dex:16,con:14,int:10,wis:14,cha:8}, skills:["sur","per","ste","ath"], weapons:["longbow","shortsword"]},
+  mira:{name:"Mira Benda", race:"human", cls:"fighter", ab:{str:16,dex:12,con:15,int:10,wis:12,cha:12}, skills:["ath","inti","per"], weapons:["longsword","javelin"]},
+  doran:{name:"Doran Varn", race:"human", cls:"ranger", ab:{str:10,dex:16,con:13,int:12,wis:14,cha:10}, skills:["ste","per","sur","dec"], weapons:["longbow","shortsword"]},
+  hrun:{name:"Hrun", race:"dwarf", cls:"paladin", ab:{str:16,dex:8,con:16,int:10,wis:12,cha:14}, skills:["ath","his","rel"], weapons:["warhammer","javelin"]},
 };
 
 /* =================== WEAPONS =================== */
@@ -958,6 +970,7 @@ Object.assign(ITEMS, {
   oil:{n:["Olio infuocato","Fire oil","Aceite ígneo"], d:["Azione bonus in combattimento: per il resto dello scontro i tuoi colpi con l'arma infliggono +1d4 danni da fuoco.","Bonus action in combat: for the rest of the fight your weapon hits deal +1d4 fire damage.","Acción adicional en combate: durante el resto del combate tus golpes con arma causan +1d4 de daño de fuego."], price:30, use:"oil"},
   holywater:{n:["Acqua consacrata","Holy water","Agua bendita"], d:["Da lanciare entro 5 esagoni: 2d6 radiosi, 4d6 ai non morti.","Throw within 5 hexes: 2d6 radiant, 4d6 against the undead.","Para lanzar a 5 hexágonos: 2d6 radiante, 4d6 contra muertos vivientes."], price:25, use:"throw", dmg:"2d6", undead:"4d6", type:"radiant"},
   sunlantern:{n:["Lanterna dei Custodi","Sunwarden Lantern","Linterna de los Custodios"], d:["Accessorio leggendario: i tuoi colpi infliggono +1d6 radiosi ai non morti, e hai +1 a tutti i tiri salvezza.","Legendary trinket: your hits deal +1d6 radiant to the undead, and you get +1 to all saving throws.","Accesorio legendario: tus golpes causan +1d6 radiante a los muertos vivientes, y tienes +1 a todas las salvaciones."], price:900, use:"equip", slot:"t"},
+  woodsun:{n:["Sole di legno","Wooden sun","Sol de madera"], d:["Un sole di betulla intagliato da Fenn per Tam e Wren. È storto apposta.","A birchwood sun carved by Fenn for Tam and Wren. It's crooked on purpose.","Un sol de abedul tallado por Fenn para Tam y Wren. Está torcido a propósito."], use:"quest"},
   memvial:{n:["Fiala di ricordi","Vial of memories","Frasco de recuerdos"], d:["Una fiala opaca che contiene la voce di qualcuno. Va restituita.","An opaque vial holding someone's voice. It must be returned.","Un frasco opaco que contiene la voz de alguien. Hay que devolverlo."], use:"quest"},
 });
 ITEMS.flask.dmg = "2d6"; ITEMS.flask.type = "fire";
@@ -969,7 +982,7 @@ const FEATLIST = {
   mobile:{n:["Mobile","Mobile","Móvil"], d:["+2 alla velocità e non provochi mai attacchi d'opportunità.","+2 speed and you never provoke opportunity attacks.","+2 a la velocidad y nunca provocas ataques de oportunidad."], ic:"wind"},
   sentinel:{n:["Sentinella","Sentinel","Centinela"], d:["I tuoi attacchi d'opportunità funzionano anche contro chi si disimpegna, e se colpisci il nemico si ferma sul posto.","Your opportunity attacks work even against creatures that disengage, and a hit stops the enemy in its tracks.","Tus ataques de oportunidad funcionan incluso contra quien se retira, y si aciertas el enemigo se detiene."], ic:"shield"},
 };
-const COMP_FEAT = {brenna: "tough", kael: "mobile", ilyra: "alert"};
+const COMP_FEAT = {brenna: "tough", kael: "mobile", ilyra: "alert", fenn: "sharpshooter", mira: "sentinel", doran: "alert", hrun: "tough"};
 const LOOT = {
   mill:["eye_hawk"], cem:["sun_talisman"], varga:["periapt"], varga_small:["periapt"], bandits:["cloak_displ"], tower:["pearl_power"], doran:["boots_wind"],
   duke:["ring_prot"], vault_boss:["w2","scroll_fire"], vault_boss_hard:["w2","scroll_fire"], vault_guard:["greater"], keeper:["amulet_health"], ser_guards:["headband_int"], pass:["gauntlets_ogre"], jailers:["scroll_fire","scroll_heal"],
@@ -2039,6 +2052,9 @@ const epilogue = () => cat(
   inP("kael") && (has("doran_ally") ? ["Kael e Doran aprono un forno sul Ponte Vecchio. Il pane è pessimo, ma nessuno paga.","Kael and Doran open a bakery on the Old Bridge. The bread is terrible, but nobody pays.","Kael y Doran abren una panadería en el Puente Viejo. El pan es pésimo, pero nadie paga."] :
     ["Kael torna alla Gilda delle Ombre. Ogni anno, all'anniversario, lascia una pagnotta sulla tomba di suo fratello.","Kael returns to the Shadow Guild. Every year, on the anniversary, he leaves a loaf on his brother's grave.","Kael vuelve al Gremio de las Sombras. Cada año, en el aniversario, deja una hogaza en la tumba de su hermano."]),
   inP("ilyra") && ["Ilyra ricostruisce l'Archivio di Vesperia e vi scrive la vostra storia. Dice che è il primo libro di cui non conosce il finale.","Ilyra rebuilds the Archive of Vesperia and writes your story there. She says it's the first book whose ending she doesn't know.","Ilyra reconstruye el Archivo de Vesperia y escribe allí vuestra historia. Dice que es el primer libro cuyo final no conoce."],
+  inP("mira") && ["Mira Benda diventa capitano della guardia di Vesperia. La prima cosa che fa è spegnere l'ultima lanterna nera con le sue mani.","Mira Patch becomes captain of the Vesperia guard. The first thing she does is put out the last black lantern with her own hands.","Mira Parche se convierte en capitana de la guardia de Vesperia. Lo primero que hace es apagar la última linterna negra con sus propias manos."],
+  inP("hrun") && ["Hrun riaccende la fucina dei Custodi ai piedi della Corona. Dice di avere sessant'anni di armi da rifare, e stavolta per gente che torna.","Hrun relights the Sunwardens' forge at the foot of the Crown. He says he has sixty years of weapons to remake, and this time for people who come back.","Hrun vuelve a encender la forja de los Custodios al pie de la Corona. Dice que tiene sesenta años de armas por rehacer, y esta vez para gente que vuelve."],
+  has("fenn_dead") && (S.inv.woodsun ? ["Ad Ashford, sulla tomba di Fenn Ashwood, Tam e Wren lasciano ogni mattina un sole di legno storto. Lo zio l'aveva fatto così apposta, per riconoscerlo.","In Ashford, on Fenn Ashwood's grave, Tam and Wren leave a crooked wooden sun every morning. Their uncle made it that way on purpose, so they would know it.","En Ashford, sobre la tumba de Fenn Ashwood, Tam y Wren dejan cada mañana un sol de madera torcido. Su tío lo hizo así a propósito, para reconocerlo."] : ["Ad Ashford, Liesel pianta una betulla sulla tomba di suo fratello Fenn. È l'unico albero della valle che cresce dritto verso il cielo.","In Ashford, Liesel plants a birch on her brother Fenn's grave. It's the only tree in the valley that grows straight towards the sky.","En Ashford, Liesel planta un abedul sobre la tumba de su hermano Fenn. Es el único árbol del valle que crece recto hacia el cielo."]),
   has("freed_branded") && ["I sei marchiati liberati tornano alle loro case. Ognuno porta sulla mano una cicatrice a forma di sole.","The six freed marked return to their homes. Each bears a sun-shaped scar on their hand.","Los seis marcados liberados vuelven a sus casas. Cada uno lleva en la mano una cicatriz con forma de sol."]);
 
 SC.end_dawn = {bg:"dawn", loc:LOC.throne, once(){ set("game_done"); set("end_dawn"); },
@@ -2224,6 +2240,103 @@ CHAPTER_QUESTS.push(
     t: () => has("bott_failed") ? ["Missione segreta fallita: il ladro è fuggito.", "Secret quest failed: the thief escaped.", "Misión secreta fallida: el ladrón huyó."] : ["Missione segreta. Qualcuno nella Via degli Speziali, nella Città Bassa di Vesperia, ruba i ricordi felici e li chiude in fiale.", "Secret quest. Someone on Apothecaries' Row, in Vesperia's Lower City, is stealing happy memories and sealing them in vials.", "Misión secreta. Alguien en la Calle de los Boticarios, en la Ciudad Baja de Vesperia, roba los recuerdos felices y los encierra en frascos."]},
 );
 
+/* ===== chapters/ch1_il_sole_nero/50_companions.js ===== */
+/* =================== CHAPTER I — COMPANIONS: RECRUITS AND A LOSS =================== */
+// Roster: the hero + up to 7 companions (4 travel together, the others wait at camp).
+// Brenna, Kael, Ilyra (original); Fenn (Act I, always); Mira and Doran (Act II, only if spared/redeemed); Hrun (Act III).
+// Fenn dies at the climax of Act II, when Seraphine reveals herself.
+
+/* ---------- Fenn Ashwood: Liesel's brother ---------- */
+LOC.fields = ["Gli ultimi campi", "The last fields", "Los últimos campos"];
+{ const w = SC.ashford.ch.find(c => c.go === "a1_woods"); w.go = () => has("fenn_met") ? "a1_woods" : "a1_fenn"; w.to = ["a1_woods", "a1_fenn"]; }
+SC.a1_fenn = {bg: "forest", loc: LOC.fields, once() { set("fenn_met"); },
+  t: ["Dove finiscono gli ultimi campi, appoggiato a uno spaventapasseri senza testa, ti aspetta un uomo con un arco lungo e un mantello color muschio. Ha gli stessi occhi di Liesel.\n\n«Fenn Ashwood. Tam e Wren sono i figli di mia sorella.» Incocca una freccia e la riabbassa, come per abitudine. «Conosco il Bosco Cavo meglio di chiunque altro ad Ashford. E non resterò alla palizzata a guardare le luci nere mentre qualcun altro va a riprenderli.»",
+    "Where the last fields end, leaning on a headless scarecrow, a man with a longbow and a moss-coloured cloak is waiting for you. He has Liesel's eyes.\n\n“Fenn Ashwood. Tam and Wren are my sister's children.” He nocks an arrow and lowers it again, out of habit. “I know the Hollow Woods better than anyone in Ashford. And I'm not staying at the palisade watching the black lights while someone else goes to bring them back.”",
+    "Donde terminan los últimos campos, apoyado en un espantapájaros sin cabeza, te espera un hombre con un arco largo y una capa color musgo. Tiene los mismos ojos que Liesel.\n\n«Fenn Ashwood. Tam y Wren son los hijos de mi hermana.» Encaja una flecha y vuelve a bajarla, por costumbre. «Conozco el Bosque Hueco mejor que nadie en Ashford. Y no me voy a quedar en la empalizada mirando las luces negras mientras otro va a buscarlos.»"],
+  ch: [
+    {t: ["«Allora vieni. Un arco in più ci serve.»", "“Then come. We could use another bow.”", "«Entonces ven. Nos vendrá bien otro arco.»"], fx() { join("fenn"); set("fenn_welcomed"); }, go: "a1_woods"},
+    {t: ["«È troppo pericoloso. Resta con Liesel.»", "“It's too dangerous. Stay with Liesel.”", "«Es demasiado peligroso. Quédate con Liesel.»"], go: "a1_fenn_insist"}]};
+SC.a1_fenn_insist = {bg: "forest", loc: LOC.fields,
+  t: ["Fenn sorride senza allegria. «Non era una domanda.» Si mette l'arco in spalla e si avvia verso gli alberi bianchi, un passo davanti a te. «Liesel ha già perso un marito. Non perderà anche i figli, e se qualcuno deve non tornare, preferisco che sia io.»",
+    "Fenn smiles without humour. “It wasn't a question.” He shoulders his bow and heads for the white trees, one step ahead of you. “Liesel has already lost a husband. She won't lose her children too, and if someone has to not come back, I'd rather it be me.”",
+    "Fenn sonríe sin alegría. «No era una pregunta.» Se cuelga el arco al hombro y echa a andar hacia los árboles blancos, un paso por delante de ti. «Liesel ya perdió un marido. No perderá también a sus hijos, y si alguien no tiene que volver, prefiero ser yo.»"],
+  ch: [{t: ["Seguirlo nel bosco", "Follow him into the woods", "Seguirlo al bosque"], fx() { join("fenn"); }, go: "a1_woods"}]};
+
+// a quiet moment in Vesperia: the wooden sun
+addChoice("vesperia", {t: ["Parlare con Fenn, sul ponte", "Talk to Fenn, on the bridge", "Hablar con Fenn, en el puente"], req: () => inP("fenn") && !has("t_fenn") && !has("act2_done"), go: "a2_fenn_talk"}, 2);
+SC.a2_fenn_talk = {bg: "city", loc: LOC.vesperia, once() { set("t_fenn"); xp(50); item("woodsun", 1); },
+  t: () => cat(["Trovi Fenn seduto sul parapetto del ponte, con un coltellino e un pezzo di legno di betulla. Sta intagliando un sole: raggi storti, un sorriso.\n\n«Per Tam e Wren. Gliel'avevo promesso, la notte prima che sparissero: un sole vero, visto che quello del cielo si era rotto.» Soffia via i trucioli. «Tienilo tu. Io perdo tutto, tranne le frecce.»\n\nTe lo mette in mano prima che tu possa rifiutare. «E se non torno, daglielo tu. Di' che lo zio Fenn l'ha fatto storto apposta, così si riconosce.»",
+    "You find Fenn sitting on the bridge parapet with a small knife and a piece of birchwood. He is carving a sun: crooked rays, a smile.\n\n“For Tam and Wren. I promised them, the night before they vanished: a real sun, since the one in the sky had broken.” He blows away the shavings. “You keep it. I lose everything except arrows.”\n\nHe presses it into your hand before you can refuse. “And if I don't come back, you give it to them. Tell them Uncle Fenn made it crooked on purpose, so they'd know it was his.”",
+    "Encuentras a Fenn sentado en el pretil del puente, con una navaja y un trozo de madera de abedul. Está tallando un sol: rayos torcidos, una sonrisa.\n\n«Para Tam y Wren. Se lo prometí la noche antes de que desaparecieran: un sol de verdad, ya que el del cielo se había roto.» Sopla las virutas. «Guárdalo tú. Yo lo pierdo todo, menos las flechas.»\n\nTe lo pone en la mano antes de que puedas negarte. «Y si no vuelvo, dáselo tú. Diles que el tío Fenn lo hizo torcido a propósito, para que sepan que es suyo.»"],
+    has("children_saved") && ["«Li abbiamo riportati a casa» aggiunge. «Qualunque cosa succeda adesso, questo nessuno ce lo toglie.»", "“We brought them home,” he adds. “Whatever happens now, nobody can take that from us.”", "«Los llevamos a casa» añade. «Pase lo que pase ahora, eso nadie nos lo quita.»"]),
+  ch: [{t: BACK_CITY, go: "vesperia"}]};
+
+// the betrayal: Seraphine takes Fenn
+["a2_rev_give", "a2_rev_after"].forEach(id => { const c = SC[id].ch[0]; c.go = () => inP("fenn") ? "a2_fenn_death" : "a2_after"; c.to = ["a2_fenn_death", "a2_after"]; });
+SC.a2_fenn_death = {bg: "archive", loc: LOC.archive, once() { killComp("fenn"); },
+  t: () => cat(["Prima che il fumo nero si chiuda su di lei, Seraphine si ferma. Guarda Fenn, che ha già l'arco teso e la freccia puntata al suo cuore.\n\n«Il cacciatore di Ashford.» La sua voce è quasi tenera. «Hai riportato a casa due piccoli che erano miei. Io non perdono chi mi toglie ciò che è mio.»\n\nLa freccia parte. Seraphine alza un dito. L'ombra che ha ucciso Pellin si volta, attraversa la freccia come se non esistesse, e attraversa Fenn.\n\nNon cade subito. Fa due passi verso di te, come per dirti qualcosa, e poi le gambe non lo reggono più. Quando arrivi accanto a lui, Seraphine non c'è più.",
+    "Before the black smoke closes over her, Seraphine pauses. She looks at Fenn, who already has his bow drawn and an arrow aimed at her heart.\n\n“The hunter of Ashford.” Her voice is almost tender. “You brought home two little ones who were mine. I do not forgive those who take what is mine.”\n\nThe arrow flies. Seraphine raises one finger. The shadow that killed Pellin turns, passes through the arrow as if it weren't there, and passes through Fenn.\n\nHe doesn't fall at once. He takes two steps towards you, as if to tell you something, and then his legs give way. By the time you reach his side, Seraphine is gone.",
+    "Antes de que el humo negro se cierre sobre ella, Seraphine se detiene. Mira a Fenn, que ya tiene el arco tensado y la flecha apuntando a su corazón.\n\n«El cazador de Ashford.» Su voz es casi tierna. «Llevaste a casa a dos pequeños que eran míos. Yo no perdono a quien me quita lo que es mío.»\n\nLa flecha sale. Seraphine alza un dedo. La sombra que mató a Pellin se gira, atraviesa la flecha como si no existiera, y atraviesa a Fenn.\n\nNo cae enseguida. Da dos pasos hacia ti, como para decirte algo, y luego las piernas no lo sostienen. Cuando llegas a su lado, Seraphine ya no está."],
+    has("t_fenn") ? ["«Il sole…» sussurra. «Ce l'hai ancora? Bene. Storto apposta… ricordatelo.» Sorride, e smette di respirare con il sorriso ancora addosso.", "“The sun…” he whispers. “You still have it? Good. Crooked on purpose… remember.” He smiles, and stops breathing with the smile still on him.", "«El sol…» susurra. «¿Todavía lo tienes? Bien. Torcido a propósito… acuérdate.» Sonríe, y deja de respirar con la sonrisa aún puesta."]
+      : ["«Di' a Liesel…» sussurra. «Di' ai bambini che lo zio Fenn… ha preso la mira giusta. Una volta.» Sorride, e smette di respirare con il sorriso ancora addosso.", "“Tell Liesel…” he whispers. “Tell the children Uncle Fenn… aimed true. Once.” He smiles, and stops breathing with the smile still on him.", "«Dile a Liesel…» susurra. «Dile a los niños que el tío Fenn… apuntó bien. Una vez.» Sonríe, y deja de respirar con la sonrisa aún puesta."],
+    ["Brenna recita la preghiera dei morti con la voce spezzata. Nessuno dice che era inevitabile.", "Brenna recites the prayer for the dead in a broken voice. Nobody says it was inevitable.", "Brenna recita la oración de los muertos con la voz rota. Nadie dice que fuera inevitable."],
+    inP("kael") && ["Kael guarda altrove, la mascella serrata. «Gli dovevo ancora una birra» dice soltanto.", "Kael looks away, jaw clenched. “I still owed him a beer,” is all he says.", "Kael mira hacia otro lado, con la mandíbula apretada. «Todavía le debía una cerveza» es todo lo que dice."]),
+  ch: [{t: ["Continuare", "Go on", "Continuar"], go: "a2_after"}]};
+{ const t0 = SC.a2_after.t; SC.a2_after.t = () => has("fenn_dead") ? cat(["Avvolgete Fenn nel suo mantello color muschio. Lo seppellirete ad Ashford, se ci sarà ancora un'Ashford.", "You wrap Fenn in his moss-coloured cloak. You will bury him in Ashford, if there is still an Ashford.", "Envolvéis a Fenn en su capa color musgo. Lo enterraréis en Ashford, si todavía queda un Ashford."], typeof t0 === "function" ? t0() : t0) : (typeof t0 === "function" ? t0() : t0); }
+
+/* ---------- Mira Benda: the deserter captain ---------- */
+LOC.barracks = ["La caserma dei disertori", "The deserters' barracks", "El cuartel de los desertores"];
+addChoice("vesperia", {t: ["La caserma dei disertori, alla Porta Vecchia", "The deserters' barracks, by the Old Gate", "El cuartel de los desertores, junto a la Puerta Vieja"], req: () => has("mira_ally") && !has("mira_asked") && !has("act2_done"), go: "a2_mira"}, 2);
+SC.a2_mira = {bg: "city", loc: LOC.barracks, once() { set("mira_asked"); },
+  t: ["Nella vecchia caserma abbandonata, una dozzina di guardie senza stemma affila le spade alla luce di una sola lanterna. Mira Benda si alza dal tavolo, la benda sull'occhio sinistro, la spada al fianco.\n\n«Il marchiato del ponte. Ho saputo cosa hai fatto ad Ashford.» Si appoggia allo stipite. «I miei uomini possono tenere la Porta Vecchia anche senza di me. Ma io sono stanca di aspettare che il Duca venga a prenderci. Se combatti il buio, fammi combattere con te.»",
+    "In the old abandoned barracks, a dozen guards without insignia sharpen their swords by the light of a single lantern. Mira Patch rises from the table, the patch over her left eye, her sword at her side.\n\n“The marked one from the bridge. I heard what you did in Ashford.” She leans against the doorframe. “My people can hold the Old Gate without me. But I'm tired of waiting for the Duke to come for us. If you're fighting the dark, let me fight with you.”",
+    "En el viejo cuartel abandonado, una docena de guardias sin emblema afilan sus espadas a la luz de una sola linterna. Mira Parche se levanta de la mesa, con el parche en el ojo izquierdo y la espada al cinto.\n\n«El marcado del puente. He sabido lo que hiciste en Ashford.» Se apoya en el marco de la puerta. «Mi gente puede defender la Puerta Vieja sin mí. Pero estoy harta de esperar a que el Duque venga a por nosotros. Si luchas contra la oscuridad, déjame luchar contigo.»"],
+  ch: [
+    {t: ["«Benvenuta, capitano.»", "“Welcome aboard, captain.”", "«Bienvenida, capitana.»"], fx() { join("mira"); xp(100); }, go: "vesperia"},
+    {t: ["«I tuoi uomini hanno bisogno di te. Resta con loro.»", "“Your people need you. Stay with them.”", "«Tu gente te necesita. Quédate con ellos.»"], go: "vesperia"}]};
+
+/* ---------- Doran Varn: Kael's brother ---------- */
+SC.a2_doran_ok.ch.unshift({t: ["«Vieni con noi, Doran. Combatti dalla parte giusta.»", "“Come with us, Doran. Fight on the right side.”", "«Ven con nosotros, Doran. Lucha del lado correcto.»"], go: "a2_doran_join"});
+SC.a2_doran_join = {bg: "bell", loc: LOC.bell, once() { join("doran"); xp(100); },
+  t: ["Doran guarda Kael, poi te. Si rimette la maschera in tasca, non in faccia. «Ho tirato frecce dai tetti di questa città per gente che voleva vederla bruciare. Vediamo se so tirarle anche per chi la vuole salvare.»\n\nKael gli dà una spallata. «Non sbagliare mira, fratellino. Stavolta ti guardo.»",
+    "Doran looks at Kael, then at you. He puts the mask in his pocket, not on his face. “I've shot arrows from this city's rooftops for people who wanted to watch it burn. Let's see if I can shoot them for people who want to save it.”\n\nKael shoulders him. “Don't miss, little brother. This time I'm watching.”",
+    "Doran mira a Kael, luego a ti. Se guarda la máscara en el bolsillo, no en la cara. «He disparado flechas desde los tejados de esta ciudad para gente que quería verla arder. Veamos si sé dispararlas para quien quiere salvarla.»\n\nKael le da un empujón con el hombro. «No falles, hermanito. Esta vez te estoy mirando.»"],
+  ch: [{t: BACK_CITY, go: "vesperia"}]};
+
+/* ---------- Hrun: the last smith of the Sunwardens ---------- */
+addChoice("a3_hermit", {t: ["«Vieni con noi alla Corona, Hrun.»", "“Come with us to the Crown, Hrun.”", "«Ven con nosotros a la Corona, Hrun.»"], req: () => !inP("hrun"), go: "a3_hrun_join"}, 1);
+SC.a3_hrun_join = {bg: "mountain", loc: LOC.hermit, once() { join("hrun"); xp(100); },
+  t: ["Hrun posa il martello sull'incudine, lentamente, come chi chiude un libro. «Sessant'anni a forgiare armi per Custodi che non sono mai tornati.» Si allaccia un pettorale ammaccato con il sole inciso. «Mio nonno ha giurato di proteggere la luce. Mio padre ha giurato. Io ho giurato e poi mi sono nascosto quassù.»\n\nSi carica il martello in spalla. «Basta nascondersi. Andiamo a romperle la corona, a quella strega.»",
+    "Hrun sets his hammer on the anvil, slowly, like someone closing a book. “Sixty years forging weapons for Sunwardens who never came back.” He buckles on a dented breastplate engraved with the sun. “My grandfather swore to protect the light. My father swore. I swore, and then I hid up here.”\n\nHe hefts the hammer onto his shoulder. “No more hiding. Let's go break that witch's crown.”",
+    "Hrun deja el martillo sobre el yunque, despacio, como quien cierra un libro. «Sesenta años forjando armas para Custodios que nunca volvieron.» Se ciñe un peto abollado con el sol grabado. «Mi abuelo juró proteger la luz. Mi padre juró. Yo juré y luego me escondí aquí arriba.»\n\nSe echa el martillo al hombro. «Se acabó esconderse. Vamos a romperle la corona a esa bruja.»"],
+  ch: [{t: ["Tornare all'eremo", "Back to the hermitage", "Volver a la ermita"], go: "a3_hermit"}]};
+
+/* ---------- the last night: new voices around the fire ---------- */
+addChoice("a3_camp", {t: ["Parlare con Mira", "Talk to Mira", "Hablar con Mira"], req: () => inP("mira") && !has("t_mira"), go: "a3_t_mira"});
+addChoice("a3_camp", {t: ["Parlare con Doran", "Talk to Doran", "Hablar con Doran"], req: () => inP("doran") && !has("t_doran"), go: "a3_t_doran"});
+addChoice("a3_camp", {t: ["Parlare con Hrun", "Talk to Hrun", "Hablar con Hrun"], req: () => inP("hrun") && !has("t_hrun"), go: "a3_t_hrun"});
+addChoice("a3_camp", {t: ["Guardare il sole di legno di Fenn", "Look at Fenn's wooden sun", "Mirar el sol de madera de Fenn"], req: () => has("fenn_dead") && S.inv.woodsun && !has("t_fennmem"), go: "a3_fennmem"});
+SC.a3_t_mira = {bg: "camp", loc: LOC.camp, once() { set("t_mira"); xp(50); },
+  t: ["Mira pulisce la spada che è già pulita. «Sai perché porto la benda? Il Duca mi ha tolto l'occhio quando ho rifiutato di accendere la prima lanterna nera. Ha detto: così vedrai solo metà del buio.»\n\nRinfodera. «Domani voglio vederlo tutto, il buio. E poi voglio vederlo finire.»",
+    "Mira cleans a sword that is already clean. “Do you know why I wear the patch? The Duke took my eye when I refused to light the first black lantern. He said: that way you'll only see half the dark.”\n\nShe sheathes it. “Tomorrow I want to see all of it, the dark. And then I want to see it end.”",
+    "Mira limpia una espada que ya está limpia. «¿Sabes por qué llevo el parche? El Duque me quitó el ojo cuando me negué a encender la primera linterna negra. Dijo: así solo verás la mitad de la oscuridad.»\n\nEnvaina. «Mañana quiero verla entera, la oscuridad. Y luego quiero verla acabar.»"],
+  ch: [{t: ["Continuare", "Go on", "Continuar"], go: "a3_camp"}]};
+SC.a3_t_doran = {bg: "camp", loc: LOC.camp, once() { set("t_doran"); xp(50); },
+  t: ["Doran parla senza guardarti. «Le cisterne sotto la fortezza le ho scavate io, con altri venti. Gli altri venti sono ancora là sotto.» Stringe l'arco. «Domani passerò accanto a loro. Gli devo almeno questo: che serva a qualcosa.»",
+    "Doran speaks without looking at you. “I dug the cisterns under the fortress myself, with twenty others. The other twenty are still down there.” He grips his bow. “Tomorrow I'll walk past them. I owe them that much at least: that it was for something.”",
+    "Doran habla sin mirarte. «Las cisternas bajo la fortaleza las cavé yo, con otros veinte. Los otros veinte siguen ahí abajo.» Aprieta el arco. «Mañana pasaré junto a ellos. Les debo al menos eso: que haya servido para algo.»"],
+  ch: [{t: ["Continuare", "Go on", "Continuar"], go: "a3_camp"}]};
+SC.a3_t_hrun = {bg: "camp", loc: LOC.camp, once() { set("t_hrun"); xp(50); },
+  t: ["Hrun ripara una cinghia alla luce del fuoco. «I Custodi non erano eroi, sai. Erano fabbri, contadini, una lavandaia di Vesperia che sapeva tirare di spada. Gente che una mattina ha deciso di non avere più paura.»\n\nTi guarda da sotto le sopracciglia bruciacchiate. «Tu sei uno di loro. Anche se non hai mai visto un'alba.»",
+    "Hrun mends a strap by the firelight. “The Sunwardens weren't heroes, you know. They were smiths, farmers, a washerwoman from Vesperia who could handle a sword. People who one morning decided not to be afraid any more.”\n\nHe looks at you from under his singed eyebrows. “You're one of them. Even if you've never seen a dawn.”",
+    "Hrun repara una correa a la luz del fuego. «Los Custodios no eran héroes, ¿sabes? Eran herreros, campesinos, una lavandera de Vesperia que sabía manejar la espada. Gente que una mañana decidió dejar de tener miedo.»\n\nTe mira por debajo de sus cejas chamuscadas. «Tú eres uno de ellos. Aunque nunca hayas visto un amanecer.»"],
+  ch: [{t: ["Continuare", "Go on", "Continuar"], go: "a3_camp"}]};
+SC.a3_fennmem = {bg: "camp", loc: LOC.camp, once() { set("t_fennmem"); xp(50); },
+  t: ["Rigiri tra le dita il sole di legno. Un raggio è più lungo degli altri, il sorriso pende da una parte. Storto apposta.\n\nBrenna si siede accanto a te senza dire niente. Dopo un po' tende la mano, e tu glielo passi. Lo guarda a lungo. «Domani lo portiamo con noi» dice. «Così almeno un sole, lassù, ci sarà di sicuro.»",
+    "You turn the wooden sun over in your fingers. One ray is longer than the others, the smile tilts to one side. Crooked on purpose.\n\nBrenna sits beside you without a word. After a while she holds out her hand, and you pass it to her. She looks at it for a long time. “Tomorrow we take it with us,” she says. “That way there'll be at least one sun up there for certain.”",
+    "Giras el sol de madera entre los dedos. Un rayo es más largo que los demás, la sonrisa se inclina hacia un lado. Torcido a propósito.\n\nBrenna se sienta a tu lado sin decir nada. Al rato tiende la mano y se lo pasas. Lo mira largo rato. «Mañana nos lo llevamos» dice. «Así al menos habrá un sol allí arriba, seguro.»"],
+  ch: [{t: ["Continuare", "Go on", "Continuar"], go: "a3_camp"}]};
+
 /* ===== 30_engine.js ===== */
 /* =================== UTIL =================== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -2304,14 +2417,30 @@ const pc = () => S.party[0];
 /* =================== STORY HELPERS =================== */
 const has = f => !!(S && S.flags[f]);
 const set = (f, v = 1) => { S.flags[f] = v; };
-const inP = id => S.party.some(c => c.id === id);
+// party = who travels and fights (max 4); reserve = recruited companions waiting at camp (roster max 8)
+const PARTY_MAX = 4, ROSTER_MAX = 8;
+const roster = () => S.party.concat(S.reserve || []);
+const inP = id => roster().some(c => c.id === id);           // recruited (active or at camp)
+const inActive = id => S.party.some(c => c.id === id);       // in the active party
 function gold(n) { S.gold += n; toastQ(`+${n} ${T_("gp")}`); }
 function item(k, n = 1) { S.inv[k] = (S.inv[k] || 0) + n; toastQ(`${T_("got")}: ${tr(ITEMS[k].n)}${n > 1 ? " ×" + n : ""}`); }
 function take(k) { if (S.inv[k]) { S.inv[k]--; if (!S.inv[k]) delete S.inv[k]; } }
 function xp(n) { S.xp += n; toastQ(`+${n} ${T_("xp")}`); checkLevel(); }
-function join(id) { if (inP(id)) return; const c = makeComp(id); S.party.push(c); toastQ(`${c.name} ${T_("joined")}`); }
+function join(id) {
+  if (inP(id) || (S.fallen || []).includes(id) || roster().length >= ROSTER_MAX) return; const c = makeComp(id);
+  if (S.party.length < PARTY_MAX) { S.party.push(c); toastQ(`${c.name} ${T_("joined")}`); }
+  else { (S.reserve = S.reserve || []).push(c); toastQ(`${c.name} ${tr(["si unisce e ti aspetta all'accampamento (Menu → Gruppo → Formazione)", "joins and waits at camp (Menu → Party → Formation)", "se une y te espera en el campamento (Menú → Grupo → Formación)"])}`); }
+}
+// a companion dies for good: gear goes back to the pack
+function killComp(id) {
+  const c = roster().find(x => x.id === id); if (!c) return;
+  if (c.trinket) S.inv[c.trinket] = (S.inv[c.trinket] || 0) + 1;
+  S.party = S.party.filter(x => x.id !== id); S.reserve = (S.reserve || []).filter(x => x.id !== id);
+  (S.fallen = S.fallen || []).push(id); set(id + "_dead");
+  if (S.party.length < PARTY_MAX && (S.reserve || []).length) S.party.push(S.reserve.shift());
+}
 function dmgParty(n) { S.party.forEach(c => c.hp = Math.max(1, c.hp - n)); }
-function longRest() { S.party.forEach(c => { c.hp = c.maxhp; c.slots = slotsMax(c); resetRes(c); }); S.shortRests = 0; }
+function longRest() { roster().forEach(c => { c.hp = c.maxhp; c.slots = slotsMax(c); resetRes(c); }); S.shortRests = 0; }
 function shortRest() {
   if ((S.shortRests || 0) >= 2) return false; S.shortRests = (S.shortRests || 0) + 1;
   S.party.forEach(c => { if (c.hdLeft == null) c.hdLeft = c.lvl; const hd = CL(c).hd;
@@ -2323,7 +2452,7 @@ function shortRest() {
 function checkLevel() {
   while (S.level < MAXLV && S.xp >= XPT[S.level + 1]) {
     S.level++; (S.pendingLv = S.pendingLv || []).push(S.level);
-    S.party.forEach(c => { c.lvl = S.level; if (c.id !== "pc") autoASI(c); recalc(c); c.slots = slotsMax(c); resetRes(c); });
+    roster().forEach(c => { c.lvl = S.level; if (c.id !== "pc") autoASI(c); recalc(c); c.slots = slotsMax(c); resetRes(c); });
   }
 }
 
@@ -4308,7 +4437,7 @@ const FOE_LOOK = {
 function miniLook(u) {
   if (u.side === "p") { const c = u.ref, w = weaponsOf(c)[0];
     return Object.assign({skin: "#e0b48e"}, RACE_LOOK[c.race], CLASS_LOOK[c.cls], {weapon: WEAP_LOOK[w] || "sword"},
-      c.id === "brenna" ? {hair: "#b8562a", beard: 1, cloak: "#5a3a22"} : {}, c.id === "kael" ? {hair: "#16121a"} : {}, c.id === "ilyra" ? {hair: "#bdb8b0", hatc: "#3a3a4a", robe: "#4a4a5a", armor: "#4a4a5a"} : {},
+      c.id === "brenna" ? {hair: "#b8562a", beard: 1, cloak: "#5a3a22"} : {}, c.id === "kael" ? {hair: "#16121a"} : {}, c.id === "ilyra" ? {hair: "#bdb8b0", hatc: "#3a3a4a", robe: "#4a4a5a", armor: "#4a4a5a"} : {}, c.id === "fenn" ? {hair: "#8a5a2a", cloak: "#3e5a2e", beard: 1} : {}, c.id === "mira" ? {hair: "#2a1a12", cloak: "#6a1e22"} : {}, c.id === "doran" ? {hair: "#16121a", cloak: "#2a2430"} : {}, c.id === "hrun" ? {hair: "#6a6a6a", beard: 1, cloak: "#7a4a1a"} : {},
       {rim: "#caa650", key: "p_" + c.id + c.cls + c.race}); }
   return Object.assign({skin: "#d0b090", pants: "#2a2420"}, FOE_LOOK[u.foe] || FOE_LOOK.cultist, {rim: "#b8344d", key: "e_" + u.foe});
 }
@@ -5059,7 +5188,7 @@ const LEARN_FROM = {
 };
 const CLS_N = c => tr(CLASSES[c].n);
 const known = r => !r.learn || has(r.learn);
-const clsOK = r => !r.cls || S.party.some(c => r.cls.includes(c.cls));
+const clsOK = r => !r.cls || roster().some(c => r.cls.includes(c.cls));
 const haveAll = r => Object.entries(r.need).every(([k, n]) => (S.inv[k] || 0) >= n) && S.gold >= (r.gold || 0);
 function craft(r) {
   if (!known(r) || !clsOK(r) || !haveAll(r)) return false;
@@ -5164,6 +5293,37 @@ LEADS.bottler = {
   fall: ["Vell è caduto… ricordo tutto… via di qui!", "Vell is down… I remember everything… get out!", "Vell ha caído… lo recuerdo todo… ¡fuera de aquí!"],
 };
 
+/* ===== 76_party.js ===== */
+/* =================== PARTY FORMATION =================== */
+// Up to 4 characters travel and fight; the other recruited companions (roster of 8) wait at camp.
+// The formation can be changed from the party menu whenever you are not in combat.
+function formationHTML() {
+  const res = S.reserve || [], canEdit = SCREEN === "story";
+  const line = (c, where) => `<div class="row fm"><span class="fmi">${icon(CL(c).icon || "star")}</span><div class="t"><b>${esc(c.name)}</b><small>${tr(CLASSES[c.cls].n)} · ${tr(RACES[c.race].n)} · ${T_("hp")} ${c.hp}/${c.maxhp}</small></div>
+    ${canEdit && where === "a" && c.id !== "pc" ? `<button class="btn small" data-bench="${c.id}">${tr(["Al campo", "To camp", "Al campamento"])}</button>` : ""}
+    ${canEdit && where === "r" ? (S.party.length < PARTY_MAX ? `<button class="btn small" data-call="${c.id}">${tr(["Nel gruppo", "Join party", "Al grupo"])}</button>` : `<div class="swap">${S.party.filter(a => a.id !== "pc").map(a => `<button class="btn small" data-swap="${c.id}" data-out="${a.id}">⇄ ${esc(a.name.split(" ")[0])}</button>`).join("")}</div>`) : ""}</div>`;
+  const fallen = (S.fallen || []).map(id => COMPS[id] ? COMPS[id].name : id);
+  return `<h3>${tr(["Formazione", "Formation", "Formación"])} · ${S.party.length}/${PARTY_MAX}</h3>
+    ${S.party.map(c => line(c, "a")).join("")}
+    ${res.length ? `<h3>${tr(["All'accampamento", "At camp", "En el campamento"])}</h3>${res.map(c => line(c, "r")).join("")}` : ""}
+    ${!canEdit ? `<p class="hint" style="font-size:13px;color:var(--muted)">${tr(["La formazione si cambia fuori dal combattimento.", "The formation can be changed outside combat.", "La formación se cambia fuera del combate."])}</p>` : ""}
+    <p class="hint" style="font-size:13px;color:var(--muted)">${tr(["Compagni reclutati", "Companions recruited", "Compañeros reclutados"])}: ${roster().length}/${ROSTER_MAX}</p>
+    ${fallen.length ? `<p class="fallen">✝ ${tr(["In memoria", "In memory", "En memoria"])}: ${fallen.map(esc).join(", ")}</p>` : ""}`;
+}
+function benchComp(id) { if (S.party.length <= 1) return; const c = S.party.find(x => x.id === id); if (!c || c.id === "pc") return; S.party = S.party.filter(x => x !== c); (S.reserve = S.reserve || []).push(c); }
+function callComp(id) { const c = (S.reserve || []).find(x => x.id === id); if (!c || S.party.length >= PARTY_MAX) return; S.reserve = S.reserve.filter(x => x !== c); S.party.push(c); }
+const _openMenuP = openMenu;
+openMenu = function (tab) {
+  _openMenuP(tab);
+  if (tab !== "party") return;
+  const m = document.querySelector(".modal .sheet"); if (!m) return; const close = m.querySelector("#mClose");
+  close.insertAdjacentHTML("beforebegin", `<div class="formation">${formationHTML()}</div>`);
+  const redo = () => { saveGame(true); menuMember = 0; openMenu("party"); if (SCREEN === "story") { const h = $(".chips") || $("#chips"); if (h && typeof chipsHTML === "function") h.innerHTML = chipsHTML(); } };
+  m.querySelectorAll("[data-bench]").forEach(b => b.onclick = () => { benchComp(b.dataset.bench); redo(); });
+  m.querySelectorAll("[data-call]").forEach(b => b.onclick = () => { callComp(b.dataset.call); redo(); });
+  m.querySelectorAll("[data-swap]").forEach(b => b.onclick = () => { benchComp(b.dataset.out); callComp(b.dataset.swap); redo(); });
+};
+
 /* ===== 80_meta.js ===== */
 /* =================== META: save slots, export/import, bestiary, achievements, options =================== */
 Object.assign(ICONS, {
@@ -5245,7 +5405,7 @@ function checkAch() {
   if (f.vault_done) unlock("vault"); if (f.doran_ally) unlock("brothers"); if (f.ser_redeemed) unlock("redeem");
   ["end_dawn", "end_twilight", "end_dark"].forEach(e => { if (f[e]) unlock(e); });
   if (f.game_done && S.diff === 2) unlock("merciless");
-  const tk = new Set(Object.keys(S.inv || {}).filter(k => ITEMS[k] && ITEMS[k].slot === "t")); S.party.forEach(c => { if (c.trinket) tk.add(c.trinket); }); if (tk.size >= 6) unlock("collector");
+  const tk = new Set(Object.keys(S.inv || {}).filter(k => ITEMS[k] && ITEMS[k].slot === "t")); roster().forEach(c => { if (c.trinket) tk.add(c.trinket); }); if (tk.size >= 6) unlock("collector");
 }
 function achHTML() {
   const A = PREF.ach || {}, n = ACH.filter(a => A[a[0]]).length;

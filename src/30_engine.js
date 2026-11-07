@@ -77,14 +77,30 @@ const pc = () => S.party[0];
 /* =================== STORY HELPERS =================== */
 const has = f => !!(S && S.flags[f]);
 const set = (f, v = 1) => { S.flags[f] = v; };
-const inP = id => S.party.some(c => c.id === id);
+// party = who travels and fights (max 4); reserve = recruited companions waiting at camp (roster max 8)
+const PARTY_MAX = 4, ROSTER_MAX = 8;
+const roster = () => S.party.concat(S.reserve || []);
+const inP = id => roster().some(c => c.id === id);           // recruited (active or at camp)
+const inActive = id => S.party.some(c => c.id === id);       // in the active party
 function gold(n) { S.gold += n; toastQ(`+${n} ${T_("gp")}`); }
 function item(k, n = 1) { S.inv[k] = (S.inv[k] || 0) + n; toastQ(`${T_("got")}: ${tr(ITEMS[k].n)}${n > 1 ? " ×" + n : ""}`); }
 function take(k) { if (S.inv[k]) { S.inv[k]--; if (!S.inv[k]) delete S.inv[k]; } }
 function xp(n) { S.xp += n; toastQ(`+${n} ${T_("xp")}`); checkLevel(); }
-function join(id) { if (inP(id)) return; const c = makeComp(id); S.party.push(c); toastQ(`${c.name} ${T_("joined")}`); }
+function join(id) {
+  if (inP(id) || (S.fallen || []).includes(id) || roster().length >= ROSTER_MAX) return; const c = makeComp(id);
+  if (S.party.length < PARTY_MAX) { S.party.push(c); toastQ(`${c.name} ${T_("joined")}`); }
+  else { (S.reserve = S.reserve || []).push(c); toastQ(`${c.name} ${tr(["si unisce e ti aspetta all'accampamento (Menu → Gruppo → Formazione)", "joins and waits at camp (Menu → Party → Formation)", "se une y te espera en el campamento (Menú → Grupo → Formación)"])}`); }
+}
+// a companion dies for good: gear goes back to the pack
+function killComp(id) {
+  const c = roster().find(x => x.id === id); if (!c) return;
+  if (c.trinket) S.inv[c.trinket] = (S.inv[c.trinket] || 0) + 1;
+  S.party = S.party.filter(x => x.id !== id); S.reserve = (S.reserve || []).filter(x => x.id !== id);
+  (S.fallen = S.fallen || []).push(id); set(id + "_dead");
+  if (S.party.length < PARTY_MAX && (S.reserve || []).length) S.party.push(S.reserve.shift());
+}
 function dmgParty(n) { S.party.forEach(c => c.hp = Math.max(1, c.hp - n)); }
-function longRest() { S.party.forEach(c => { c.hp = c.maxhp; c.slots = slotsMax(c); resetRes(c); }); S.shortRests = 0; }
+function longRest() { roster().forEach(c => { c.hp = c.maxhp; c.slots = slotsMax(c); resetRes(c); }); S.shortRests = 0; }
 function shortRest() {
   if ((S.shortRests || 0) >= 2) return false; S.shortRests = (S.shortRests || 0) + 1;
   S.party.forEach(c => { if (c.hdLeft == null) c.hdLeft = c.lvl; const hd = CL(c).hd;
@@ -96,7 +112,7 @@ function shortRest() {
 function checkLevel() {
   while (S.level < MAXLV && S.xp >= XPT[S.level + 1]) {
     S.level++; (S.pendingLv = S.pendingLv || []).push(S.level);
-    S.party.forEach(c => { c.lvl = S.level; if (c.id !== "pc") autoASI(c); recalc(c); c.slots = slotsMax(c); resetRes(c); });
+    roster().forEach(c => { c.lvl = S.level; if (c.id !== "pc") autoASI(c); recalc(c); c.slots = slotsMax(c); resetRes(c); });
   }
 }
 

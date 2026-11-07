@@ -62,8 +62,9 @@ Ogni scelta ha `t` (il testo: array trilingue oppure funzione che lo restituisce
 Funzioni di supporto per `once`, `enter` e `fx`:
 
 - `has(flag)` e `set(flag, v)` per leggere e impostare i flag della storia;
-- `inP(id)` per sapere se un compagno è nel gruppo;
-- `join(id)` per aggiungere un compagno;
+- `inP(id)` per sapere se un compagno è stato reclutato (nel gruppo o all'accampamento) e `inActive(id)` per sapere se è nel gruppo attivo;
+- `join(id)` per aggiungere un compagno: va nel gruppo se c'è posto (4), altrimenti all'accampamento (roster massimo 8);
+- `killComp(id)` per la morte definitiva di un compagno (imposta il flag `<id>_dead`);
 - `gold(n)`, `item(k, n)`, `take(k)` e `xp(n)` per oro, oggetti ed esperienza;
 - `dmgParty(n)` per infliggere danni a tutto il gruppo;
 - `longRest()` e `shortRest()` per i riposi.

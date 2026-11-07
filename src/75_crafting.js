@@ -21,7 +21,7 @@ const LEARN_FROM = {
 };
 const CLS_N = c => tr(CLASSES[c].n);
 const known = r => !r.learn || has(r.learn);
-const clsOK = r => !r.cls || S.party.some(c => r.cls.includes(c.cls));
+const clsOK = r => !r.cls || roster().some(c => r.cls.includes(c.cls));
 const haveAll = r => Object.entries(r.need).every(([k, n]) => (S.inv[k] || 0) >= n) && S.gold >= (r.gold || 0);
 function craft(r) {
   if (!known(r) || !clsOK(r) || !haveAll(r)) return false;

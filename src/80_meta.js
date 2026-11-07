@@ -78,7 +78,7 @@ function checkAch() {
   if (f.vault_done) unlock("vault"); if (f.doran_ally) unlock("brothers"); if (f.ser_redeemed) unlock("redeem");
   ["end_dawn", "end_twilight", "end_dark"].forEach(e => { if (f[e]) unlock(e); });
   if (f.game_done && S.diff === 2) unlock("merciless");
-  const tk = new Set(Object.keys(S.inv || {}).filter(k => ITEMS[k] && ITEMS[k].slot === "t")); S.party.forEach(c => { if (c.trinket) tk.add(c.trinket); }); if (tk.size >= 6) unlock("collector");
+  const tk = new Set(Object.keys(S.inv || {}).filter(k => ITEMS[k] && ITEMS[k].slot === "t")); roster().forEach(c => { if (c.trinket) tk.add(c.trinket); }); if (tk.size >= 6) unlock("collector");
 }
 function achHTML() {
   const A = PREF.ach || {}, n = ACH.filter(a => A[a[0]]).length;
