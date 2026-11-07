@@ -111,7 +111,7 @@ const SUBCLASSES = {
     war: {n: ["Dominio della guerra", "War Domain", "Dominio de la guerra"], ic: "sword", d: ["Il sacerdote guerriero: attacchi extra e colpi divini.", "The warrior priest: extra attacks and divine strikes.", "El sacerdote guerrero: ataques extra y golpes divinos."], f: {3: ["warpriest"], 7: ["divinestrike"], 11: ["battleavatar"]}},
   },
 };
-const COMP_SUB = {brenna: "life", kael: "thief", ilyra: "evocation", fenn: "hunter", mira: "battlemaster", doran: "gloom", hrun: "devotion"};
+const COMP_SUB = {brenna: "life", kael: "thief", ilyra: "evocation", fenn: "hunter", mira: "battlemaster", doran: "gloom", hrun: "devotion", nessa: "assassin"};
 function subOf(c) {
   const T = SUBCLASSES[c.cls]; if (!T || c.lvl < 3) return null;
   if (!c.sub && c.id !== "pc") c.sub = T[COMP_SUB[c.id]] ? COMP_SUB[c.id] : Object.keys(T)[0];

@@ -218,6 +218,7 @@ const COMPS = {
   fenn:{name:"Fenn Ashwood", race:"human", cls:"ranger", ab:{str:12,dex:16,con:14,int:10,wis:14,cha:8}, skills:["sur","per","ste","ath"], weapons:["longbow","shortsword"]},
   mira:{name:"Mira Benda", race:"human", cls:"fighter", ab:{str:16,dex:12,con:15,int:10,wis:12,cha:12}, skills:["ath","inti","per"], weapons:["longsword","javelin"]},
   doran:{name:"Doran Varn", race:"human", cls:"ranger", ab:{str:10,dex:16,con:13,int:12,wis:14,cha:10}, skills:["ste","per","sur","dec"], weapons:["longbow","shortsword"]},
+  nessa:{name:"Nessa", race:"human", cls:"rogue", ab:{str:10,dex:16,con:14,int:10,wis:13,cha:12}, skills:["ste","sle","per","ins"], weapons:["shortsword","shortbow"]},
   hrun:{name:"Hrun", race:"dwarf", cls:"paladin", ab:{str:16,dex:8,con:16,int:10,wis:12,cha:14}, skills:["ath","his","rel"], weapons:["warhammer","javelin"]},
 };
 
@@ -305,7 +306,7 @@ const FEATLIST = {
   mobile:{n:["Mobile","Mobile","Móvil"], d:["+2 alla velocità e non provochi mai attacchi d'opportunità.","+2 speed and you never provoke opportunity attacks.","+2 a la velocidad y nunca provocas ataques de oportunidad."], ic:"wind"},
   sentinel:{n:["Sentinella","Sentinel","Centinela"], d:["I tuoi attacchi d'opportunità funzionano anche contro chi si disimpegna, e se colpisci il nemico si ferma sul posto.","Your opportunity attacks work even against creatures that disengage, and a hit stops the enemy in its tracks.","Tus ataques de oportunidad funcionan incluso contra quien se retira, y si aciertas el enemigo se detiene."], ic:"shield"},
 };
-const COMP_FEAT = {brenna: "tough", kael: "mobile", ilyra: "alert", fenn: "sharpshooter", mira: "sentinel", doran: "alert", hrun: "tough"};
+const COMP_FEAT = {brenna: "tough", kael: "mobile", ilyra: "alert", fenn: "sharpshooter", mira: "sentinel", doran: "alert", hrun: "tough", nessa: "mobile"};
 const LOOT = {
   mill:["eye_hawk"], cem:["sun_talisman"], varga:["periapt"], varga_small:["periapt"], bandits:["cloak_displ"], tower:["pearl_power"], doran:["boots_wind"],
   duke:["ring_prot"], vault_boss:["w2","scroll_fire"], vault_boss_hard:["w2","scroll_fire"], vault_guard:["greater"], keeper:["amulet_health"], ser_guards:["headband_int"], pass:["gauntlets_ogre"], jailers:["scroll_fire","scroll_heal"],

@@ -136,7 +136,7 @@ Regole:
 - **`tools/validate-story.mjs`** controlla il grafo della storia (vedi sopra).
 - **`tools/simulate.mjs`** gioca tutti gli scontri della campagna con un gruppo-bot, per ogni classe e difficoltà:
   - `--quick` fa poche partite;
-  - `--runs N`, `--classes a,b` e `--diff 0|1|2` regolano la simulazione;
+  - `--runs N`, `--classes a,b`, `--diff 0|1|2` e `--ch 1,5` (capitoli) regolano la simulazione;
   - `--verbose` mostra la percentuale di vittorie scontro per scontro.
 
   Fallisce (exit 1) se uno scontro è vinto meno del 50% delle volte. Usalo dopo ogni modifica a nemici, scontri o regole.
@@ -193,4 +193,18 @@ In `79_progression.js`:
 - gli agganci al combattimento sono `subAdv`, `subDmg`, `subTurnStart`, `subNimbus`, `devAura`, più gli involucri di `attackRoll`, `applyDmg`, `castSpell`, `heal` e `saveRoll`.
 
 Per aggiungere privilegi ai livelli 15 o più basta aggiungere chiavi in `f` e i testi in `FEATS`/`FEAT_D`.
+
+## Strumenti della saga (capitoli II–V)
+
+In `12_saga.js` (caricato prima dei capitoli) e `82_saga.js` (dopo i moduli di combattimento):
+
+- `mkFoe(chiave, {n, lv, role, ...})` crea un nemico i cui numeri seguono la crescita del gruppo. I ruoli sono `brute`, `soldier`, `skirm`, `archer`, `caster`, `elite`, `leader` e `boss`. Le opzioni `hpm`, `acm`, `dmg` e `hit` correggono i valori; `undead`, `construct`, `res`, `vuln` e `drain` aggiungono proprietà.
+- `mkObj(chiave, n, pf, ca, icona)` crea un oggetto sul campo (pilastri, candele, occhi) da usare con `objs`, `ward` e `ritual`.
+- `xpTo(L)` porta il gruppo almeno al livello L, entro il tetto del capitolo. Si usa nelle scene di fine atto.
+- `SAGA_LEADS` contiene le frasi dei capi dichiarati dai capitoli. `82_saga.js` le unisce a `LEADS`.
+- `FOE_LOOK` (in `82_saga.js`) definisce l'aspetto delle miniature dei nuovi nemici.
+- `SAGA_SHOPS` contiene i negozi dei capitoli successivi.
+- Ci sono incantesimi di alto livello (Cono di freddo, Catena di fulmini, Pioggia di meteore, Colonna di fuoco, Guarigione, Guarigione di massa, Raffica, Onda distruttiva) e armi e armature fino a +5.
+
+Il simulatore ha un piano di scontri per ogni capitolo (`PLANS`). Dal livello 8 il gruppo-bot riceve armi, armature e pozioni adeguate al livello.
 

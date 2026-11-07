@@ -69,6 +69,11 @@ const ACH = [
   ["end_dark", "skull", ["Il Re di Cenere", "The Ash King", "El Rey de Ceniza"], ["Prendi il potere di Morrhan.", "Take Morrhan's power.", "Toma el poder de Morrhan."]],
   ["end_ember", "flame", ["La Brace", "The Ember", "La Brasa"], ["Lascia che Brenna paghi il prezzo dell'alba.", "Let Brenna pay the price of dawn.", "Deja que Brenna pague el precio del alba."]],
   ["end_night", "eye", ["La Notte Eterna", "The Endless Night", "La Noche Eterna"], ["Fuggi con la Chiave.", "Flee with the Key.", "Huye con la Llave."]],
+  ["ch5_end_dawn", "sun", ["L'Ultima Alba", "The Last Dawn", "El Último Alba"], ["Concludi la saga dando il tuo cuore al sole.", "End the saga by giving your heart to the sun.", "Termina la saga dando tu corazón al sol."]],
+  ["ch5_end_sun", "star", ["Il Sole Nuovo", "The New Sun", "El Sol Nuevo"], ["Prendi il posto di Aurel nel cielo.", "Take Aurel's place in the sky.", "Ocupa el lugar de Aurel en el cielo."]],
+  ["ch5_end_godless", "moon", ["Il Mondo Senza Dèi", "The Godless World", "El Mundo Sin Dioses"], ["Spezza entrambi i cuori.", "Break both hearts.", "Rompe ambos corazones."]],
+  ["ch5_end_hunger", "skull", ["La Fame", "The Hunger", "El Hambre"], ["Mangia il dio.", "Eat the god.", "Devora al dios."]],
+  ["ch5_end_all", "eye", ["La Fine di Tutto", "The End of Everything", "El Fin de Todo"], ["Accetta il patto di Morrhan.", "Accept Morrhan's pact.", "Acepta el pacto de Morrhan."]],
   ["merciless", "flame", ["Spietato", "Merciless", "Despiadado"], ["Completa la storia a difficoltà Spietata.", "Finish the story on Merciless difficulty.", "Completa la historia en dificultad Despiadada."]],
 ];
 function unlock(id) {
@@ -78,7 +83,7 @@ function unlock(id) {
 function checkAch() {
   if (!S) return; const f = S.flags || {};
   if (f.vault_done) unlock("vault"); if (f.doran_ally) unlock("brothers"); if (f.ser_redeemed) unlock("redeem");
-  ["end_dawn", "end_twilight", "end_dark", "end_ember", "end_night"].forEach(e => { if (f[e]) unlock(e); });
+  ["end_dawn", "end_twilight", "end_dark", "end_ember", "end_night", "ch5_end_dawn", "ch5_end_sun", "ch5_end_godless", "ch5_end_hunger", "ch5_end_all"].forEach(e => { if (f[e]) unlock(e); });
   if (f.game_done && S.diff === 2) unlock("merciless");
   const tk = new Set(Object.keys(S.inv || {}).filter(k => ITEMS[k] && ITEMS[k].slot === "t")); roster().forEach(c => { if (c.trinket) tk.add(c.trinket); }); if (tk.size >= 6) unlock("collector");
 }
@@ -195,7 +200,7 @@ function openChapters() {
     return `<div class="chap${doneEnding ? " done" : ""}"><div class="cnum">${esc(tr(c.num))}</div><b>${esc(tr(c.title))}</b><p>${esc(tr(c.blurb || ["", "", ""]))}</p>
       ${status ? `<small>${status}</small>` : ""}${canStart ? `<button class="btn small" data-chstart="${prev.id}">${tr(["Inizia con il gruppo del capitolo precedente", "Start with the party from the previous chapter", "Empezar con el grupo del capítulo anterior"])}</button>` : ""}</div>`; }).join("");
   const m = modal(`<h2>${tr(["Capitoli", "Chapters", "Capítulos"])}</h2>${rows}
-    <div class="chap next"><div class="cnum">${tr(["Prossimamente", "Coming soon", "Próximamente"])}</div><b>${tr(["Nuovi capitoli", "New chapters", "Nuevos capítulos"])}</b><p>${tr(["Nuovi archi narrativi arriveranno con gli aggiornamenti. La tua partita alla fine di ogni capitolo resta conservata, con personaggi, oggetti e scelte.", "New story arcs will arrive with updates. Your game at the end of each chapter is kept, with characters, items and choices.", "Nuevos arcos narrativos llegarán con las actualizaciones. Tu partida al final de cada capítulo se conserva, con personajes, objetos y decisiones."])}</p></div>
+    ${CHAPTERS.length >= 5 ? `<div class="chap next"><div class="cnum">${tr(["La saga", "The saga", "La saga"])}</div><b>${tr(["Cinque capitoli, dal livello 1 al 50", "Five chapters, from level 1 to 50", "Cinco capítulos, del nivel 1 al 50"])}</b><p>${tr(["La storia di Dark Days Chronicles è completa. Ogni capitolo ricorda le scelte dei precedenti; il Capitolo V ha cinque finali.", "The story of Dark Days Chronicles is complete. Each chapter remembers the choices of the ones before; Chapter V has five endings.", "La historia de Dark Days Chronicles está completa. Cada capítulo recuerda las decisiones de los anteriores; el Capítulo V tiene cinco finales."])}</p></div>` : ``}
     <button class="btn small" id="chX" style="margin-top:10px">${T_("close")}</button>`);
   m.querySelectorAll("[data-chstart]").forEach(b => b.onclick = () => { const s = load("ddc-chapter-" + b.dataset.chstart); if (s) { closeModal(); loadState(s); } });
   m.querySelector("#chX").onclick = closeModal;

@@ -82,16 +82,28 @@ globalThis.runAll=async function(plan,cls,diff){ const out={};
       if(lvl>=3&&SUBCLASSES[cls]){ pcc.sub=Object.keys(SUBCLASSES[cls])[i%2]; resetRes(pcc); }
       pcc.wplus = lvl>=5?1:0;
       S.party=[pcc]; comps.forEach(id=>S.party.push(makeComp(id)));
+      if(lvl>=8){ const tier=lvl>=40?5:lvl>=30?4:lvl>=20?3:lvl>=12?2:1; autoASI(pcc); S.party.forEach(c=>{ c.wplus=tier; c.aplus=Math.min(tier,lvl>=12?tier:2); recalc(c,true); }); S.inv={potion:2, supreme:lvl>=12?2:0, titan:lvl>=27?2:0}; }
       const r=await runFight(key); if(r.err) { out[key]='ERR'; break; } if(r.win){w++; hpl+=r.hp.reduce((a,b)=>a+b,0)/r.hp.length;} rs+=r.rounds; }
     out[key]=out[key]||(w+'/'+n+' r'+(rs/n).toFixed(1)+' hp'+(w?(hpl/w).toFixed(2):'-')); }
   return out; };
 `;
 const plan0=[['cart',1,['brenna']],['wolves',2,['brenna']],['mill',2,['brenna','kael']],['cem',2,['brenna','kael']],['camp',3,['brenna','kael']],['camp_easy',3,['brenna','kael']],['varga',4,['brenna','kael']],['bandits',4,['brenna','kael']],['shadows',4,['brenna','kael']],['tower',4,['brenna','kael']],['bottler',4,['brenna','kael','ilyra']],['doran',4,['brenna','kael']],['sewer',4,['brenna','kael']],['drowned',5,['brenna','kael']],['guardians',5,['brenna','kael']],['keeper',5,['brenna','kael','ilyra']],['vault1',5,['brenna','kael','ilyra']],['vault_guard',5,['brenna','kael','ilyra']],['vault_boss',5,['brenna','kael','ilyra']],['vault_boss_hard',5,['brenna','kael','ilyra']],['duke',5,['brenna','kael','ilyra']],['ser_guards',5,['brenna','kael','ilyra']],['pass',6,['brenna','kael','ilyra']],['knives',6,['brenna','kael','ilyra']],['gate',6,['brenna','kael','ilyra']],['cistern',6,['brenna','kael','ilyra']],['mirror',6,['brenna','kael','ilyra']],['jailers',6,['brenna','kael','ilyra']],['seraphine',6,['brenna','kael','ilyra']],['avatar',7,['brenna','kael','ilyra']],['avatar_weak',7,['brenna','kael','ilyra']]];
+const C2=['nessa','kael','ilyra'], C2b=['brenna','mira','hrun'];
+const plan2=[['spenti',8,C2],['crow_siege',9,C2],['crow_walls',9,C2b],['ferry_drowned',10,C2],['faceless_alley',10,C2b],['bell_guards',11,C2],['ball_masks',11,C2],['cath_wardens',12,C2b],['chimera',12,C2],['caspian',13,C2],['caspian_ambush',13,C2b],['harvesters',13,C2],['choir',14,C2],['hierophant',15,C2],['hierophant_free',15,C2b],['lia_possessed',15,C2]];
+const C3=['nessa','kael','ilyra'], C3b=['mira','doran','hrun'];
+const plan3=[['docks',17,C3],['mouths',18,C3b],['tide_rite',19,C3],['eel_attack',19,C3b],['ghostship',20,C3],['forge_trial',22,C3b],['heartspawn',23,C3],['vashka',24,C3],['vashka',24,['nessa','mira','doran']]];
+const C4=['nessa','kael','ilyra'], C4b=['mira','doran','brenna'];
+const plan4=[['maw_road',28,C4],['glass',30,C4b],['angels',31,C4],['firstwarden',32,C4],['siege_walls',34,C4b],['bridge',35,C4],['general',36,C4],['general',36,C4b]];
+const C5=['nessa','kael','ilyra'], C5b=['doran','brenna','kael'];
+const plan5=[['eaten_crypt',40,C5],['throat_gate',42,C5b],['throat_host',42,C5],['teeth',43,C5],['echoes',44,C5b],['lia_ash',45,C5],['hand',46,C5],['morrhan',48,C5],['morrhan_w',48,C5b],['morrhan2',49,C5],['morrhan2',49,['kael','ilyra']]];
+const PLANS={1:plan0,2:plan2,3:plan3,4:plan4,5:plan5};
 vm.runInContext(src+harness, ctx);
 let failed = false;
 const t0 = Date.now();
 for (const cls of CLASSES) {
-  const r = await ctx.runAll(plan0, cls, DIFF);
+  const CHS = opt("--ch") ? opt("--ch").split(",") : Object.keys(PLANS);
+  const plan = CHS.flatMap(c => PLANS[c] || []);
+  const r = await ctx.runAll(plan, cls, DIFF);
   // tactical fights (ENC.tac) are meant to need tactics the bot only half uses: they pass at 1/3
   // (in --quick mode, with only 2 runs, they are checked for crashes only: run the full simulation for balance)
   const weak = Object.entries(r).filter(([k, v]) => v === "ERR" || +v.split("/")[0] < +v.split("/")[1].split(" ")[0] * (ctx.ENC_TAC && ctx.ENC_TAC[k] ? (QUICK ? 0 : .33) : .5));

@@ -360,6 +360,7 @@ async function attackRoll(a, t, o) {
     if (c.id === "pc" && has("took_flame")) dmg += rnd(4);
     if (c.trinket === "sun_talisman" && o.weapon && und) dmg += rnd(4);
     if (c.trinket === "sunlantern" && und) dmg += rnd(6);
+    if (c.trinket === "hrun_hammer" && und) dmg += rnd(6);
     if (o.weapon && a.cond.oil) dmg += rnd(4);
   } else if (S.diff === 2) dmg += 1;
   await applyDmg(t, dmg, o.type, a);

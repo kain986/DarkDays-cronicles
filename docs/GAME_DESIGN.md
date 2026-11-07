@@ -53,10 +53,38 @@ Ognuno ha dialoghi propri e un talento personale.
 | Mira Benda | guerriera | se al ponte l'hai convinta a parole; caserma dei disertori a Vesperia |
 | Doran Varn | ranger | se Kael lo convince sulla Torre Campanaria |
 | Hrun | paladino | all'eremo sul fianco della Corona (Atto III) |
+| Nessa | ladra | sorella di Oren, liberata nelle prigioni della Corona; si unisce nel Capitolo II |
 
 - **La morte di Fenn:** quando Seraphine si rivela all'Archivio (fine dell'Atto II), uccide Fenn per vendicarsi dei bambini sottratti al culto. È la perdita a metà storia. Il suo equipaggiamento torna nello zaino, il posto libero nel gruppo viene preso da chi è all'accampamento, e il sole di legno (se Fenn te l'ha dato) torna nel finale.
+- **Le altre perdite:** nella saga muoiono altri compagni, in punti fissi o per scelta del giocatore:
+  - Brenna nei finali La Brace e Il Re di Cenere del Capitolo I;
+  - Hrun nel Capitolo III, quando riforgia la Chiave;
+  - Mira sul Ponte Vecchio di Vesperia, nel Capitolo IV;
+  - nel Capitolo V uno dei compagni attivi può restare a tenere aperta la valvola della Gola (Doran, Kael, Nessa, Ilyra o Brenna, nell'ordine), a meno di spendere la luce del cuore di Aurel.
 
 I capitoli successivi riprendono la stessa partita: gruppo, livello, oggetti e flag della storia passano al capitolo seguente.
+
+## La saga
+
+| Capitolo | Livelli | Trama | Finali |
+|---|---|---|---|
+| I — Il Sole Nero | 1–7 | il Sole Nero sopra Valtenebra, Seraphine e l'Avatar di Morrhan | 5 (vedi sopra) |
+| II — La Città dei Senza Volto | 8–16 | le Marche di Ferro e gli Spenti, Corvelle delle maschere, l'Ierofante Senza Volto (Lia, la figlia di Seraphine) | La bambola di pezza · Il rogo di Corvelle |
+| III — Il Mare di Cenere | 17–26 | Saltgrave e il Faro Nero, Iskra e la flotta, la Forgia di Aurel dove Hrun riforgia la Chiave, Vashka la Fame che cammina | Il porto in fiamme · L'ultima rotta di Iskra |
+| IV — La Guerra degli Dèi | 27–38 | l'occhio di Morrhan nel cielo, il cuore di Aurel nel Deserto di Vetro, l'assedio di Vesperia | Vesperia regge · La caduta di Vesperia |
+| V — L'Ultima Alba | 39–50 | il ritorno a Valtenebra diventata una gola, Ashford e Liesel, la discesa nello stomaco del dio | 5 finali |
+
+Ogni capitolo si apre in modo diverso a seconda del finale del precedente, e molte scelte lontane tornano più avanti: Oren e Nessa, i bambini di Ashford, Seraphine redenta, Lia, il Primo Custode risparmiato, gli alleati raccolti a Vesperia.
+
+**Capitolo V — la luce del cuore.** Il cuore di Aurel ha tre cariche di luce. Si possono spendere per salvare Liesel o per tenere aperta la valvola della Gola senza sacrificare un compagno; Lia (se è stata salvata nel Capitolo II e Seraphine redenta nel I) ne restituisce una. I finali più luminosi chiedono quella che resta:
+
+| Finale | Requisito | Cosa succede |
+|---|---|---|
+| L'Ultima Alba | almeno 1 carica | spingi il cuore di Aurel, e il tuo, nella bocca del dio: muori e nasce un sole nuovo |
+| Il Sole Nuovo | almeno 2 cariche | diventi tu il sole, e guardi invecchiare e morire tutti quelli che ami |
+| Il Mondo Senza Dèi | Ilyra nel gruppo, oppure Arcano CD 24 | spezzi entrambi i cuori: nessun dio, nessun sole, un mondo duro ma vostro |
+| La Fame | sempre | mangi il dio e poi i tuoi compagni |
+| La Fine di Tutto | sempre (anche prima dello scontro finale) | accetti il patto di Morrhan: i morti tornano, con una bocca dentro la bocca, e il mondo viene mangiato |
 
 ## Personaggio
 
@@ -70,7 +98,7 @@ I capitoli successivi riprendono la stessa partita: gruppo, livello, oggetti e f
   - aumento delle caratteristiche oppure un talento ai livelli 4, 8, 12, 16, 19 e poi ogni 4 livelli dal 24 (il guerriero anche al 6 e al 14, il ladro al 10); oltre il 20° le caratteristiche salgono fino a 24;
   - slot degli incantesimi fino al IV livello, che continuano a crescere; oltre il 10° i danni degli incantesimi crescono del 3% a livello; i trucchetti salgono ai livelli 5, 11, 17 e poi ogni 10;
   - privilegi di classe aggiuntivi: Indomito (guerriero 9), terzo e quarto attacco (guerriero 11 e 20), Colpi radiosi (paladino 11), Elusione e Inafferrabile (ladro 7 e 11), Passo sicuro (ranger 9), terzo attacco per paladino e ranger al 24.
-  - Il Capitolo I si ferma al livello 7; i capitoli successivi alzano il tetto (piano della saga: II fino al 16, III al 26, IV al 38, V al 50).
+  - ogni capitolo ha un tetto di livello: I fino al 7, II al 16, III al 26, IV al 38, V al 50. Nei capitoli II–V il gruppo raggiunge anche delle soglie minime di livello a ogni atto (`xpTo`).
 - **Sottoclassi** (scelta definitiva al livello 3, privilegi ai livelli 3, 7 e 11):
 
   | Classe | Sottoclasse | 3° | 7° | 11° |
@@ -202,7 +230,7 @@ Nel simulatore questi scontri, segnati con `tac: 1`, devono essere vinti almeno 
 - 3 slot manuali.
 - Codice di esportazione (prefisso `DDC1:`) per spostare la partita tra dispositivi.
 - Bestiario dei nemici incontrati.
-- 14 imprese, una per ciascuno dei cinque finali.
+- 19 imprese, tra cui una per ciascuno dei dieci finali dei Capitoli I e V.
 - Controllo degli aggiornamenti tramite GitHub Releases.
 
 ## Crafting ed economia

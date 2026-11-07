@@ -24,7 +24,14 @@ Il gioco funziona offline. Nell'app controlla da solo se è uscita una versione 
 
 ## Caratteristiche
 
-- **Storia a capitoli.** Il *Capitolo I — Il Sole Nero* ha tre atti, un dungeon opzionale (le Volte di Aurel), due missioni segrete, 199 scene, compagni reclutabili e **cinque finali**, con un Atto III cupo e violento. La durata è di circa 5–6 ore. Gruppo, oggetti, livello e scelte passano ai capitoli successivi.
+- **Una saga in cinque capitoli, dal livello 1 al 50:**
+  - I — Il Sole Nero;
+  - II — La Città dei Senza Volto;
+  - III — Il Mare di Cenere;
+  - IV — La Guerra degli Dèi;
+  - V — L'Ultima Alba.
+
+  In tutto sono 333 scene, con dungeon opzionali, missioni segrete, compagni che possono morire e scelte che tornano a distanza di capitoli. Il primo e l'ultimo capitolo hanno **cinque finali** ciascuno; il Capitolo V è il più cupo e violento. Gruppo, oggetti, livello e scelte passano da un capitolo all'altro.
 - **Gruppo di 4 su un roster di 8:** compagni reclutabili lungo la storia, formazione da cambiare all'accampamento e un compagno che non arriverà alla fine.
 - **Tre lingue:** italiano, inglese e spagnolo, cambiabili in qualsiasi momento.
 - **Creazione del personaggio in stile 5e:** 6 razze, 6 classi, background, acquisto a punti (27), abilità e competenze.
@@ -47,7 +54,7 @@ Il gioco funziona offline. Nell'app controlla da solo se è uscita una versione 
 - **Indovinelli, rompicapo e missioni segrete**, tra cui la caccia alle Tre Fiamme dei Custodi e l'enigma del ladro di ricordi.
 - **IA dei nemici "utility":** valuta ogni casella raggiungibile in base al danno atteso, alla copertura, alle alture, alla linea di vista, al fuoco e al rischio di subire attacchi di opportunità o la Guardia.
 - **Progressione alla Baldur's Gate:**
-  - progressione fino al **livello 50** (il Capitolo I arriva al 7), talenti, dadi vita, riposi brevi e lunghi;
+  - progressione fino al **livello 50** lungo i cinque capitoli, talenti, dadi vita, riposi brevi e lunghi;
   - **due sottoclassi per classe**, scelte al livello 3, con nuovi privilegi ai livelli 3, 7 e 11;
   - oggetti magici, ninnoli, pergamene, negozi e bottino casuale.
 - **Grafica e audio:**
@@ -56,7 +63,7 @@ Il gioco funziona offline. Nell'app controlla da solo se è uscita una versione 
   - musica procedurale che cambia con l'atmosfera, ed effetti sonori.
 - **Comodità:**
   - salvataggio automatico, 3 slot manuali, esportazione e importazione della partita come codice testuale;
-  - bestiario, 14 imprese (obiettivi), dimensione del testo regolabile ed effetti ridotti;
+  - bestiario, 19 imprese (obiettivi), dimensione del testo regolabile ed effetti ridotti;
   - modalità orizzontale (predefinita su telefono) oppure verticale o automatica.
 
 ## Struttura del repository
@@ -65,6 +72,7 @@ Il gioco funziona offline. Nell'app controlla da solo se è uscita una versione 
 src/                      sorgenti del gioco (HTML/CSS/JS), concatenati in ordine
   00_shell.html           struttura della pagina e stili
   10_data.js              regole: razze, classi, incantesimi, oggetti, nemici, scontri
+  12_saga.js              strumenti dei capitoli II–V: nemici in scala, livelli a tappe, oggetti e incantesimi alti
   15_chapters.js          registro dei capitoli
   30_engine.js            stato, scene, prove, riposi, livelli, menu
   40_combat_rules.js      regole di combattimento e IA dei nemici
@@ -82,8 +90,13 @@ src/                      sorgenti del gioco (HTML/CSS/JS), concatenati in ordin
   78_ui_clarity.js        barre dei PF, scheda compatta, pannello azioni a schede
   79_progression.js       progressione fino al livello 50 e sottoclassi
   80_meta.js              salvataggi, bestiario, obiettivi, opzioni, aggiornamenti
+  82_saga.js              mappe, miniature, frasi dei capi e incantesimi dei capitoli II–V
   99_boot.js              avvio
   chapters/ch1_il_sole_nero/   Capitolo I (definizione, tre atti, segreti e indovinelli)
+  chapters/ch2_senza_volto/    Capitolo II
+  chapters/ch3_mare_di_cenere/ Capitolo III
+  chapters/ch4_guerra_degli_dei/ Capitolo IV
+  chapters/ch5_ultima_alba/    Capitolo V
 tools/
   build.mjs               assembla il gioco nei tre file di uscita
   validate-story.mjs      controlla che ogni scena e ogni scelta portino da qualche parte
@@ -130,7 +143,7 @@ Se la release `vX.Y` non esiste ancora, il workflow la crea con l'APK allegato e
 
 L'APK è firmato con `app/release.keystore`. La chiave è inclusa nel repository di proposito, così ogni build (locale o in CI) ha la stessa firma e gli aggiornamenti si installano sopra la versione precedente. Va bene per un progetto amatoriale distribuito tramite GitHub. Per pubblicare sul Play Store serve una chiave privata tenuta fuori dal repository (in un *secret* di GitHub) e un App Bundle (`.aab`).
 
-## Aggiungere un capitolo
+## Aggiungere o modificare un capitolo
 
 Vedi [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md). In breve:
 

@@ -33,7 +33,7 @@ const abEff = (c, k) => { const v = c.ab[k], t = c.trinket && ITEMS[c.trinket]; 
 const abm = (c, k) => mod(abEff(c, k));
 const hasFeat = (c, f) => !!(c && c.feats && c.feats.includes(f));
 function maxHP(c) { const h = CL(c).hd, con = abm(c, "con"); let hp = h + con + (c.lvl - 1) * (h / 2 + 1 + con); if (c.race === "dwarf") hp += c.lvl; if (hasFeat(c, "tough")) hp += 2 * c.lvl; return Math.max(1, hp); }
-function acOf(c) { const dex = abm(c, "dex"); const a = CL(c).armor; let ac = a === "heavy" ? 16 : a === "medium" ? 14 + Math.min(dex, 2) : a === "light" ? 11 + dex : 13 + dex; if (CL(c).shield) ac += 2; return ac + (c.aplus || 0) + (c.trinket === "ring_prot" || c.trinket === "sunlantern" ? 1 : 0); }
+function acOf(c) { const dex = abm(c, "dex"); const a = CL(c).armor; let ac = a === "heavy" ? 16 : a === "medium" ? 14 + Math.min(dex, 2) : a === "light" ? 11 + dex : 13 + dex; if (CL(c).shield) ac += 2; return ac + (c.aplus || 0) + (c.trinket === "ring_prot" || c.trinket === "sunlantern" || c.trinket === "hrun_hammer" ? 1 : 0); }
 const speedOf = c => RACES[c.race].spd + (c.trinket === "boots_wind" ? 2 : 0) + (hasFeat(c, "mobile") ? 2 : 0) + subSpd(c);
 function slotsMax(c) { const t = CL(c).caster; const tab = t === "full" ? FULL : t === "half" ? HALF : null; const s = tab ? tab[c.lvl].slice() : [0,0,0,0]; if (tab && c.trinket === "pearl_power") s[c.lvl >= 3 ? 1 : 0]++; return s; }
 const castMod = c => CL(c).cast ? abm(c, CL(c).cast) : 0;
@@ -155,6 +155,13 @@ const BG = {
   dawn:{sky:["#1d2c55","#efb06a"], gold:[.5,.62,.16], L:["peaks"]},
   twilight:{sky:["#34304a","#c39a98"], pale:[.5,.5,.12], L:["peaks"]},
   dark:{sky:["#000000","#14081a"], sun:[.5,.4,.36], L:["peaks","throneking"]},
+  march:{sky:["#0c0b10","#2a2a33"], sun:[.3,.2,.08], L:["peaks","fort","fog"]},
+  ruinsv:{sky:["#0b0809","#33191a"], sun:[.7,.22,.1], L:["hills","houses","ash"]},
+  sea:{sky:["#070b10","#1a2b36"], sun:[.68,.2,.08], L:["river","fog"]},
+  harbor:{sky:["#0a0b10","#23303a"], sun:[.25,.2,.08], L:["houses","river","fog"]},
+  desert:{sky:["#120c0a","#5a3424"], sun:[.5,.3,.12], L:["hills","ruins"]},
+  warcamp:{sky:["#0d0a0c","#3a1c1c"], sun:[.75,.22,.1], L:["hills","palisade","campfire"]},
+  maw:{sky:["#020102","#3a0610"], sun:[.5,.45,.4], L:["peaks","throneking","ash"]},
   inn:{wall:"#2b1d15", glow:"#f08a45", gx:.18, L:["beams","hearth","tables"]},
   tavern2:{wall:"#1b1816", glow:"#d06a3a", gx:.7, L:["beams","tables","smoke"]},
   shrine:{wall:"#1e1a24", glow:"#e9c46a", gx:.5, L:["arches","altarIn","candles"]},
@@ -165,6 +172,11 @@ const BG = {
   drowned:{wall:"#0f1a20", glow:"#6fb3a0", gx:.5, L:["shelves","water"]},
   mirror:{wall:"#121018", glow:"#a07ad6", gx:.5, L:["mirrors"]},
   dungeon:{wall:"#17130f", glow:"#e0703f", gx:.5, L:["bars","chains"]},
+  cathedral:{wall:"#120d16", glow:"#c08cff", gx:.5, L:["arches","candles","mirrors"]},
+  ballroom:{wall:"#22142a", glow:"#e9c46a", gx:.5, L:["arches","chandelier","dancers"]},
+  ship:{wall:"#1a140f", glow:"#e09a4a", gx:.3, L:["beams","water"]},
+  forge:{wall:"#1e120c", glow:"#ff7a30", gx:.5, L:["arches","hearth","chains"]},
+  gullet:{wall:"#1a0408", glow:"#ff3a4a", gx:.5, L:["tunnel","chains"]},
   title:{sky:["#07060a","#2a2030"], sun:[.62,.3,.16], L:["peaks","whitetrees","fog"]},
 };
 function hashStr(s) { let h = 2166136261; for (const ch of s) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return (h >>> 0) % 2147483646 + 1; }
@@ -469,7 +481,7 @@ function bindInv(m) {
   m.querySelectorAll("[data-use]").forEach(b => b.onclick = () => {
     const k = b.dataset.use, c = S.party[+b.dataset.on], it = ITEMS[k];
     if (it.use === "heal") { if (c.hp >= c.maxhp) return; c.hp = Math.min(c.maxhp, c.hp + roll(it.dice).total); take(k); }
-    else if (it.use === "equip") { if (it.slot === "w") { if (c.wplus >= it.v) return; c.wplus = it.v; take(k); } else if (it.slot === "t") { take(k); if (c.trinket) S.inv[c.trinket] = (S.inv[c.trinket] || 0) + 1; c.trinket = k; const hp0 = c.hp; recalc(c); c.slots = c.slots.map((v, i) => Math.min(v + (slotsMax(c)[i] > v ? 0 : 0), slotsMax(c)[i])); c.hp = Math.min(c.maxhp, Math.max(hp0, c.hp)); } else { if (c.aplus >= 2) return; c.aplus += it.v; take(k); } }
+    else if (it.use === "equip") { if (it.slot === "w") { if (c.wplus >= it.v) return; c.wplus = it.v; take(k); } else if (it.slot === "t") { take(k); if (c.trinket) S.inv[c.trinket] = (S.inv[c.trinket] || 0) + 1; c.trinket = k; const hp0 = c.hp; recalc(c); c.slots = c.slots.map((v, i) => Math.min(v + (slotsMax(c)[i] > v ? 0 : 0), slotsMax(c)[i])); c.hp = Math.min(c.maxhp, Math.max(hp0, c.hp)); } else { if (c.aplus >= (it.cap || 2)) return; c.aplus += it.v; take(k); } }
     saveGame(true); openMenu("inv");
   });
 }

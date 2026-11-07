@@ -120,7 +120,7 @@ function goalLines() {
   const e = tacEnc(), L = [];
   if (!CB.tac) return L;
   if (CB.tac.tele) L.push(`<span class="warn">⚠ ${tr(teleCfg() ? teleCfg().n : ["Colpo", "Strike", "Golpe"])}: ${tr(["esci dagli esagoni rossi!", "leave the red hexes!", "¡sal de los hexágonos rojos!"])}</span>`);
-  if (e.ward) { const n = objsAlive(e.ward.by).length; if (n) L.push(`${icon("flame")} ${tr(["Bracieri", "Braziers", "Braseros"])}: ${n} · ${tr(["capo protetto", "leader warded", "jefe protegido"])}`); }
+  if (e.ward) { const n = objsAlive(e.ward.by).length; if (n) L.push(`${icon("flame")} ${e.ward.by === "brazier" ? tr(["Bracieri", "Braziers", "Braseros"]) : tr(FOES[e.ward.by].n)}: ${n} · ${tr(["capo protetto", "leader warded", "jefe protegido"])}`); }
   if (e.ritual && !CB.tac.ritualDone && objsAlive(e.ritual.by).length) { const left = e.ritual.rounds - CB.round + 1; L.push(`${icon("skull")} ${tr(["Il rito si compie tra", "The rite completes in", "El rito se completa en"])} ${Math.max(0, left)} ${tr(["round", "rounds", "rondas"])}`); }
   (e.reinf || []).forEach(w => { if (!CB.tac["rf" + w.r] && w.r - CB.round <= 2 && w.r > CB.round) L.push(`${icon("end")} ${tr(["Rinforzi in arrivo", "Reinforcements coming", "Refuerzos en camino"])}`); });
   return L;

@@ -1,5 +1,36 @@
 # Cronologia delle versioni
 
+## 4.0 — 2026-11-07
+
+**La saga completa: quattro nuovi capitoli, fino al livello 50**
+- **Capitolo II — La Città dei Senza Volto** (livelli 8–16):
+  - novanta giorni dopo la Corona di Cenere, al nord la gente perde l'ombra e diventa Spenta;
+  - l'assedio di Forte Corvaccia, il traghetto degli annegati, Corvelle dove tutti portano la maschera, il ballo mascherato, la Cattedrale Rovesciata;
+  - l'Ierofante Senza Volto è Lia, la figlia di Seraphine;
+  - due finali: *La bambola di pezza* e *Il rogo di Corvelle*.
+- **Capitolo III — Il Mare di Cenere** (livelli 17–26):
+  - Saltgrave, il Faro Nero, la nave fantasma dell'Ammiraglio Cavo;
+  - la Forgia di Aurel, dove Hrun riforgia la Chiave e muore;
+  - Vashka, la Fame che cammina;
+  - due finali: *Il porto in fiamme* e *L'ultima rotta di Iskra*.
+- **Capitolo IV — La Guerra degli Dèi** (livelli 27–38):
+  - l'occhio di Morrhan mangia le stelle;
+  - il cuore di Aurel nel Deserto di Vetro e il Primo Custode;
+  - l'assedio di Vesperia e la morte di Mira sul Ponte Vecchio;
+  - due finali: *Vesperia regge* e *La caduta di Vesperia*.
+- **Capitolo V — L'Ultima Alba** (livelli 39–50):
+  - Valtenebra è diventata una gola;
+  - Ashford è piena di Mangiati e Liesel, la sorella di Fenn, è stata morsa;
+  - la discesa nella Gola: l'indovinello dei denti, la Sala degli Echi dove i compagni morti parlano con la loro voce, la valvola che qualcuno deve tenere aperta, lo stomaco del dio con le ossa di Aurel;
+  - la **luce del cuore**: tre cariche da spendere per salvare vite o da conservare per i finali più luminosi;
+  - **cinque finali:** L'Ultima Alba, Il Sole Nuovo, Il Mondo Senza Dèi, La Fame, La Fine di Tutto.
+- **Nuova compagna:** Nessa, ladra, la sorella di Oren.
+- **Nuovi incantesimi** di alto livello: Cono di freddo, Catena di fulmini, Pioggia di meteore, Colonna di fuoco, Guarigione, Guarigione di massa, Raffica, Onda distruttiva.
+- **Nuovo equipaggiamento:** armi fino a +5, armature fino a +5, pozioni supreme ed elisir del titano, fuoco stellare; fucine e negozi nuovi in ogni capitolo.
+- Nuove mappe di combattimento (nave, deserto, città, cattedrale, gola, rovine), nuovi sfondi e decine di nuovi nemici, con scontri tattici e capi in ogni capitolo.
+- Cinque nuove imprese, una per ogni finale del Capitolo V.
+- La schermata Capitoli mostra la saga completa.
+
 ## 3.4 — 2026-11-07
 
 **Atto III più cupo e cinque finali**
