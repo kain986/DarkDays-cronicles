@@ -20,9 +20,21 @@ Valtenebra, una valle in cui il sole si è spento da quaranta giorni. Il protago
 |---|---|
 | I — La Lanterna e il Bosco | il carro dei prigionieri, Ashford, il mulino dei goblin, il cimitero, il campo del culto, le Pietre di Varga |
 | II — La Città delle Candele | Vesperia, la torre del Guardiano, il duca, le fogne, il dungeon opzionale delle Volte di Aurel |
-| III — La Corona di Cenere | il passo innevato, la fortezza, lo Specchio, Seraphine e l'Avatar |
+| III — La Corona di Cenere | la strada delle mani e Oren, il passo innevato, la Notte dei Coltelli, la fortezza, lo Specchio, le prigioni, Seraphine e l'Avatar |
 
-Ci sono tre finali (L'Alba, Il Crepuscolo libero, Il Re di Cenere), che dipendono dalle scelte e dagli alleati raccolti. I compagni sono:
+L'Atto III è il più cupo: la strada è segnata dai profughi impiccati dal culto, le assassine di Seraphine attaccano l'ultimo accampamento, nelle prigioni si ammucchiano i prigionieri dissanguati e nella sala del trono Seraphine uccide davanti al gruppo chi è salito prima di loro (il capitano della guardia o il Duca, a seconda delle alleanze).
+
+Ci sono cinque finali, che dipendono dalle scelte e dagli alleati raccolti:
+
+| Finale | Come si ottiene | Cosa succede |
+|---|---|---|
+| L'Alba | girare la Chiave | il sole torna; il prezzo è una vita: la tua, oppure quella di Seraphine redenta, oppure divisa con i sei marchiati liberati |
+| La Brace | lasciare che Brenna giri la Chiave (deve essere nel gruppo attivo) | Brenna brucia al posto tuo; l'alba resta rossa per sempre |
+| Il Crepuscolo libero | spezzare la Chiave (prova di Arcano, automatica se Ilyra ne ha parlato) | il legame tra il sole e gli dèi si rompe |
+| Il Re di Cenere | accogliere la voce di Morrhan | diventi il nuovo signore della valle; Brenna muore cercando di fermarti |
+| La Notte Eterna | rifiutare il prezzo e fuggire | nessuna alba: la valle muore di freddo e di buio |
+
+I compagni sono:
 
 - **Brenna Ironvow**, chierica nana;
 - **Kael Varn**, ladro umano;
@@ -190,7 +202,7 @@ Nel simulatore questi scontri, segnati con `tac: 1`, devono essere vinti almeno 
 - 3 slot manuali.
 - Codice di esportazione (prefisso `DDC1:`) per spostare la partita tra dispositivi.
 - Bestiario dei nemici incontrati.
-- 12 imprese.
+- 14 imprese, una per ciascuno dei cinque finali.
 - Controllo degli aggiornamenti tramite GitHub Releases.
 
 ## Crafting ed economia

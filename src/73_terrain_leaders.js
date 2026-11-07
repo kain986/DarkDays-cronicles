@@ -178,6 +178,14 @@ const LEADS = {
   },
 };
 LEADS.varga_small = LEADS.varga;
+LEADS.knives = {
+  start: ["(La Sorella non parla: si è tagliata la lingua al giuramento. Si passa la lama sulla gola e indica te.)", "(The Sister does not speak: she cut out her tongue when she took her oath. She draws the blade across her throat and points at you.)", "(La Hermana no habla: se cortó la lengua al jurar. Se pasa la hoja por la garganta y te señala.)"],
+  rally: [["La Sorella vi ha scelti. Nessuno torna giù senza le vostre teste!", "The Sister has chosen you. No one goes down without your heads!", "¡La Hermana os ha elegido! ¡Nadie baja sin vuestras cabezas!"],
+          ["Finché lei respira, il giuramento ci tiene qui…", "While she breathes, the oath holds us here…", "Mientras ella respire, el juramento nos retiene aquí…"],
+          ["Se cade la Sorella, il giuramento muore con lei.", "If the Sister falls, the oath dies with her.", "Si cae la Hermana, el juramento muere con ella."]],
+  hurt: ["La Sorella sanguina… il giuramento si sta spezzando.", "The Sister is bleeding… the oath is breaking.", "La Hermana sangra… el juramento se rompe."],
+  fall: ["La Sorella è morta! Il giuramento è sciolto, via!", "The Sister is dead! The oath is broken, run!", "¡La Hermana ha muerto! ¡El juramento se ha roto, huid!"],
+};
 const leaderU = () => CB && CB.lead ? CB.units.find(u => u.uid === CB.lead) : null;
 function bark(u, txt, ms = 2600) {
   logL(`${u.name}: «${txt}»`);

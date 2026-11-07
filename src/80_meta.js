@@ -67,6 +67,8 @@ const ACH = [
   ["end_dawn", "sun", ["L'Alba", "The Dawn", "El Alba"], ["Riporta il sole nel cielo.", "Return the sun to the sky.", "Devuelve el sol al cielo."]],
   ["end_twilight", "moon", ["Il Crepuscolo libero", "The Free Twilight", "El Crepúsculo libre"], ["Spezza il legame tra il sole e gli dèi.", "Break the bond between sun and gods.", "Rompe el vínculo entre el sol y los dioses."]],
   ["end_dark", "skull", ["Il Re di Cenere", "The Ash King", "El Rey de Ceniza"], ["Prendi il potere di Morrhan.", "Take Morrhan's power.", "Toma el poder de Morrhan."]],
+  ["end_ember", "flame", ["La Brace", "The Ember", "La Brasa"], ["Lascia che Brenna paghi il prezzo dell'alba.", "Let Brenna pay the price of dawn.", "Deja que Brenna pague el precio del alba."]],
+  ["end_night", "eye", ["La Notte Eterna", "The Endless Night", "La Noche Eterna"], ["Fuggi con la Chiave.", "Flee with the Key.", "Huye con la Llave."]],
   ["merciless", "flame", ["Spietato", "Merciless", "Despiadado"], ["Completa la storia a difficoltà Spietata.", "Finish the story on Merciless difficulty.", "Completa la historia en dificultad Despiadada."]],
 ];
 function unlock(id) {
@@ -76,7 +78,7 @@ function unlock(id) {
 function checkAch() {
   if (!S) return; const f = S.flags || {};
   if (f.vault_done) unlock("vault"); if (f.doran_ally) unlock("brothers"); if (f.ser_redeemed) unlock("redeem");
-  ["end_dawn", "end_twilight", "end_dark"].forEach(e => { if (f[e]) unlock(e); });
+  ["end_dawn", "end_twilight", "end_dark", "end_ember", "end_night"].forEach(e => { if (f[e]) unlock(e); });
   if (f.game_done && S.diff === 2) unlock("merciless");
   const tk = new Set(Object.keys(S.inv || {}).filter(k => ITEMS[k] && ITEMS[k].slot === "t")); roster().forEach(c => { if (c.trinket) tk.add(c.trinket); }); if (tk.size >= 6) unlock("collector");
 }

@@ -99,7 +99,7 @@ Regole:
 - **Prefissa gli id delle scene** con il capitolo (`ch2_…`), perché le scene di tutti i capitoli condividono `SC`.
 - L'ordine dei capitoli è l'ordine delle cartelle. `nextChapter()` collega automaticamente la fine di un capitolo all'inizio del successivo.
 - Le partite già arrivate alla fine stanno nella scena `ch_wait`: quando esce il nuovo capitolo, **Continua** le porta alla sua scena iniziale. Ogni fine capitolo salva anche una copia in `ddc-chapter-<id>`.
-- Per reagire alle scelte passate usa i flag (`has("doran_ally")`) oppure `S.chaptersDone.ch1`, che contiene l'id del finale ottenuto (`end_dawn`, `end_twilight`, `end_dark`).
+- Per reagire alle scelte passate usa i flag (`has("doran_ally")`) oppure `S.chaptersDone.ch1`, che contiene l'id del finale ottenuto (`end_dawn`, `end_ember`, `end_twilight`, `end_dark`, `end_night`). Nei finali La Brace e Il Re di Cenere Brenna muore (`brenna_dead`); nell'Alba senza aiuti muore il protagonista (né `ser_redeemed` né `freed_branded`).
 - Nuovi nemici, scontri, oggetti e mappe vanno in `10_data.js`, oppure in un file dati del capitolo che li aggiunga agli oggetti esistenti (`FOES.nuovo = {...}`).
 
 `validate-story.mjs` controlla che:

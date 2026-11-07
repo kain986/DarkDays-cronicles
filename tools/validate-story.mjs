@@ -14,7 +14,7 @@ const eng = files.filter(f => /^(30_engine|50_ui)/.test(f)).map(f => readFileSyn
 const process_exit = c => process.exit(c);
 const BGkeys=[...eng.matchAll(/^\s{2}(\w+):\{(sky|wall)/gm)].map(m=>m[1]).concat([...eng.matchAll(/^BG\.(\w+) =/gm)].map(m=>m[1]));
 const stub=`let S={flags:{},party:[{id:'pc',name:'X',hp:5,maxhp:10}],inv:{},gold:100,seen:{}};
-const has=f=>!!S.flags[f]; const set=(f,v=1)=>S.flags[f]=v; const inP=id=>S.party.some(c=>c.id===id);
+const has=f=>!!S.flags[f]; const set=(f,v=1)=>S.flags[f]=v; const inP=id=>S.party.some(c=>c.id===id); const inActive=inP; const killComp=()=>{};
 const gold=()=>{}, item=()=>{}, take=()=>{}, xp=()=>{}, join=()=>{}, dmgParty=()=>{}, longRest=()=>{}, toastQ=()=>{}; const rnd=n=>1;`;
 const errsEarly=[];
 const fn=new Function(stub+src+`;return {SC,ENC,FOES,MAPS,S,CHAPTERS};`);
@@ -26,7 +26,7 @@ const chk=(id,v,what)=>{ if(typeof v==='string' && !SC[v]) errs.push(`${id}: ${w
 const reach=new Set();
 for(const [id,sc] of Object.entries(SC)){
   if(!BGkeys.includes(sc.bg)) errs.push(`${id}: bg ${sc.bg} not in BG`);
-  for(const flags of [{},{children_saved:1,oil_done:1,guard_ally:1,doran_ally:1,lia_grave:1,took_flame:1,has_key:1,act1_done:1,act2_done:1,shatter_known:1,freed_branded:1,ser_redeemed:1,lamps_freed:1,kael_late:1,q_children:1}]){
+  for(const flags of [{},{children_saved:1,oil_done:1,guard_ally:1,doran_ally:1,lia_grave:1,took_flame:1,has_key:1,act1_done:1,act2_done:1,shatter_known:1,freed_branded:1,ser_redeemed:1,lamps_freed:1,kael_late:1,q_children:1},{oren_met:1,oren_saved:1,duke_deal:1,mira_ally:1},{oren_met:1}]){
     S.flags=flags; S.tmp={a:3,b:2};
     const t=typeof sc.t==='function'?sc.t():sc.t;
     if(!Array.isArray(t)||t.length!==3||t.some(x=>typeof x!=='string'||!x.length)) errs.push(`${id}: bad text`);

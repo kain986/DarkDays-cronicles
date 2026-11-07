@@ -1,5 +1,17 @@
 # Cronologia delle versioni
 
+## 3.4 — 2026-11-07
+
+**Atto III più cupo e cinque finali**
+- **La strada delle mani:** salendo al passo trovate i profughi del nord impiccati dal culto, tutti con la mano destra tagliata. Sotto l'ultimo albero c'è Oren, un ragazzo che si era disegnato il marchio col carbone per non lasciare sola la sorella. Puoi salvarlo (una pozione o una prova di Medicina) oppure restare con lui fino alla fine. Sua sorella Nessa è tra i marchiati delle prigioni.
+- **La Notte dei Coltelli:** le Sorelle dei Coltelli, le assassine mute di Seraphine, attaccano l'ultimo accampamento. È un nuovo scontro con un capo: se cade la Sorella, il giuramento si spezza.
+- Le prigioni sono piene di prigionieri dissanguati per niente. Nella sala del trono Seraphine uccide sotto i vostri occhi chi è salito prima di voi: il capitano della guardia o il Duca Malvern.
+- **Due nuovi finali:**
+  - **La Brace:** Brenna prende la Chiave e brucia al posto tuo;
+  - **La Notte Eterna:** rifiuti il prezzo e fuggi con la Chiave, e l'alba non arriva più.
+- **Il Re di Cenere** è più brutale: Brenna cerca di fermarti e il buio la spezza.
+- Due nuove imprese, una per ciascun nuovo finale (14 in tutto).
+
 ## 3.3 — 2026-11-07
 
 **Interfaccia più chiara**
