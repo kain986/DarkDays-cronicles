@@ -114,6 +114,24 @@ Background, oggetti e scelte precedenti possono dare vantaggio o rendere la prov
 - Il capo apre lo scontro con una frase. I seguaci, durante i loro turni, fanno capire che combattono per lui, e quando è ferito vacillano.
 - Se il capo cade, i seguaci fuggono (o si dissolvono, se non morti) e lo scontro è vinto; ogni fuggitivo vale metà dell'esperienza.
 
+**Scontri tattici** (`77_tactical.js`)
+
+Gli scontri chiave hanno meccaniche che premiano il ragionamento più dello scambio di colpi:
+
+| Scontro | Meccanica | Tattica che premia |
+|---|---|---|
+| Mulino (Snik) | rinforzi al round 3 | abbattere il capo prima che arrivino |
+| Pietre di Varga | bracieri: danni dimezzati e cura; rito in 6 round | dividere il gruppo, spegnere i bracieri |
+| Torre della Lanterna | colpo telegrafato ad area (raggio 1) | non ammassarsi, uscire dagli esagoni rossi |
+| Archivio Sommerso (Custode) | onda telegrafata su un'intera fila | cambiare fila al momento giusto |
+| Palazzo del Duca, porta della fortezza | rinforzi | tenere una strettoia o chiudere in fretta |
+| Guardiano d'ossidiana, Seraphine | seconda fase a metà vita (evocazioni, colpi telegrafati) | conservare risorse per la fase due |
+| Avatar di Morrhan | due zone telegrafate a turno | movimento continuo |
+
+Sulla mappa un riquadro descrive le regole attive (durante lo schieramento e in battaglia): bracieri, round che mancano al rito, rinforzi in arrivo, esagoni da lasciare.
+
+Nel simulatore questi scontri, segnati con `tac: 1`, devono essere vinti almeno da un terzo dei gruppi-bot. Gli altri scontri restano alla soglia del 50%.
+
 **Informazione**
 - **Zone d'azione colorate:** rosso per gli attacchi, arancione per incantesimi e abilità, giallo per la Guardia, scuro per le caselle in gittata ma fuori vista. Toccando un nemico in guardia si vede la sua zona.
 - **Movimento in due tempi:** il primo tocco mostra il percorso, il costo, il terreno di arrivo e i rischi; si conferma con **Vai** o con un secondo tocco. I cerchi dorati sono raggiungibili solo con uno Scatto. Si può scegliere il movimento immediato dalle Opzioni.

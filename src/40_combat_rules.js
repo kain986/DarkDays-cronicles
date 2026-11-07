@@ -25,7 +25,7 @@ const opposite = (a, t) => { const [aq, ar] = toCube(a.x, a.y), [tq, tr] = toCub
 const alive = u => u.side === "e" ? u.hp > 0 : !u.down;
 const cur = () => CB.order[CB.ti];
 const unitAt = (x, y) => CB.units.find(u => u.x === x && u.y === y && (u.side === "p" || u.hp > 0));
-const foes = () => CB.units.filter(u => u.side === "e" && u.hp > 0);
+const foes = () => CB.units.filter(u => u.side === "e" && u.hp > 0 && !u.obj);   // objects (braziers…) are not foes
 const allies = () => CB.units.filter(u => u.side === "p");
 const inGrid = (x, y) => x >= 0 && y >= 0 && x < COLS && y < ROWS;
 const ABIL = {
@@ -72,9 +72,10 @@ function startCombat(key, win, surprise) {
     const hp = Math.max(1, Math.round(d.hp * hpMul));
     CB.units.push({uid: "e" + i, side: "e", foe: k, def: d, name: tr(d.n) + (cnt[k] > 1 ? " " + seen[k] : ""), hp, maxhp: hp, ac: d.ac, spd: d.spd || 6, icon: d.ic, boss: !!d.boss, x, y, cond: surprise ? {surp: 1} : {}, react: 1});
   });
+  tacSetup(enc);
   if (enc.lead) { const L = CB.units.find(u => u.foe === enc.lead); if (L && CB.units.some(u => u.side === "e" && u !== L)) { CB.lead = L.uid; L.leader = 1; } }
   CB.units.forEach(u => u.init = rnd(20) + (u.side === "p" ? abm(u.ref, "dex") + (hasFeat(u.ref, "alert") ? 5 : 0) : (u.def.sv || 0)) + Math.random() * .1);
-  CB.order = [...CB.units].sort((a, b) => b.init - a.init);
+  CB.order = CB.units.filter(u => !u.obj).sort((a, b) => b.init - a.init);
   showScreen("combat"); buildCombat();
   logL(tr(["Tiro per l'iniziativa…","Rolling initiative…","Tirando iniciativa…"]));
   if (surprise) logL(T_("surprised"));
@@ -170,14 +171,14 @@ async function overwatchCheck(m) {
 /* ---------- turn flow ---------- */
 function checkEnd() {
   if (CB.ended) return true;
-  if (CB.units.filter(u => u.side === "e").every(u => u.hp <= 0)) { CB.ended = true; setTimeout(winCombat, 600); return true; }
+  if (CB.units.filter(u => u.side === "e" && !u.obj).every(u => u.hp <= 0)) { CB.ended = true; setTimeout(winCombat, 600); return true; }
   if (allies().every(u => u.down)) { CB.ended = true; setTimeout(loseCombat, 700); return true; }
   return false;
 }
 async function nextTurn() {
   if (!CB || checkEnd()) return;
   let guard = 0;
-  do { CB.ti++; if (CB.ti >= CB.order.length) { CB.ti = 0; CB.round++; CB.newRound = true; tickFire(); } } while (!alive(CB.order[CB.ti]) && guard++ < 50);
+  do { CB.ti++; if (CB.ti >= CB.order.length) { CB.ti = 0; CB.round++; CB.newRound = true; tickFire(); tacRound(); } } while (!alive(CB.order[CB.ti]) && guard++ < 50);
   const u = cur(); u.mv = u.spd; u.act = 1; u.bon = 1; u.atkLeft = 0; u.sneakUsed = 0; u.colUsed = 0; u.react = 1; delete u.cond.dodge; delete u.cond.dis; delete u.cond.ow; delete u.cond.power;
   if (u.cond.prone && !u.cond.asleep && !u.cond.stun) { delete u.cond.prone; u.mv = Math.floor(u.spd / 2); logL(`${u.name}: ${tr(["si rialza","stands up","se levanta"])}`); }
   if (u.side === "e" && u.def.gob) u.cond.dis = 1;
@@ -188,6 +189,7 @@ async function nextTurn() {
   CB.busy = true; renderCombat(); await turnBanner(u);
   if (!CB || CB.turnTok !== tok) return; CB.busy = false;
   if (!CB.introDone) { CB.introDone = true; await leaderIntro(); if (!CB || CB.turnTok !== tok) return; }
+  if (await tacTurnStart(u)) { if (!CB) return; if (!checkEnd()) setTimeout(nextTurn, 250); return; }
   if (await terrainTurnStart(u)) { if (!CB) return; if (!checkEnd()) setTimeout(nextTurn, 250); return; }
   if (u.side === "e") {
     // spirit guardians
@@ -197,7 +199,7 @@ async function nextTurn() {
   if (u.cond.surp) { delete u.cond.surp; renderCombat(); await sleep(250); return endTurn(); }
   if (u.cond.asleep) { if (--u.cond.asleep <= 0) delete u.cond.asleep; logL(`${u.name}: Zz…`); renderCombat(); await sleep(350); return endTurn(); }
   if (u.cond.stun) { if (--u.cond.stun <= 0) delete u.cond.stun; logL(`${u.name} ${T_("stunned")}`); renderCombat(); await sleep(400); return endTurn(); }
-  if (u.side === "e") { CB.busy = true; renderCombat(); await sleep(380); await followerBark(u); if (!CB || CB.ended) return; await aiTurn(u); CB.busy = false; return endTurn(); }
+  if (u.side === "e") { CB.busy = true; renderCombat(); await sleep(380); await followerBark(u); if (!CB || CB.ended) return; if (await tacEnemyAct(u)) { CB.busy = false; return endTurn(); } await aiTurn(u); CB.busy = false; return endTurn(); }
   CB.sel = defaultSel(u); renderCombat();
 }
 function endTurn() { if (!CB || CB.ended) return; CB.busy = true; renderCombat(); setTimeout(() => { if (CB) { CB.busy = false; nextTurn(); } }, 160); }

@@ -1,5 +1,27 @@
 # Cronologia delle versioni
 
+## 3.2 — 2026-11-07
+
+**Scontri tattici.** Gli scontri chiave hanno regole proprie. Le annuncia un riquadro sopra la mappa, già durante lo schieramento.
+- **Varga il Pallido, alle Pietre di Varga:**
+  - due bracieri d'ombra lo proteggono (danni dimezzati) e lo curano a ogni round;
+  - se bruciano ancora dopo 6 round il rito si compie: Varga si cura e arriva un ghoul;
+  - conviene dividere il gruppo e spegnerli.
+- **Guardiano della Lanterna, alla Torre:** ogni due turni prepara la Lanterna e segna in rosso gli esagoni che brucerà al turno dopo.
+- **Custode Annegato:** l'Onda nera spazza un'intera fila di esagoni, che va lasciata in tempo.
+- **Rinforzi a ondate:**
+  - al mulino di Snik (dal fienile);
+  - alla porta della fortezza (dalle mura);
+  - al palazzo del Duca.
+  Conviene chiudere in fretta o abbattere il capo.
+- **Seconde fasi:**
+  - il Guardiano d'ossidiana evoca ombre a metà vita;
+  - Madre Seraphine evoca ombre e comincia a lanciare l'Abbraccio della Notte;
+  - l'Avatar di Morrhan segna due zone alla volta.
+- I colpi telegrafati colpiscono chiunque resti negli esagoni rossi, alleati del boss compresi. Quelli di fuoco incendiano la sterpaglia.
+- La difficoltà regola anche la forza di questi colpi: −40% in Racconto, +25% in Spietata.
+- Il simulatore di bilanciamento usa le tattiche di base: esce dagli esagoni rossi e punta i bracieri.
+
 ## 3.1 — 2026-11-07
 
 **Gruppo e compagni**

@@ -170,3 +170,15 @@ Linea di vista e copertura campionano la retta tra i centri.
 - **Ricette:** `RECIPES` in `75_crafting.js`, con `need` (materiali), `gold`, `kind` (`alc` o `forge`), `learn` (flag da avere), `cls` (classi richieste nel gruppo) e `forge` (livello della fucina: 2 = maestro).
 - **Materiali:** sono `ITEMS` con `use: "mat"`. Cosa lascia ogni nemico lo decide `dropsOf(f)`.
 - **Negozi:** `SHOPS[id].forge` (1 o 2) aggiunge la scheda Fucina.
+
+## Scontri tattici
+
+In `ENC[chiave]` (configurati in `77_tactical.js`):
+
+- `objs: [[nemico, x, y]]`: oggetti sulla mappa, per esempio `brazier`. Non agiscono e non contano per la vittoria, ma si possono distruggere.
+- `ward: {foe, by, heal}`: il boss subisce danni dimezzati e si cura di `heal` a ogni round finché resta in piedi un oggetto `by`.
+- `ritual: {rounds, by, spawn, bark}`: se dopo `rounds` round resta un oggetto `by`, il boss recupera metà dei PF e arrivano le creature di `spawn`.
+- `tele: {foe, every, shape: "burst"|"row", rad, cnt, dmg, type, n, bark}`: colpo telegrafato. Il boss segna gli esagoni e li colpisce all'inizio del suo turno successivo.
+- `reinf: [{r, foes, bark}]`: rinforzi all'inizio del round `r`.
+- `phase: {foe, at, spawn, bark, tele}`: seconda fase sotto la frazione `at` dei PF.
+- `tac: 1`: il simulatore applica la soglia ridotta.

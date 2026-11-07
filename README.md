@@ -35,7 +35,8 @@ Il gioco funziona offline. Nell'app controlla da solo se è uscita una versione 
   - terreni con effetti: alture, sterpaglia che dà copertura e prende fuoco, macerie e neve alta, cerchi sacri, ostacoli alti che bloccano la linea di vista;
   - fiancheggiamento e bersagli esposti (critici con 18–20), attacchi di opportunità, Disimpegno, Guardia (overwatch), Atterrare, Colpo potente;
   - reazioni, condizioni e incantesimi con slot;
-  - capi nemici: in alcuni scontri, se il capo cade, i seguaci fuggono.
+  - capi nemici: in alcuni scontri, se il capo cade, i seguaci fuggono;
+  - scontri tattici con regole proprie: bracieri da spegnere, riti a tempo, colpi telegrafati da schivare, rinforzi, boss a due fasi.
   - Le zone d'azione sono colorate: rosso per gli attacchi, arancione per gli incantesimi, giallo per la Guardia, scuro fuori vista. Il movimento mostra il percorso e il costo prima di confermare.
   - Toccando un nemico vedi la probabilità di colpirlo; le caselle rischiose sono segnalate prima di muoverti.
   - Prima dello scontro puoi schierare il gruppo; durante lo scontro ci sono sfide facoltative che danno ricompense.
@@ -76,6 +77,7 @@ src/                      sorgenti del gioco (HTML/CSS/JS), concatenati in ordin
   74_masteries_fx.js      maestrie delle armi, kill cam
   75_crafting.js          materiali, ricette, fucina, mercato
   76_party.js             formazione del gruppo (attivi e accampamento)
+  77_tactical.js          scontri tattici: oggetti, protezioni, riti, colpi telegrafati, rinforzi, fasi
   80_meta.js              salvataggi, bestiario, obiettivi, opzioni, aggiornamenti
   99_boot.js              avvio
   chapters/ch1_il_sole_nero/   Capitolo I (definizione, tre atti, segreti e indovinelli)

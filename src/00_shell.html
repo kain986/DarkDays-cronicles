@@ -654,6 +654,19 @@ a.btn{text-decoration:none}
 .row.fm .swap{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end;max-width:52%}
 .row.fm .swap .btn{padding:5px 8px;font-size:13px}
 .formation .fallen{margin-top:10px;font-style:italic;color:#bfb2a0;font-size:14px}
+/* ---------- tactical fights ---------- */
+.cell.tele{background:rgba(200,20,30,.28)!important;animation:telep .8s ease-in-out infinite alternate}
+.cell.tele::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(-45deg,rgba(150,0,10,.35) 0 4px,transparent 4px 9px);pointer-events:none}
+@keyframes telep{from{filter:brightness(1)}to{filter:brightness(1.35)}}
+#goalbar{position:absolute;left:8px;right:8px;top:2px;z-index:20;display:grid;gap:3px;pointer-events:none}
+#goalbar div{justify-self:center;max-width:100%;padding:4px 10px;border-radius:999px;font:500 12px/1.3 var(--f-ui);color:#f0e4c8;background:rgba(14,10,16,.82);box-shadow:0 0 0 1px rgba(202,166,80,.35);text-align:center}
+#goalbar div svg{width:12px;height:12px;vertical-align:-2px;color:var(--brass)}
+#goalbar .warn{color:#ffb38a;font-weight:700}
+.tok.obj .mini{display:none}
+.tok.obj .disc{display:block;inset:18%;padding:20%;background:radial-gradient(circle at 50% 60%,#ffb050,#b0381a 45%,#3a1408 75%);box-shadow:0 0 14px 4px rgba(255,120,40,.55);animation:brz 1.1s ease-in-out infinite alternate}
+.tok.obj .disc svg{color:#2a0e06}
+@keyframes brz{from{box-shadow:0 0 10px 2px rgba(255,120,40,.45)}to{box-shadow:0 0 18px 6px rgba(160,90,255,.55)}}
+.tok.obj.dead{opacity:.35}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 

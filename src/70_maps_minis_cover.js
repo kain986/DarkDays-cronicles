@@ -318,7 +318,7 @@ function paintMaw(x, L) {
 const _buildCombat0 = buildCombat;
 buildCombat = function () {
   _buildCombat0();
-  CB.units.forEach(u => { const t = $("#t_" + u.uid); if (!t) return; const d = t.querySelector(".disc"); if (d) { const img = document.createElement("img"); img.className = "mini"; img.alt = ""; img.src = miniSrc(u); d.replaceWith(img); }
+  CB.units.forEach(u => { const t = $("#t_" + u.uid); if (!t) return; const d = t.querySelector(".disc"); if (d && !u.obj) { const img = document.createElement("img"); img.className = "mini"; img.alt = ""; img.src = miniSrc(u); d.replaceWith(img); }
     const r = t.querySelector(".ring"); if (r) r.outerHTML = `<svg class="ring" viewBox="0 0 100 40" aria-hidden="true"><ellipse class="trk" cx="50" cy="20" rx="45" ry="15" pathLength="100"/><ellipse class="hp" cx="50" cy="20" rx="45" ry="15" pathLength="100"/></svg>`; });
   placeTokens();
 };
